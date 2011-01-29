@@ -70,6 +70,11 @@ namespace lightseeds
             base.Update(gameTime);
         }
 
+        public void Respawn()
+        {
+            this.position.X = 0;
+        }
+
         private void UpdateXPosition(GameTime gameTime)
         {
             

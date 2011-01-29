@@ -29,6 +29,16 @@ namespace lightseeds.GameObjects
         {
             float accumulatedRepulsion = 1.0f;
 
+            foreach (var player in game.players)
+            {
+                if (IsBehind(player.worldPosition.X))
+                {
+                    // player is dead
+
+                    player.Respawn();
+                }
+            }
+
             foreach(var tree in game.treeCollection.trees) {
                 double distance = Math.Abs(tree.position.X - horizontalPosition);
 
