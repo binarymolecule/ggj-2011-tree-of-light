@@ -191,10 +191,11 @@ namespace lightseeds
             for (int i = 0; i < 2; i++)
             {
                 GraphicsDevice.SetRenderTarget(splitScreens[i]);
-                if (i == 0)
-                    GraphicsDevice.Clear(new Color(40, 40, 40));
-                else
-                    GraphicsDevice.Clear(new Color(40, 40, 80));
+                GraphicsDevice.Clear(new Color(40, 40, 40));
+            
+                GameCamera.CurrentCamera = cameras[i];
+                world.Draw(this, gameTime, -1000, 2000);
+
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
                                   cameras[i].screenTransform);
                 treeCollection.Draw(spriteBatch);
@@ -203,8 +204,6 @@ namespace lightseeds
                   player.Draw(gameTime);   
                 }
                 spriteBatch.End();
-                GameCamera.CurrentCamera = cameras[i];
-                world.Draw(this, gameTime, -1000, 2000);
 
                 BlendState bs = new BlendState() {
                     AlphaBlendFunction = BlendFunction.Subtract,

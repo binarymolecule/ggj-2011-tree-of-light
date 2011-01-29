@@ -230,7 +230,7 @@ namespace lightseeds.GameObjects
             if (treeType == TreeType.BASE)
             {
                 spriteBatch.Draw(parentCollection.baseTexture, new Vector2(screenPosition.X - 0.5f * parentCollection.baseTexture.Width, 
-                                                                           screenPosition.Y - parentCollection.baseTexture.Height + 32.0f), Color.White);
+                                                                           screenPosition.Y - parentCollection.baseTexture.Height + 64.0f), Color.White);
                 if (status == TreeStatus.MATURE)
                 {
                     float fruitScale = (float)currentFruitTime / (float)fruitTime;
