@@ -31,7 +31,7 @@ namespace lightseeds
         public float WOBBLYNESS = 1.0f;
         public float wobbleSpeed = 1.0f;
         public float wobbleHeight = 3.0f;
-
+        
         public float MAXVELOCITY = 10.0f;
         public float ACCELERATION = 100.0f;
         public float XVelocity = 0.0f;
@@ -62,6 +62,7 @@ namespace lightseeds
             this.index = index;
             this.texture = tex;
             this.position = new Vector3(0.0f, 5.0f, 1.0f);
+            
         }
 
         /// <summary>
@@ -103,8 +104,8 @@ namespace lightseeds
 
         private float getWobblyPosition(GameTime gameTime)
         {
-            var sin = wobbleHeight * (float)Math.Sin((gameTime.TotalGameTime.TotalMilliseconds % (360.0f * 97.0f * wobbleSpeed)) / (97.0f / wobbleSpeed));
-            var cos = wobbleHeight * (float)Math.Cos((gameTime.TotalGameTime.TotalMilliseconds%(360.0f * 127.0f * wobbleSpeed)) / (127.0f / wobbleSpeed));
+            var sin = wobbleHeight * (float)Math.Sin((360.0f * index + gameTime.TotalGameTime.TotalMilliseconds % (360.0f * 97.0f * wobbleSpeed)) / (97.0f / wobbleSpeed));
+            var cos = wobbleHeight * (float)Math.Cos((360.0f * index + gameTime.TotalGameTime.TotalMilliseconds % (360.0f * 127.0f * wobbleSpeed)) / (127.0f / wobbleSpeed));
             return position.Y + cos + sin;
         }
 

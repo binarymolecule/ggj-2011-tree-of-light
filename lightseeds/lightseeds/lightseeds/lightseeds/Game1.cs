@@ -149,9 +149,7 @@ namespace lightseeds
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape))
-            {
                 this.Exit();
-            }
             if (Keyboard.GetState().IsKeyDown(Keys.Left))
                 players[0].move(Direction.LEFT);
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
