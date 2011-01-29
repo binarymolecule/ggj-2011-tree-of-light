@@ -34,8 +34,7 @@ namespace lightseeds
 
         public TreeCollection treeCollection;
         public SeedCollection seedCollection;
-        public Tree blueprint1;
-        public Tree blueprint2;
+        public Tree[] blueprints = new Tree[2];
 
         public List<TheVoid> voids = new List<TheVoid>();
 
@@ -62,6 +61,7 @@ namespace lightseeds
             splitScreenPositions = new Vector2[2];
             splitScreenPositions[0] = Vector2.Zero;
             splitScreenPositions[1] = new Vector2(0.0f, (float)SPLIT_SCREEN_HEIGHT);
+            
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace lightseeds
             spriteBatch.Begin();
             spriteBatch.DrawString(spriteFont, String.Format("P1: {0:0.0} / {1:0.0}", players[0].worldPosition.X, players[0].worldPosition.Y), Vector2.Zero, Color.White);
             spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, 20), Color.Red);
-            if (blueprint1 != null)
+            if (blueprints[0] != null)
             {
                 spriteBatch.DrawString(spriteFont, String.Format("simple Tree"), new Vector2(SCREEN_WIDTH-150, 0), Color.White);
                 spriteBatch.DrawString(spriteFont, String.Format("is simple"), new Vector2(SCREEN_WIDTH - 150, 20), Color.White);
@@ -239,16 +239,16 @@ namespace lightseeds
                 players[0].Move(0, 0);
                 if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
                 {
-                    treeCollection.trees.Remove(blueprint1);
-                    blueprint1 = null;
+                    treeCollection.trees.Remove(blueprints[0]);
+                    blueprints[0] = null;
                     createTree(players[0]);
                     waitForBPConfirm = false;
                     waitForReleaseA = true;
                 }
                 if (gamepadState.IsButtonDown(Buttons.B) && !waitForReleaseB)
                 {
-                    treeCollection.trees.Remove(blueprint1);
-                    blueprint1 = null;
+                    treeCollection.trees.Remove(blueprints[0]);
+                    blueprints[0] = null;
                     waitForBPConfirm = false;
                     waitForReleaseB = true;
                 }
@@ -284,9 +284,9 @@ namespace lightseeds
             if (!treeCollection.HasTreeAtPosition(posX))
             {
                 if (player.index == 0)
-                    blueprint1 = treeCollection.CreateTree(posX, TreeType.BLUEPRINT);
+                    blueprints[0] = treeCollection.CreateTree(posX, TreeType.BLUEPRINT);
                 if (player.index == 1)
-                    blueprint2 = treeCollection.CreateTree(posX, TreeType.BLUEPRINT);
+                    blueprints[1] = treeCollection.CreateTree(posX, TreeType.BLUEPRINT);
             }
         }
 
@@ -296,7 +296,7 @@ namespace lightseeds
             float posX = player.worldPosition.X;
             if (seedCollection.collectedSeedCount > 0 && !treeCollection.HasTreeAtPosition(posX))
             {
-                blueprint1 = treeCollection.CreateTree(posX, TreeType.PAWN);
+                blueprints[0] = treeCollection.CreateTree(posX, TreeType.PAWN);
                 seedCollection.collectedSeedCount--;
             }
         }
