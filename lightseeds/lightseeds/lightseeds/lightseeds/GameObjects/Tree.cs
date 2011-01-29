@@ -155,6 +155,14 @@ namespace lightseeds.GameObjects
                         growth = 1.0f;
                     }
                     break;
+                case TreeStatus.KILLED:
+                    growth -= (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) / growthTime;
+                    if (growth < 0.0f)
+                    {
+                        this.RemoveOnNextUpdate = true;
+                        growth = 0.0f;
+                    }
+                    break;
                 case TreeStatus.MATURE:
                     currentFruitTime += gameTime.ElapsedGameTime.TotalSeconds;
                     if (currentFruitTime > this.fruitTime)
@@ -182,6 +190,10 @@ namespace lightseeds.GameObjects
                     spriteBatch.Draw(parentCollection.texture, rectangle, Color.White);
                     break;
                 case TreeStatus.KILLED:
+                    rectangle = new Rectangle((int)(screenPosition.X - 0.5f * growth * screenSize.X), (int)(screenPosition.Y - growth * screenSize.Y + 4.0f),
+                                              (int)(growth * screenSize.X), (int)(growth * screenSize.Y));
+                    spriteBatch.Draw(parentCollection.texture, rectangle, Color.White);
+                    break;
                 case TreeStatus.DIED:
                     rectangle = new Rectangle((int)(screenPosition.X - 0.5f * screenSize.X), (int)(screenPosition.Y - screenSize.Y + 4.0f),
                                               (int)screenSize.X, (int)screenSize.Y);

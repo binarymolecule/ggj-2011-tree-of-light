@@ -29,10 +29,7 @@ namespace lightseeds.GameObjects
             foreach(var tree in game.treeCollection.trees) {
                 double distance = Math.Abs(tree.position.X - horizontalPosition);
 
-                if (IsBehind(tree.position.X) && distance > 2)
-                {
-                    tree.RemoveOnNextUpdate = true;
-                } else if(distance < 2) {
+                if (distance < 2 && tree.status != Tree.TreeStatus.KILLED) {
                     tree.status = lightseeds.GameObjects.Tree.TreeStatus.KILLED;
                 }
                 else if (distance < 10)
