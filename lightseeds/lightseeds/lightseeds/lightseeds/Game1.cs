@@ -47,6 +47,7 @@ namespace lightseeds
         private bool waitForReleaseA;
         private bool waitForReleaseB;
         private bool waitForBPConfirm;
+        public ParticleCollection particleCollection;
 
         public Game1()
         {
@@ -118,16 +119,18 @@ namespace lightseeds
             seedCollection.Load();
             seedCollection.SpawnSeed(new Vector3(4.0f, world.getHeigth(4.0f) + 2.0f, 0.0f));
 
+            this.particleCollection = new ParticleCollection(this);
+
             voids.Add(new TheVoid(this)
             {
                 direction = new Vector3(1, 0, 0),
-                horizontalPosition = -World.WorldWidth/20
+                horizontalPosition = -World.WorldWidth/5
             });
 
             voids.Add(new TheVoid(this)
             {
                 direction = new Vector3(-1, 0, 0),
-                horizontalPosition = World.WorldWidth / 20
+                horizontalPosition = World.WorldWidth / 5
             });
         }
 
@@ -164,6 +167,8 @@ namespace lightseeds
             
             voids.ForEach((v) => v.Update(gameTime));
 
+            particleCollection.Update(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -192,9 +197,18 @@ namespace lightseeds
                 GameCamera.CurrentCamera = cameras[i];
                 world.Draw(this, gameTime, -1000, 2000);
 
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
+                BlendState bs = new BlendState() {
+                    AlphaBlendFunction = BlendFunction.Subtract,
+                    ColorBlendFunction = BlendFunction.Subtract,
+                    ColorSourceBlend = Blend.One,
+                    ColorDestinationBlend = Blend.One,
+                    AlphaDestinationBlend = Blend.One,
+                    AlphaSourceBlend = Blend.One
+                };
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
                                   cameras[i].screenTransform);
                 voids.ForEach((v) => v.Draw(spriteBatch));
+                particleCollection.Draw(gameTime, spriteBatch);
                 spriteBatch.End();
             }
             GraphicsDevice.SetRenderTarget(null);

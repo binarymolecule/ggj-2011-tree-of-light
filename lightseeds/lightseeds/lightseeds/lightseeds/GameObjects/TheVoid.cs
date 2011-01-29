@@ -15,6 +15,9 @@ namespace lightseeds.GameObjects
         private Game1 game;
         private Texture2D tex;
 
+        public float spawnTimer = 0.5f;
+        private int particlePool;
+
         public TheVoid(Game1 game)
         {
             this.game = game;
@@ -48,6 +51,22 @@ namespace lightseeds.GameObjects
             regularSpeed *= accumulatedRepulsion;
 
             this.horizontalPosition += regularSpeed * direction.X;
+
+            // adding new particles
+
+            spawnTimer -= (float)gt.ElapsedGameTime.TotalSeconds;
+            if (spawnTimer < 0 || particlePool < 50)
+            {
+                particlePool++;
+                float xpos = this.horizontalPosition + direction.X * ((float)game.particleCollection.random.NextDouble() * 6.5f - 6);
+                var p = game.particleCollection.SpawnParticle(new Vector3(xpos, (float)game.particleCollection.random.NextDouble() * 10.0f, 0));
+                p.OnDestroy = delegate()
+                {
+                    particlePool--;
+                };
+                spawnTimer = 0.5f;
+            }
+            
         }
 
         public bool IsBehind(float x)
