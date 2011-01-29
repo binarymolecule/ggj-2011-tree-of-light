@@ -60,7 +60,17 @@ namespace lightseeds.GameObjects
 
         internal void CreateTree(float x)
         {
-            trees.Add(new Tree(this, new Vector3(x, game.world.getMinHeigth(x), 0.0f)));
+            trees.Add(new Tree(this, new Vector3(x, game.world.getHeigth(x), 0.0f)));
+        }
+
+        public bool HasTreeAtPosition(float posX)
+        {
+            foreach (Tree tree in trees)
+            {
+                if (tree.OccupiesPosition(posX))
+                    return true;
+            }
+            return false;
         }
     }
 }

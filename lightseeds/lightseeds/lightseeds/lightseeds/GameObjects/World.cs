@@ -105,19 +105,8 @@ namespace lightseeds.GameObjects
             {
                 a++;
             }
-
-            return Math.Max(heights[a - 1].Y, heights[a].Y);
-        }
-
-        public float getMinHeigth(float xPos)
-        {
-            var a = 0;
-            while (xPos > heights[a].X)
-            {
-                a++;
-            }
-
-            return 0.5f * (heights[a - 1].Y + heights[a].Y);
+            return Math.Min(heights[a - 1].Y, heights[a].Y);
+            //return 0.5f * (heights[a - 1].Y + heights[a].Y);
         }
 
         public void Update(GameTime gameTime)

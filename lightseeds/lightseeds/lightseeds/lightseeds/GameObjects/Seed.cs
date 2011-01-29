@@ -12,7 +12,7 @@ namespace lightseeds.GameObjects
     public class Seed
     {
         public Vector3 position;
-        public bool RemoveOnNextUpdate;
+        public bool RemoveOnNextUpdate = false;
         public bool collected = false;
         private SeedCollection parentCollection;
 

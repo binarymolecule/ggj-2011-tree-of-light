@@ -107,7 +107,6 @@ namespace lightseeds
 
             treeCollection = new TreeCollection(this);
             treeCollection.Load();
-            treeCollection.CreateTree(8);
 
             seedCollection = new SeedCollection(this);
             seedCollection.Load();
@@ -191,25 +190,38 @@ namespace lightseeds
 
         public void handleControls()
         {
-            GamePadState gps = GamePad.GetState(PlayerIndex.One);
-            var stick = gps.ThumbSticks.Left;
-            
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape) || GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            var gamepadState = GamePad.GetState(PlayerIndex.One);
+            var keyboardState = Keyboard.GetState();
+            var stick = gamepadState.ThumbSticks.Left;
+
+            if (keyboardState.IsKeyDown(Keys.Escape) ||
+                gamepadState.Buttons.Back == ButtonState.Pressed)
                 this.Exit();
+
+            // controls for player 1
             players[0].Move(stick.X, stick.Y);
 
             // buttons
-            if (gps.IsButtonDown(Buttons.X) && !waitForRelease)
+            if (gamepadState.IsButtonDown(Buttons.X) && !waitForRelease)
             {
-                treeCollection.CreateTree(players[0].worldPosition.X);
+                createTree(players[0]);
                 waitForRelease = true;
             }
 
-            if (gps.IsButtonUp(Buttons.X))
+            if (gamepadState.IsButtonUp(Buttons.X))
             {
                 waitForRelease = false;
+            }             
+        }
+
+        public void createTree(PlayerSprite player)
+        {
+            // check and decrease seeds of players here
+            float posX = player.worldPosition.X;
+            if (!treeCollection.HasTreeAtPosition(posX))
+            {
+                treeCollection.CreateTree(posX);
             }
-            
         }
     }
 }

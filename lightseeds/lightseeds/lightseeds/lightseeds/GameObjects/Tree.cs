@@ -58,14 +58,17 @@ namespace lightseeds.GameObjects
     */
     public class Tree
     {
+        public const float MIN_DISTANCE = 4.0f;
+        
         public Vector3 position;
 
         public TreeCollection parentCollection;
 
 
         #region gameplay properties
+
         public float growthTime;
-        public float growthAmount = 0.0f;
+        public float growth;
         public float lifeSpan;
         public float resistance;
         //public float fruitsPerMinute;
@@ -73,11 +76,16 @@ namespace lightseeds.GameObjects
         public int price;
         public string name;
 
+        public bool isMature;
         public double currentFruitTime;
+        
         #endregion
 
+        public bool RemoveOnNextUpdate = false;
 
-        public bool RemoveOnNextUpdate;
+        public Vector2 screenSize;
+
+        public Vector2 origin;
 
         public Vector3 worldPosition
         {
@@ -100,22 +108,55 @@ namespace lightseeds.GameObjects
         {
             this.parentCollection = coll;
             this.position = position;
+            this.origin = new Vector2(0.0f, parentCollection.texture.Height);
+            this.screenSize = new Vector2(parentCollection.texture.Width, parentCollection.texture.Height);
+            this.growth = 0.1f;
+            this.isMature = false;
+
+            this.growthTime = 10.0f;
         }
 
         public void Update(GameTime gameTime)
         {
-            currentFruitTime += gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (currentFruitTime > this.fruitTime)
+            if (!isMature)
             {
-                this.parentCollection.game.seedCollection.SpawnSeed(worldPosition + new Vector3(0,2,0));
-                currentFruitTime = 0;
+                growth += (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) / growthTime;
+                if (growth > 1.0f)
+                {
+                    isMature = true;
+                    growth = 1.0f;
+                }
+            }
+            else
+            {
+                currentFruitTime += gameTime.ElapsedGameTime.TotalSeconds;
+                if (currentFruitTime > this.fruitTime)
+                {
+                    this.parentCollection.game.seedCollection.SpawnSeed(worldPosition + new Vector3(0, 2, 0));
+                    currentFruitTime = 0;
+                }
             }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(parentCollection.texture, screenPosition - new Vector2(0.0f, parentCollection.texture.Height), Color.White);
+            if (isMature)
+            {
+                Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * screenSize.X), (int)(screenPosition.Y - screenSize.Y + 4.0f),
+                                                    (int)screenSize.X, (int)screenSize.Y);
+                spriteBatch.Draw(parentCollection.texture, rectangle, Color.Green);
+            }
+            else
+            {
+                Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * growth * screenSize.X), (int)(screenPosition.Y - growth * screenSize.Y + 4.0f),
+                                                    (int)(growth * screenSize.X), (int)(growth * screenSize.Y));
+                spriteBatch.Draw(parentCollection.texture, rectangle, Color.White);
+            }
+        }
+
+        public bool OccupiesPosition(float posX)
+        {
+            return (Math.Abs(posX - worldPosition.X) < MIN_DISTANCE);
         }
     }
 }
