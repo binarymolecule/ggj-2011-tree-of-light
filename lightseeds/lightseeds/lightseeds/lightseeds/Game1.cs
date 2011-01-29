@@ -17,12 +17,29 @@ namespace lightseeds
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        public SpriteBatch spriteBatch;
+
+        public Matrix[] worldToScreen;
+        PlayerSprite[] players;
+
+        Texture2D playerTexture;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            graphics.PreferredBackBufferWidth = 1024;
+            graphics.PreferredBackBufferHeight = 768;
+            
+            float screenWidth = 1024.0f;
+            float screenHeight = 768.0f;
+            float screenWidthWorld = 10.0f;
+            float screenHeightWorld = 8.0f;
+
+            worldToScreen = new Matrix[2];
+            worldToScreen[0] = Matrix.CreateScale(screenWidth / screenWidthWorld, -0.5f*screenHeight / screenHeightWorld, 1.0f) *
+                               Matrix.CreateTranslation(0.5f * screenWidth, 0.5f * screenHeight, 0.0f);
+            worldToScreen[1] = worldToScreen[0] * Matrix.CreateTranslation(0.0f, 0.5f * screenHeight, 0.0f);
         }
 
         /// <summary>
@@ -34,7 +51,6 @@ namespace lightseeds
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
             base.Initialize();
         }
 
@@ -47,7 +63,11 @@ namespace lightseeds
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            playerTexture = Content.Load<Texture2D>("playerTexture");
+
+            players = new PlayerSprite[2];
+            players[0] = new PlayerSprite(this, 0, playerTexture);
+            players[1] = new PlayerSprite(this, 1, playerTexture);
         }
 
         /// <summary>
@@ -56,7 +76,6 @@ namespace lightseeds
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
         }
 
         /// <summary>
@@ -67,10 +86,13 @@ namespace lightseeds
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+                Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            // TODO: Add your update logic here
+            // Update players
+            foreach (PlayerSprite p in players)
+                p.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -81,9 +103,13 @@ namespace lightseeds
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
-            // TODO: Add your drawing code here
+            // Draw players
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            foreach (PlayerSprite p in players)
+                p.Draw(gameTime);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
