@@ -46,6 +46,9 @@ namespace lightseeds
         static public int WORLD_SCREEN_HEIGHT = 9;
         private bool waitForReleaseA;
         private bool waitForReleaseB;
+        private bool waitForReleaseLeft;
+        private bool waitForReleaseRight;
+
         private bool waitForBPConfirm;
         public ParticleCollection particleCollection;
 
@@ -266,8 +269,8 @@ namespace lightseeds
                 if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
                 {
                     treeCollection.trees.Remove(blueprints[0]);
+                    createTree(players[0], blueprints[0].treeType);
                     blueprints[0] = null;
-                    createTree(players[0]);
                     waitForBPConfirm = false;
                     waitForReleaseA = true;
                 }
@@ -278,13 +281,19 @@ namespace lightseeds
                     waitForBPConfirm = false;
                     waitForReleaseB = true;
                 }
-                if (gamepadState.ThumbSticks.Left.X < 0.0f)
+                if (gamepadState.ThumbSticks.Left.X < 0.0f && !waitForReleaseLeft)
                 {
-                    ;//prev blueprint
+                    var type = blueprints[0].treeType;
+                    treeCollection.trees.Remove(blueprints[0]);
+                    blueprints[0] = treeCollection.CreateTree(players[0].worldPosition, type.Previous(), true);
+                    waitForReleaseLeft = true;
                 }
-                if (gamepadState.ThumbSticks.Left.X > 0.0f)
+                if (gamepadState.ThumbSticks.Left.X > 0.0f && !waitForReleaseRight)
                 {
-                    ;//next blueprint
+                    var type = blueprints[0].treeType;
+                    treeCollection.trees.Remove(blueprints[0]);
+                    blueprints[0] = treeCollection.CreateTree(players[0].worldPosition, type.Next(), true);
+                    waitForReleaseRight = true;
                 }
                 
                     
@@ -301,7 +310,14 @@ namespace lightseeds
                 waitForReleaseA = false;
             if (gamepadState.IsButtonUp(Buttons.B))
                 waitForReleaseB = false;
+            if (gamepadState.ThumbSticks.Left.X == 0)
+            {
+                waitForReleaseLeft = false;
+                waitForReleaseRight = false;
+            }
         }
+
+ 
 
         private void showBlueprint(PlayerSprite player)
         {
@@ -314,13 +330,13 @@ namespace lightseeds
             }
         }
 
-        public void createTree(PlayerSprite player)
+        public void createTree(PlayerSprite player, TreeType tt)
         {
             // check and decrease seeds of players here
             if (seedCollection.collectedSeedCount > 0 &&
                 !treeCollection.HasTreeAtPosition(player.worldPosition.X))
             {
-                treeCollection.CreateTree(player.worldPosition, TreeType.PAWN, false);
+                treeCollection.CreateTree(player.worldPosition, tt, false);
                 seedCollection.collectedSeedCount--;
             }
         }

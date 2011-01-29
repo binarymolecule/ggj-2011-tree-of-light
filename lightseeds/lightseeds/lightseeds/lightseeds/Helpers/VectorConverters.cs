@@ -24,5 +24,32 @@ namespace lightseeds.Helpers
         {
             return new Vector2(v.X, v.Y);
         }
+        public static TreeType Next(this TreeType type)
+        {
+            var a = Enum.GetValues(typeof(TreeType));
+            var l = new List<TreeType>();
+            foreach (var tt in a)
+            {
+                l.Add((TreeType)tt);
+
+            }
+            var i = l.FindIndex(((x) => x == type)) + 1;
+            return (i > l.Count-1 ? l.First() : l[i]);
+        }
+        public static TreeType Previous(this TreeType type)
+        {
+            var a = Enum.GetValues(typeof(TreeType));
+            var l = new List<TreeType>();
+            foreach (var tt in a)
+            {
+                if ((TreeType)tt != TreeType.BASE)
+                {
+                    l.Add((TreeType)tt);
+                }
+            }
+            var i = l.FindIndex(((x) => x == type)) - 1;
+            return (i < 0 ? l.Last() : l[i]);
+        }
     }
+    
 }

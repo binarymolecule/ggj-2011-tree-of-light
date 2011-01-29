@@ -15,7 +15,7 @@ namespace lightseeds.GameObjects
         FIGHTER,
         MOTHER,
         PAWN,
-        TANK,
+        TANK
     };
 
     public class TreeCollection
