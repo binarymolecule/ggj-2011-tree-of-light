@@ -6,7 +6,7 @@ namespace lightseeds
 {
     public enum Direction
     {
-        Left, Right, None
+        Left, Right, None, Up
     }
     /// <summary>
     /// This is a game component that implements IUpdateable.
@@ -20,6 +20,9 @@ namespace lightseeds
         Vector3 position;
 
         Texture2D texture;
+        public const float XBOUNDARY = 180.0f;
+        public const float YBOUNDARY = 50.0f;
+
         public const float WOBBLEBPM = 60.0f;
         public const float WOBBLYNESS = 3.0f;
         public const float MAXVELOCITY = 25.0f;
@@ -27,8 +30,9 @@ namespace lightseeds
         public float wobbleHeight = 2.0f;
         
         public Direction currentDirection = Direction.None;
-        public float xAcceleration = 0.0f;
+        public float currentAcceleration = 0.0f;
         public float xVelocity = 0.0f;
+        public float yVelocity = 0.0f;
 
         public int collectedSeeds;
         
@@ -67,15 +71,15 @@ namespace lightseeds
 
         private void UpdateXPosition(GameTime gameTime)
         {
-            var boundary = 180.0f;
+            
             var timeFactor = gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
-            if (xVelocity < MAXVELOCITY && Direction.Right == currentDirection && position.X < boundary)
-                xVelocity += xAcceleration * timeFactor;
-            if (xVelocity > -MAXVELOCITY && Direction.Left == currentDirection && position.X > -boundary)
-                xVelocity -= xAcceleration * timeFactor;
-            if (position.X < -boundary)
+            if (xVelocity < MAXVELOCITY && Direction.Right == currentDirection && position.X < XBOUNDARY)
+                xVelocity += currentAcceleration * timeFactor;
+            if (xVelocity > -MAXVELOCITY && Direction.Left == currentDirection && position.X > -XBOUNDARY)
+                xVelocity -= currentAcceleration * timeFactor;
+            if (position.X < -XBOUNDARY)
                 xVelocity += 2 * ACCELERATION * timeFactor;
-            if (position.X > boundary)
+            if (position.X > XBOUNDARY)
                 xVelocity -= 2 * ACCELERATION * timeFactor;
             if (Direction.None == currentDirection)
             {
@@ -92,10 +96,20 @@ namespace lightseeds
         }
         public void UpdateYPosition(GameTime gameTime)
         {
-            float diff = game.world.getHeigth(position.X) + 3.0f - position.Y;
             var timeFactor = gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
-            
-            position.Y += diff * timeFactor * 10;
+            if (yVelocity < MAXVELOCITY && Direction.Up == currentDirection && position.Y < YBOUNDARY)
+                yVelocity += currentAcceleration * timeFactor;
+            float diff = game.world.getHeigth(position.X) + 3.0f - position.Y;
+
+            position.Y += yVelocity * timeFactor;
+            if (Direction.None == currentDirection && yVelocity > 0)
+                yVelocity -= ACCELERATION * timeFactor;
+            if (position.Y > YBOUNDARY)
+                yVelocity -= 2*ACCELERATION * timeFactor;
+            if (diff > 0)
+                position.Y += diff * timeFactor * 8;
+            else
+                position.Y += diff * timeFactor * 0.2f;
         }
 
         public override void Draw(GameTime gameTime)
@@ -117,7 +131,7 @@ namespace lightseeds
         public void Move(Direction d, float strength)
         {
             currentDirection = d;
-            xAcceleration = ACCELERATION*strength;
+            currentAcceleration = ACCELERATION * strength;
         }
     }
 }

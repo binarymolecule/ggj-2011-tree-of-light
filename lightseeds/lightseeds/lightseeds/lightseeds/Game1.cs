@@ -188,24 +188,17 @@ namespace lightseeds
         public void handleControls()
         {
             var stick = GamePad.GetState(PlayerIndex.One).ThumbSticks.Left;
-            var throttle = stick.X != 0 ? Math.Abs(stick.X) : 1;
-
+            
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-            {
                 this.Exit();
-            }
             else if (stick.X < 0.0f || Keyboard.GetState().IsKeyDown(Keys.Left))
-            {   
-                players[0].Move(Direction.Left, throttle);
-            }
+                players[0].Move(Direction.Left, stick.X != 0 ? Math.Abs(stick.X) : 1);
             else if (stick.X > 0.0f || Keyboard.GetState().IsKeyDown(Keys.Right))
-            {
-                players[0].Move(Direction.Right, throttle);
-            }
+                players[0].Move(Direction.Right, stick.X != 0 ? Math.Abs(stick.X) : 1);
+            else if (stick.Y > 0.0f || Keyboard.GetState().IsKeyDown(Keys.Up))
+                players[0].Move(Direction.Up, stick.Y > 0 ? stick.Y : 1);
             else if (!Keyboard.GetState().IsKeyDown(Keys.Right) && !Keyboard.GetState().IsKeyDown(Keys.Left))
-            {
-                players[0].Move(Direction.None, throttle);
-            }
+                players[0].Move(Direction.None, 0);
             
         }
     }
