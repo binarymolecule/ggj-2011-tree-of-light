@@ -24,6 +24,9 @@ namespace lightseeds
 
         Texture2D texture;
 
+        public float playerSpeed = 0.08f;
+
+
         public Vector3 worldPosition
         {
             get
@@ -67,8 +70,6 @@ namespace lightseeds
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
-            // TODO: Add your update code here
-
             base.Update(gameTime);
         }
 
@@ -77,6 +78,12 @@ namespace lightseeds
             game.spriteBatch.Draw(texture, this.screenPosition, Color.White);
 
             base.Draw(gameTime);
+        }
+
+        public void move(float p0)
+        {
+            this.position.X += p0;
+
         }
     }
 }
