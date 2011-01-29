@@ -198,7 +198,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Treeoflife_Small.png">
+    <Compile Include="Tree Previews\Treeoflife_Small.png">
       <Name>Treeoflife_Small</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
