@@ -37,7 +37,7 @@ namespace lightseeds.GameObjects
         {
             graphicsDevice = GameServices.GetService<GraphicsDevice>();
             content = GameServices.GetService<ContentManager>();
-            tile = content.Load<Texture2D>("textures/testtile");
+            tile = content.Load<Texture2D>("black");
             grassTopping = content.Load<Texture2D>("ground/Grass");
             spriteEffect = content.Load<Effect>("effects/sprite");
 
@@ -89,11 +89,11 @@ namespace lightseeds.GameObjects
                 var x = heights[i].X;
                 var y = heights[i].Y;
 
-                vertices[i * 2] = new VertexPositionColorTexture(new Vector3(x, 0, 0), Color.White, Vector2.Zero);
-                vertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y, 0), Color.White, Vector2.Zero);
+                vertices[i * 2] = new VertexPositionColorTexture(new Vector3(x, 0, 0), Color.White, new Vector2(x, 0));
+                vertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y, 0), Color.White, new Vector2(x, y));
 
-                topVertices[i * 2] = new VertexPositionColorTexture(new Vector3(x, y - 0.2f, 0), Color.Green, Vector2.Zero);
-                topVertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y + 0.2f, 0), Color.Green, Vector2.Zero);
+                topVertices[i * 2] = new VertexPositionColorTexture(new Vector3(x, y - 0.4f, 0), Color.Green, new Vector2(x, 1));
+                topVertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y + 0.8f, 0), Color.Green, new Vector2(x, 0));
             }
 
             groundVbo.SetData(vertices);
@@ -130,9 +130,9 @@ namespace lightseeds.GameObjects
             graphicsDevice.Textures[0] = tile;
             graphicsDevice.SamplerStates[0] = new SamplerState()
             {
-                AddressU = TextureAddressMode.Clamp,
-                AddressV = TextureAddressMode.Clamp,
-                AddressW = TextureAddressMode.Clamp
+                AddressU = TextureAddressMode.Wrap,
+                AddressV = TextureAddressMode.Wrap,
+                AddressW = TextureAddressMode.Wrap
             };
             graphicsDevice.RasterizerState = new RasterizerState()
             {
