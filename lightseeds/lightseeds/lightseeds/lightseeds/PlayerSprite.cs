@@ -4,10 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace lightseeds
 {
-    public enum Direction
-    {
-        Left, Right, None, Up
-    }
+    
     /// <summary>
     /// This is a game component that implements IUpdateable.
     /// </summary>
@@ -29,8 +26,8 @@ namespace lightseeds
         public const float ACCELERATION = 100.0f;
         public float wobbleHeight = 2.0f;
         
-        public Direction currentDirection = Direction.None;
-        public float currentAcceleration = 0.0f;
+        public float currentXAcceleration = 0.0f;
+        public float currentYAcceleration = 0.0f;
         public float xVelocity = 0.0f;
         public float yVelocity = 0.0f;
 
@@ -73,15 +70,18 @@ namespace lightseeds
         {
             
             var timeFactor = gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
-            if (xVelocity < MAXVELOCITY && Direction.Right == currentDirection && position.X < XBOUNDARY)
-                xVelocity += currentAcceleration * timeFactor;
-            if (xVelocity > -MAXVELOCITY && Direction.Left == currentDirection && position.X > -XBOUNDARY)
-                xVelocity -= currentAcceleration * timeFactor;
+            //movement
+            if (Math.Abs(xVelocity) < MAXVELOCITY && position.X < XBOUNDARY && position.X > -XBOUNDARY)
+                xVelocity += currentXAcceleration * timeFactor;
+            
+            //backbounce
             if (position.X < -XBOUNDARY)
                 xVelocity += 2 * ACCELERATION * timeFactor;
             if (position.X > XBOUNDARY)
                 xVelocity -= 2 * ACCELERATION * timeFactor;
-            if (Direction.None == currentDirection)
+            
+            //slowdown
+            if (currentXAcceleration == 0)
             {
                 if (xVelocity > 0)
                     xVelocity -= ACCELERATION * timeFactor;
@@ -97,19 +97,27 @@ namespace lightseeds
         public void UpdateYPosition(GameTime gameTime)
         {
             var timeFactor = gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
-            if (yVelocity < MAXVELOCITY && Direction.Up == currentDirection && position.Y < YBOUNDARY)
-                yVelocity += currentAcceleration * timeFactor;
+            //movement
+            if (Math.Abs(yVelocity) < MAXVELOCITY && position.Y < YBOUNDARY)
+                yVelocity += currentYAcceleration * timeFactor;
+
+            //backbounce
+            if (position.Y > YBOUNDARY)
+                yVelocity -= 2 * ACCELERATION * timeFactor;
             float diff = game.world.getHeigth(position.X) + 3.0f - position.Y;
+            if (diff > 0 && yVelocity < MAXVELOCITY/2)
+                yVelocity += 4 * diff * ACCELERATION * timeFactor;
+
+
+            //slowdown
+            if (currentYAcceleration == 0)
+            {
+                if (yVelocity > 0)
+                    yVelocity -= ACCELERATION * timeFactor;
+            }
 
             position.Y += yVelocity * timeFactor;
-            if (Direction.None == currentDirection && yVelocity > 0)
-                yVelocity -= ACCELERATION * timeFactor;
-            if (position.Y > YBOUNDARY)
-                yVelocity -= 2*ACCELERATION * timeFactor;
-            if (diff > 0)
-                position.Y += diff * timeFactor * 8;
-            else
-                position.Y += diff * timeFactor * 0.2f;
+            
         }
 
         public override void Draw(GameTime gameTime)
@@ -128,10 +136,10 @@ namespace lightseeds
             return pos + sin1 + sin2 + sin3 ;
         }
 
-        public void Move(Direction d, float strength)
+        public void Move(float x, float y)
         {
-            currentDirection = d;
-            currentAcceleration = ACCELERATION * strength;
+            currentXAcceleration = x * ACCELERATION;
+            currentYAcceleration = y * ACCELERATION;
         }
     }
 }

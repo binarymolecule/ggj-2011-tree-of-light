@@ -194,16 +194,9 @@ namespace lightseeds
             GamePadState gps = GamePad.GetState(PlayerIndex.One);
             var stick = gps.ThumbSticks.Left;
             
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape) || GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
-            else if (stick.X < 0.0f || Keyboard.GetState().IsKeyDown(Keys.Left))
-                players[0].Move(Direction.Left, stick.X != 0 ? Math.Abs(stick.X) : 1);
-            else if (stick.X > 0.0f || Keyboard.GetState().IsKeyDown(Keys.Right))
-                players[0].Move(Direction.Right, stick.X != 0 ? Math.Abs(stick.X) : 1);
-            else if (stick.Y > 0.0f || Keyboard.GetState().IsKeyDown(Keys.Up))
-                players[0].Move(Direction.Up, stick.Y > 0 ? stick.Y : 1);
-            else if (!Keyboard.GetState().IsKeyDown(Keys.Right) && !Keyboard.GetState().IsKeyDown(Keys.Left))
-                players[0].Move(Direction.None, 0);
+            players[0].Move(stick.X, stick.Y);
 
             // buttons
             if (gps.IsButtonDown(Buttons.X) && !waitForRelease)

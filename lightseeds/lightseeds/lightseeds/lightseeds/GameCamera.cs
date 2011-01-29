@@ -108,7 +108,8 @@ namespace lightseeds
                     target.Y = MIN_COORDS.Y;
                 else if (target.Y > MAX_COORDS.Y)
                     target.Y = MAX_COORDS.Y;
-                targetIsMoving = (player.currentDirection != Direction.None);
+                targetIsMoving = (player.currentXAcceleration != 0 || player.currentYAcceleration !=0 );
+            
             }
 
             Vector2 direction = target - translation;
