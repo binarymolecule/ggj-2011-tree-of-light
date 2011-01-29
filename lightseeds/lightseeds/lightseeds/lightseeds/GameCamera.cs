@@ -23,9 +23,11 @@ namespace lightseeds
 
         public const float ACCELERATION = 8.0f;
 
-        Vector3 translation;
+        public Vector2 WORLD_OFFSET = new Vector2(0.0f, 3.0f);
 
-        Vector3 source, target;
+        Vector2 translation;
+
+        Vector2 source, target;
 
         Game1 game;
 
@@ -37,8 +39,9 @@ namespace lightseeds
         {
             get
             {
-                return Matrix.CreateTranslation(-translation.X * game.worldToScreen.M11,
-                                                -translation.Y * game.worldToScreen.M12, 0.0f);
+                Vector3 v = new Vector3(-(translation.X - WORLD_OFFSET.X) * game.worldToScreen.M11, 
+                                        -(translation.Y - WORLD_OFFSET.Y) * game.worldToScreen.M22, 0.0f);
+                return Matrix.CreateTranslation(v);
             }
         }
 
@@ -46,7 +49,7 @@ namespace lightseeds
         {
             get
             {
-                return Matrix.CreateTranslation(-translation);
+                return Matrix.CreateTranslation(-(new Vector3(translation.X - WORLD_OFFSET.X, translation.Y - WORLD_OFFSET.Y, 0.0f)));
             }
         }
 
@@ -69,8 +72,8 @@ namespace lightseeds
         public void Center(Vector3 position)
         {
             this.player = null;
-            this.translation = position;
-            this.target = position;
+            this.translation = new Vector2(position.X, position.Y);
+            this.target = new Vector2(position.X, position.Y);
             this.speed = 0.0f;
             isMoving = false;
         }
@@ -83,7 +86,7 @@ namespace lightseeds
         public void MoveTo(Vector3 position)
         {
             this.player = null;
-            this.target = position;
+            this.target = new Vector2(position.X, position.Y);
             this.speed = 0.0f;
             isMoving = false;
         }
@@ -92,10 +95,14 @@ namespace lightseeds
         {
             if (player != null)
             {
-                target = player.worldPosition;
+                target = new Vector2(player.worldPosition.X, player.worldPosition.Y);
+
+                this.translation = target;
             }
 
-            Vector3 direction = target - translation;
+            return;
+
+            Vector2 direction = target - translation;
             float seconds = 0.001f * gameTime.ElapsedGameTime.Milliseconds;
             float distance = direction.Length();
 
@@ -113,7 +120,7 @@ namespace lightseeds
                 {
                     translation = target;
                     speed = 0.0f;
-                    direction = Vector3.Zero;
+                    direction = Vector2.Zero;
                     isMoving = false;
                 }
                 else 

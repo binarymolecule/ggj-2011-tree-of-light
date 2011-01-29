@@ -63,8 +63,7 @@ namespace lightseeds
             this.game = (Game1)game;
             this.index = index;
             texture = tex;
-            position = new Vector3(0.0f, 5.0f, 1.0f);
-            
+            position = new Vector3(0.0f, 8.0f, 1.0f);            
         }
 
         public override void Update(GameTime gameTime)

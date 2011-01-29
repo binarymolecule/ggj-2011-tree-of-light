@@ -120,7 +120,7 @@ namespace lightseeds.GameObjects
 
             spriteEffect.Parameters["ViewportSize"].SetValue(graphicsDevice.Viewport.ToVector());
             spriteEffect.Parameters["TextureSize"].SetValue(tile.ToVector());
-            spriteEffect.Parameters["MatrixTransform"].SetValue(GameCamera.CurrentCamera.screenTransform * game.worldToScreen);
+            spriteEffect.Parameters["MatrixTransform"].SetValue(GameCamera.CurrentCamera.worldTransform * game.worldToScreen);
             //spriteEffect.Parameters["MatrixTransform"].SetValue(Matrix.CreateScale(0.05f));
             //spriteEffect.Parameters["TextureSampler"].SetValue(tile);
             spriteEffect.CurrentTechnique.Passes[0].Apply();

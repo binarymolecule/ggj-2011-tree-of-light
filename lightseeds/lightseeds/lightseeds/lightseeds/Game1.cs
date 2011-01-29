@@ -49,7 +49,7 @@ namespace lightseeds
 
             worldToScreen = Matrix.CreateScale((float)SPLIT_SCREEN_WIDTH / (float)WORLD_SCREEN_WIDTH,
                                                -(float)SPLIT_SCREEN_HEIGHT / (float)WORLD_SCREEN_HEIGHT, 1.0f) *
-                            Matrix.CreateTranslation(0.5f * (float)SPLIT_SCREEN_WIDTH, (float)SPLIT_SCREEN_HEIGHT, 0.0f);
+                            Matrix.CreateTranslation(0.5f * (float)SPLIT_SCREEN_WIDTH, 0.5f * (float)SPLIT_SCREEN_HEIGHT, 0.0f);
             splitScreenPositions = new Vector2[2];
             splitScreenPositions[0] = Vector2.Zero;
             splitScreenPositions[1] = new Vector2(0.0f, (float)SPLIT_SCREEN_HEIGHT);
