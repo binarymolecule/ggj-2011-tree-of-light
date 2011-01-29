@@ -32,7 +32,8 @@ namespace lightseeds
         RenderTarget2D[] splitScreens;
         public Vector2[] splitScreenPositions;
 
-
+        public TreeCollection treeCollection;
+        private SeedCollection seedCollection;
 
         public const int SCREEN_WIDTH = 1024;
         public const int SCREEN_HEIGHT = 768;
@@ -102,6 +103,13 @@ namespace lightseeds
             splitScreens[1] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
 
             spriteFont = Content.Load<SpriteFont>("Geo");
+
+            treeCollection = new TreeCollection(this);
+            treeCollection.Load();
+
+            seedCollection = new SeedCollection(this);
+            seedCollection.Load();
+            seedCollection.SpawnSeed(new Vector3(4, 6, 0));
         }
 
         /// <summary>
@@ -129,6 +137,10 @@ namespace lightseeds
             foreach (GameCamera c in cameras)
                 c.Update(gameTime);
 
+            treeCollection.Update(gameTime);
+
+            seedCollection.Update();
+
             world.Update(gameTime);
             
             base.Update(gameTime);
@@ -149,6 +161,8 @@ namespace lightseeds
                 GraphicsDevice.Clear(new Color(40, 40, 40));
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
                                   cameras[i].screenTransform);
+                treeCollection.Draw(spriteBatch);
+                seedCollection.Draw(spriteBatch);
                 players[i].Draw(gameTime);
                 spriteBatch.End();
                 GameCamera.CurrentCamera = cameras[i];
@@ -164,6 +178,7 @@ namespace lightseeds
 
             spriteBatch.Begin();
             spriteBatch.DrawString(spriteFont, String.Format("P1: {0:0.0} / {1:0.0}", players[0].worldPosition.X, players[0].worldPosition.Y), Vector2.Zero, Color.White);
+            spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, 20), Color.Red);
             spriteBatch.End();
 
             base.Draw(gameTime);
