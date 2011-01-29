@@ -297,9 +297,7 @@ namespace lightseeds
 
         private void showBlueprint(PlayerSprite player)
         {
-
-            float posX = player.worldPosition.X;
-            if (!treeCollection.HasTreeAtPosition(posX))
+            if (!treeCollection.HasTreeAtPosition(player.worldPosition.X))
             {
                 if (player.index == 0)
                     blueprints[0] = treeCollection.CreateTree(player.worldPosition, TreeType.PAWN, true);
@@ -311,8 +309,8 @@ namespace lightseeds
         public void createTree(PlayerSprite player)
         {
             // check and decrease seeds of players here
-            float posX = player.worldPosition.X;
-            if (seedCollection.collectedSeedCount > 0 && !treeCollection.HasTreeAtPosition(posX))
+            if (seedCollection.collectedSeedCount > 0 &&
+                !treeCollection.HasTreeAtPosition(player.worldPosition.X))
             {
                 treeCollection.CreateTree(player.worldPosition, TreeType.PAWN, false);
                 seedCollection.collectedSeedCount--;

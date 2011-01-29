@@ -124,7 +124,8 @@ namespace lightseeds.GameObjects
             fruitSize = new Vector2(parentCollection.fruitTexture.Width, parentCollection.fruitTexture.Height);
             fruitOffset = new Vector2(-0.5f * fruitSize.X, -screenSize.Y + 32.0f);
             growth = 0.1f;
-            status = TreeStatus.PLANTED;
+            status = TreeStatus.SEED;
+            groundHeight = parentCollection.game.world.getHeigth(position.X);
 
             if (isBlueprint)
             {
