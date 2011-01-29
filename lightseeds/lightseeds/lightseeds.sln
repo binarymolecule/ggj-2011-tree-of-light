@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lightseeds", "lightseeds\lightseeds\lightseeds.csproj", "{40502EB5-87EF-4F6D-A9DF-97AC89C6F073}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "lightseedsContent", "lightseeds\lightseedsContent\lightseedsContent.contentproj", "{3A3E10C6-27C1-455F-B4E4-57FF6F6C42FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{40502EB5-87EF-4F6D-A9DF-97AC89C6F073}.Debug|x86.ActiveCfg = Debug|x86
+		{40502EB5-87EF-4F6D-A9DF-97AC89C6F073}.Debug|x86.Build.0 = Debug|x86
+		{40502EB5-87EF-4F6D-A9DF-97AC89C6F073}.Release|x86.ActiveCfg = Release|x86
+		{40502EB5-87EF-4F6D-A9DF-97AC89C6F073}.Release|x86.Build.0 = Release|x86
+		{3A3E10C6-27C1-455F-B4E4-57FF6F6C42FC}.Debug|x86.ActiveCfg = Debug|x86
+		{3A3E10C6-27C1-455F-B4E4-57FF6F6C42FC}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
