@@ -252,7 +252,7 @@ namespace lightseeds
                     if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
                     {
                         game.treeCollection.trees.Remove(blueprint);
-                        game.createTree(this, blueprint.treeType);
+                        game.createTree(this, blueprint.treeType, blueprint.price);
                         lastUsedType = blueprint.treeType;
                         blueprint = null;
                         waitForBPConfirm = false;

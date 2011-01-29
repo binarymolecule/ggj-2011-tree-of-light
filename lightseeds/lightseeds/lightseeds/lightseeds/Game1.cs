@@ -266,14 +266,14 @@ namespace lightseeds
             }
         }
 
-        public void createTree(PlayerSprite player, TreeType tt)
+        public void createTree(PlayerSprite player, TreeType treeType, int price)
         {
             // check and decrease seeds of players here
-            if (seedCollection.collectedSeedCount > 0 &&
+            if (seedCollection.collectedSeedCount >= price &&
                 !treeCollection.HasTreeAtPosition(player.worldPosition.X))
             {
-                treeCollection.CreateTree(player.worldPosition, tt, false);
-                seedCollection.collectedSeedCount--;
+                treeCollection.CreateTree(player.worldPosition, treeType, false);
+                seedCollection.collectedSeedCount -= price;
             }
         }
         public Matrix bgMatrix(int index)

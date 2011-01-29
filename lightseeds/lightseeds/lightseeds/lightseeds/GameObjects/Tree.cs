@@ -155,7 +155,8 @@ namespace lightseeds.GameObjects
                     growth = 1.0f;
                     fruitTime = 25.0f;
                     resistance = 1.0f;
-                    lifeSpan = -1.0f;
+                    lifeSpan = 0.0f;
+                    price = 0;
                     descriptionLines[0] = "Basic Tree";
                     descriptionLines[1] = "is Basic";
                     break;
@@ -164,6 +165,7 @@ namespace lightseeds.GameObjects
                     fruitTime = 30.0f;
                     resistance = 0.4f;
                     lifeSpan = 90.0f;
+                    price = 12;
                     descriptionLines[0] = "Fighter Tree";
                     descriptionLines[1] = "is very angry";
                     break;
@@ -172,6 +174,7 @@ namespace lightseeds.GameObjects
                     fruitTime = 10.0f;
                     resistance = 0.6f;
                     lifeSpan = 150.0f;
+                    price = 18;
                     descriptionLines[0] = "The Mana Tree";
                     descriptionLines[1] = "ya know?!";
                     break;
@@ -180,6 +183,7 @@ namespace lightseeds.GameObjects
                     fruitTime = 25.0f;
                     resistance = 0.6f;
                     lifeSpan = 30.0f;
+                    price = 3;
                     descriptionLines[0] = "Pawn Tree";
                     descriptionLines[1] = "The Ace of Rage";
                     break;
@@ -188,10 +192,12 @@ namespace lightseeds.GameObjects
                     fruitTime = 30.0f;
                     resistance = 0.2f;
                     lifeSpan = 200.0f;
+                    price = 18;
                     descriptionLines[0] = "Tank Tree";
                     descriptionLines[1] = "guess";
                     break;
             }
+            descriptionLines[2] = "Price: " + price.ToString() + " seeds";
         }
 
         public void Update(GameTime gameTime)
@@ -215,12 +221,25 @@ namespace lightseeds.GameObjects
                     }
                     break;
                 case TreeStatus.MATURE:
+                    // grow fruit
                     currentFruitTime += gameTime.ElapsedGameTime.TotalSeconds;
                     if (currentFruitTime > fruitTime)
                     {
                         parentCollection.game.seedCollection.SpawnSeed(worldPosition + new Vector3(0, 2, 0));
                         currentFruitTime = 0;
                     }
+                    // decrease life span of tree
+                    if (treeType != TreeType.BASE)
+                    {
+                        lifeSpan -= gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
+                        if (lifeSpan < 0.0f)
+                            status = TreeStatus.DIED;
+                    }
+                    break;
+                case TreeStatus.DIED:
+                    lifeSpan -= gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
+                    if (lifeSpan < -30.0f)
+                        RemoveOnNextUpdate = true;
                     break;
                 case TreeStatus.KILLED:
                     growth -= (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) / growthTime;
@@ -296,7 +315,8 @@ namespace lightseeds.GameObjects
                         break;
                     case TreeStatus.BLUEPRINT:
                         {
-                            spriteBatch.Draw(texture, screenPosition + offset, Color.Black);
+                            bool buildable = (parentCollection.game.seedCollection.collectedSeedCount >= price);
+                            spriteBatch.Draw(texture, screenPosition + offset, buildable ? Color.Gray : Color.Black);
                             break;
                         }
                 }
