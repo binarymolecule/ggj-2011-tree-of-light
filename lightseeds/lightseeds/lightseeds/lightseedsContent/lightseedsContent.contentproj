@@ -164,11 +164,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="textures\glowing.jpg">
-      <Name>glowing</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="textures\playerTexture.png">
       <Name>playerTexture</Name>
       <Importer>TextureImporter</Importer>
@@ -186,6 +181,13 @@
     </Compile>
     <Compile Include="textures\treeDummy.png">
       <Name>treeDummy</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\glowing.png">
+      <Name>glowing</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
