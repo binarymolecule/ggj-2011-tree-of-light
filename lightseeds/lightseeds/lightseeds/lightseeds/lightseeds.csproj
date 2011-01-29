@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameCamera.cs" />
+    <Compile Include="GameObjects\TreeCollection.cs" />
     <Compile Include="GameObjects\Seed.cs" />
     <Compile Include="GameObjects\SeedCollection.cs" />
     <Compile Include="GameObjects\Tree.cs" />

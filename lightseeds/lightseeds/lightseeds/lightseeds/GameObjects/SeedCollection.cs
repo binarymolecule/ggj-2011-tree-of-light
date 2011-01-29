@@ -23,7 +23,6 @@ namespace lightseeds.GameObjects
             texture = content.Load<Texture2D>("glowing");
         }
 
-
         public SeedCollection(Game1 game)
         {
             this.game = game;
