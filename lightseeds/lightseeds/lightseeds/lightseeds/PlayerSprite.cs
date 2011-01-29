@@ -87,12 +87,15 @@ namespace lightseeds
                 XVelocity += ACCELERATION * timeFactor;
             if (XVelocity > -MAXVELOCITY && Direction.LEFT == currentDirection)
                 XVelocity -= ACCELERATION * timeFactor;
-            if (Direction.NONE == currentDirection && XVelocity > 0)
-                XVelocity -= ACCELERATION * timeFactor;
-            if (Direction.NONE == currentDirection && XVelocity < 0)
-                XVelocity += ACCELERATION * timeFactor;
-            if (Direction.NONE == currentDirection && Math.Abs(XVelocity) <= ACCELERATION * timeFactor)
-                XVelocity = 0;
+            if (Direction.NONE == currentDirection)
+            {
+                if (XVelocity > 0)
+                    XVelocity -= ACCELERATION * timeFactor;
+                if (XVelocity < 0)
+                    XVelocity += ACCELERATION * timeFactor;
+                if (Math.Abs(XVelocity) <= ACCELERATION * timeFactor)
+                    XVelocity = 0;
+            }   
             
             position.X += XVelocity * timeFactor;
             base.Update(gameTime);
