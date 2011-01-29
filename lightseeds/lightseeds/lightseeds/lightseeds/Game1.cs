@@ -106,6 +106,7 @@ namespace lightseeds
 
             treeCollection = new TreeCollection(this);
             treeCollection.Load();
+            treeCollection.CreateTree(new Vector3(0.0f, world.getMinHeigth(0.0f), 0.0f));
 
             seedCollection = new SeedCollection(this);
             seedCollection.Load();

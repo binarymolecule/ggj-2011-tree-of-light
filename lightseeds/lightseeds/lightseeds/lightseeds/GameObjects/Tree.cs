@@ -101,7 +101,7 @@ namespace lightseeds.GameObjects
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(parentCollection.texture, screenPosition, Color.White);
+            spriteBatch.Draw(parentCollection.texture, screenPosition - new Vector2(0.0f, parentCollection.texture.Height), Color.White);
         }
     }
 }
