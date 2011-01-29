@@ -218,9 +218,10 @@ namespace lightseeds
         {
             // check and decrease seeds of players here
             float posX = player.worldPosition.X;
-            if (!treeCollection.HasTreeAtPosition(posX))
+            if (seedCollection.collectedSeedCount > 0 && !treeCollection.HasTreeAtPosition(posX))
             {
                 treeCollection.CreateTree(posX);
+                seedCollection.collectedSeedCount--;
             }
         }
     }
