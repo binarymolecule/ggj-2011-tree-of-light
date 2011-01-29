@@ -24,11 +24,11 @@ namespace lightseeds
         public const float WOBBLYNESS = 3.0f;
         public const float MAXVELOCITY = 25.0f;
         public const float ACCELERATION = 100.0f;
+        public float wobbleHeight = 2.0f;
         
         public Direction currentDirection = Direction.None;
         public float xAcceleration = 0.0f;
         public float xVelocity = 0.0f;
-        public float wobbleHeight = 1.0f;
 
         public int collectedSeeds;
         
@@ -60,11 +60,23 @@ namespace lightseeds
 
         public override void Update(GameTime gameTime)
         {
+            UpdateXPosition(gameTime);
+            UpdateYPosition(gameTime);
+            base.Update(gameTime);
+        }
+
+        private void UpdateXPosition(GameTime gameTime)
+        {
+            var boundary = 180.0f;
             var timeFactor = gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
-            if (xVelocity < MAXVELOCITY && Direction.Right == currentDirection)
+            if (xVelocity < MAXVELOCITY && Direction.Right == currentDirection && position.X < boundary)
                 xVelocity += xAcceleration * timeFactor;
-            if (xVelocity > -MAXVELOCITY && Direction.Left == currentDirection)
+            if (xVelocity > -MAXVELOCITY && Direction.Left == currentDirection && position.X > -boundary)
                 xVelocity -= xAcceleration * timeFactor;
+            if (position.X < -boundary)
+                xVelocity += 2 * ACCELERATION * timeFactor;
+            if (position.X > boundary)
+                xVelocity -= 2 * ACCELERATION * timeFactor;
             if (Direction.None == currentDirection)
             {
                 if (xVelocity > 0)
@@ -73,23 +85,32 @@ namespace lightseeds
                     xVelocity += ACCELERATION * timeFactor;
                 if (Math.Abs(xVelocity) <= ACCELERATION * timeFactor)
                     xVelocity = 0;
-            }   
+            }
             
             position.X += xVelocity * timeFactor;
-            base.Update(gameTime);
+            
+        }
+        public void UpdateYPosition(GameTime gameTime)
+        {
+            float diff = game.world.getHeigth(position.X) + 3.0f - position.Y;
+            var timeFactor = gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
+            
+            position.Y += diff * timeFactor * 10;
         }
 
         public override void Draw(GameTime gameTime)
         {
-            game.spriteBatch.Draw(texture, new Vector2(screenPosition.X, WobblyPosition(screenPosition.Y, gameTime)), Color.White);
+            var x = screenPosition.X + 2* (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 120);
+            var y = WobblyPosition(screenPosition.Y, wobbleHeight, gameTime);
+            game.spriteBatch.Draw(texture, new Vector2(x,y), Color.White);
             base.Draw(gameTime);
         }
 
-        private float WobblyPosition(float pos, GameTime gameTime)
+        private float WobblyPosition(float pos, float modifier, GameTime gameTime)
         {
-            var sin1 = wobbleHeight * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 60);
-            var sin2 = 0.7f * wobbleHeight * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 97);
-            var sin3 = 0.2f * wobbleHeight * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 23);
+            var sin1 = modifier * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 60 + index * Math.PI);
+            var sin2 = 0.7f * modifier * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 97);
+            var sin3 = 0.3f * modifier * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 23);
             return pos + sin1 + sin2 + sin3 ;
         }
 

@@ -20,7 +20,7 @@ namespace lightseeds
     {
         GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch;
-        private World world;
+        public World world;
 
         public Matrix worldToScreen;
         public PlayerSprite[] players;

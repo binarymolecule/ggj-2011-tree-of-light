@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace lightseeds.GameObjects
 {
-    class World
+    public class World
     {
         public class Chunk
         {
@@ -96,6 +96,17 @@ namespace lightseeds.GameObjects
 
             groundVbo.SetData(vertices);
             toppingVbo.SetData(topVertices);
+        }
+
+        public float getHeigth(float xPos)
+        {
+            var a = 0;
+            while (xPos > heights[a].X)
+            {
+                a++;
+            }
+
+            return Math.Max(heights[a - 1].Y, heights[a].Y);
         }
 
         public void Update(GameTime gameTime)
