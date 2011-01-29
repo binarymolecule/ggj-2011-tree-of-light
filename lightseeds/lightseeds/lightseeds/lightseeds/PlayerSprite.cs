@@ -91,6 +91,8 @@ namespace lightseeds
                 XVelocity -= ACCELERATION * timeFactor;
             if (Direction.NONE == currentDirection && XVelocity < 0)
                 XVelocity += ACCELERATION * timeFactor;
+            if (Direction.NONE == currentDirection && Math.Abs(XVelocity) <= ACCELERATION * timeFactor)
+                XVelocity = 0;
             
             position.X += XVelocity * timeFactor;
             base.Update(gameTime);
