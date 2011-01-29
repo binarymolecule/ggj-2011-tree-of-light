@@ -29,6 +29,8 @@ namespace lightseeds
         public float xAcceleration = 0.0f;
         public float xVelocity = 0.0f;
         public float wobbleHeight = 1.0f;
+
+        public int collectedSeeds;
         
         public Vector3 worldPosition
         {

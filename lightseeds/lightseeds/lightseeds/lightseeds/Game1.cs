@@ -23,7 +23,7 @@ namespace lightseeds
         private World world;
 
         public Matrix worldToScreen;
-        PlayerSprite[] players;
+        public PlayerSprite[] players;
         public GameCamera[] cameras;
 
         Texture2D playerTexture;
@@ -38,6 +38,7 @@ namespace lightseeds
         public const int SPLIT_SCREEN_HEIGHT = 384;
         public const int WORLD_SCREEN_WIDTH = 24;
         public const int WORLD_SCREEN_HEIGHT = 9;
+        private SeedCollection seedCollection;
 
 
         public Game1()
@@ -101,6 +102,10 @@ namespace lightseeds
             splitScreens[1] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
 
             spriteFont = Content.Load<SpriteFont>("Geo");
+
+            seedCollection = new SeedCollection(this);
+            seedCollection.Load();
+            seedCollection.SpawnSeed(new Vector3(4,6,0));
         }
 
         /// <summary>
@@ -128,6 +133,7 @@ namespace lightseeds
             foreach (GameCamera c in cameras)
                 c.Update(gameTime);
 
+            seedCollection.Update();
             world.Update(gameTime);
             
             base.Update(gameTime);
@@ -148,10 +154,12 @@ namespace lightseeds
                 GraphicsDevice.Clear(new Color(40, 40, 40));
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
                                   cameras[i].screenTransform);
+                seedCollection.Draw(spriteBatch);
                 players[i].Draw(gameTime);
                 spriteBatch.End();
                 GameCamera.CurrentCamera = cameras[i];
                 world.Draw(this, gameTime, -1000, 2000);
+
             }
             GraphicsDevice.SetRenderTarget(null);
 
@@ -163,6 +171,7 @@ namespace lightseeds
 
             spriteBatch.Begin();
             spriteBatch.DrawString(spriteFont, String.Format("P1: {0:0.0} / {1:0.0}", players[0].worldPosition.X, players[0].worldPosition.Y), Vector2.Zero, Color.White);
+            spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, 20), Color.Red);
             spriteBatch.End();
 
             base.Draw(gameTime);

@@ -18,5 +18,10 @@ namespace lightseeds.Helpers
         {
             return new Vector2(tx.Width, tx.Height);
         }
+
+        public static Vector2 ToVector2(this Vector3 v)
+        {
+            return new Vector2(v.X, v.Y);
+        }
     }
 }
