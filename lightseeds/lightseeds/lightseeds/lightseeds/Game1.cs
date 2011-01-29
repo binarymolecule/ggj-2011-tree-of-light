@@ -284,9 +284,9 @@ namespace lightseeds
             if (!treeCollection.HasTreeAtPosition(posX))
             {
                 if (player.index == 0)
-                    blueprints[0] = treeCollection.CreateTree(posX, TreeType.BLUEPRINT);
+                    blueprints[0] = treeCollection.CreateTree(posX, TreeType.BASE, true);
                 if (player.index == 1)
-                    blueprints[1] = treeCollection.CreateTree(posX, TreeType.BLUEPRINT);
+                    blueprints[1] = treeCollection.CreateTree(posX, TreeType.BASE, true);
             }
         }
 
@@ -296,7 +296,7 @@ namespace lightseeds
             float posX = player.worldPosition.X;
             if (seedCollection.collectedSeedCount > 0 && !treeCollection.HasTreeAtPosition(posX))
             {
-                blueprints[0] = treeCollection.CreateTree(posX, TreeType.PAWN);
+                blueprints[0] = treeCollection.CreateTree(posX, TreeType.PAWN, false);
                 seedCollection.collectedSeedCount--;
             }
         }

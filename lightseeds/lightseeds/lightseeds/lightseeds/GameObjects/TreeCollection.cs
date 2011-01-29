@@ -71,9 +71,9 @@ namespace lightseeds.GameObjects
             }
         }
 
-        internal Tree CreateTree(float x, TreeType type)
+        internal Tree CreateTree(float x, TreeType type, bool isBlueprint)
         {
-            Tree newTree = new Tree(this, new Vector3(x, game.world.getHeigth(x), 0.0f), type);
+            Tree newTree = new Tree(this, new Vector3(x, game.world.getHeigth(x), 0.0f), type, isBlueprint);
             trees.Add(newTree);
             return newTree;
         }

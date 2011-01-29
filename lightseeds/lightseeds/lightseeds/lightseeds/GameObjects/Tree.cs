@@ -111,16 +111,18 @@ namespace lightseeds.GameObjects
             }
         }
 
-        public Tree(TreeCollection coll, Vector3 position, TreeType type)
+        public Tree(TreeCollection coll, Vector3 position, TreeType type, bool isBlueprint)
         {
-            this.parentCollection = coll;
             this.position = position;
-            this.screenSize = new Vector2(parentCollection.texture.Width, parentCollection.texture.Height);
-            this.offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 4.0f);
-            this.fruitSize = new Vector2(parentCollection.fruitTexture.Width, parentCollection.fruitTexture.Height);
-            this.fruitOffset = new Vector2(-0.5f * fruitSize.X, -screenSize.Y + 32.0f);
-            this.growth = 0.1f;
-            this.status = TreeStatus.PLANTED;
+            parentCollection = coll;
+            screenSize = new Vector2(parentCollection.texture.Width, parentCollection.texture.Height);
+            offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 4.0f);
+            fruitSize = new Vector2(parentCollection.fruitTexture.Width, parentCollection.fruitTexture.Height);
+            fruitOffset = new Vector2(-0.5f * fruitSize.X, -screenSize.Y + 32.0f);
+            growth = 0.1f;
+            status = TreeStatus.PLANTED;
+            if (isBlueprint)
+                status = TreeStatus.BLUEPRINT;
 
             switch (type)
             {
@@ -143,9 +145,6 @@ namespace lightseeds.GameObjects
                 case TreeType.TANK:
                     this.growthTime = 60.0f;
                     this.fruitTime = 30.0f;
-                    break;
-                case TreeType.BLUEPRINT:
-                    this.status = TreeStatus.BLUEPRINT;
                     break;
             }
         }
