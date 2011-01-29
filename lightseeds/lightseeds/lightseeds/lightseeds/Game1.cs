@@ -35,12 +35,12 @@ namespace lightseeds
         public TreeCollection treeCollection;
         private SeedCollection seedCollection;
 
-        public const int SCREEN_WIDTH = 1024;
-        public const int SCREEN_HEIGHT = 768;
-        public const int SPLIT_SCREEN_WIDTH = 1024;
-        public const int SPLIT_SCREEN_HEIGHT = 384;
-        public const int WORLD_SCREEN_WIDTH = 24;
-        public const int WORLD_SCREEN_HEIGHT = 9;
+        static public int SCREEN_WIDTH = 1024;
+        static public int SCREEN_HEIGHT = 768;
+        static public int SPLIT_SCREEN_WIDTH = 1024;
+        static public int SPLIT_SCREEN_HEIGHT = 384;
+        static public int WORLD_SCREEN_WIDTH = 24;
+        static public int WORLD_SCREEN_HEIGHT = 9;
 
         public Game1()
         {
@@ -159,7 +159,10 @@ namespace lightseeds
             for (int i = 0; i < 2; i++)
             {
                 GraphicsDevice.SetRenderTarget(splitScreens[i]);
-                GraphicsDevice.Clear(new Color(40, 40, 40));
+                if (i == 0)
+                    GraphicsDevice.Clear(new Color(40, 40, 40));
+                else
+                    GraphicsDevice.Clear(new Color(40, 40, 80));
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
                                   cameras[i].screenTransform);
                 treeCollection.Draw(spriteBatch);

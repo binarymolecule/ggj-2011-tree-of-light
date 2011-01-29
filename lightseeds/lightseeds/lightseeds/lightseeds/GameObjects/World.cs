@@ -125,8 +125,6 @@ namespace lightseeds.GameObjects
 
         }
 
-
-
         public void Draw(Game1 game, GameTime gameTime, int x, int w)
         {
             foreach (var chunk in chunks.Select((c) => c.ShouldBeDrawn(x, w)))

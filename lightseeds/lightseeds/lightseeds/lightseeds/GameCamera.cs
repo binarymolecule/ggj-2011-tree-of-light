@@ -23,7 +23,10 @@ namespace lightseeds
 
         public const float ACCELERATION = 100.0f, BRAKE_ACCELERATION = 60.0f;
 
-        public Vector2 WORLD_OFFSET = new Vector2(0.0f, 3.0f);
+        static public Vector2 WORLD_OFFSET = new Vector2(0.0f, 3.0f);
+
+        static public Vector2 MIN_COORDS = new Vector2(-180.0f + 0.25f * Game1.WORLD_SCREEN_WIDTH, 0.5f * Game1.WORLD_SCREEN_HEIGHT) + WORLD_OFFSET;
+        static public Vector2 MAX_COORDS = new Vector2(180.0f - 0.25f * Game1.WORLD_SCREEN_WIDTH, 100.0f) + WORLD_OFFSET;
 
         Vector2 translation;
 
@@ -97,6 +100,14 @@ namespace lightseeds
             if (player != null)
             {
                 target = new Vector2(player.worldPosition.X, player.worldPosition.Y);
+                if (target.X < MIN_COORDS.X)
+                    target.X = MIN_COORDS.X;
+                else if (target.X > MAX_COORDS.X)
+                    target.X = MAX_COORDS.X;
+                if (target.Y < MIN_COORDS.Y)
+                    target.Y = MIN_COORDS.Y;
+                else if (target.Y > MAX_COORDS.Y)
+                    target.Y = MAX_COORDS.Y;
                 targetIsMoving = (player.currentDirection != Direction.None);
             }
 
