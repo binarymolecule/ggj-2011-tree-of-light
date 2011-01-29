@@ -13,7 +13,7 @@ namespace lightseeds
 {
     public enum Direction
     {
-        LEFT, RIGHT
+        LEFT, RIGHT, NONE
     }
     /// <summary>
     /// This is a game component that implements IUpdateable.
@@ -27,10 +27,12 @@ namespace lightseeds
         Vector3 position;
 
         Texture2D texture;
-
+        public float wobbleSpeed = 1.0f;
+        public float wobbleHeight = 2.0f;
         public float XVelocity = 0.0f;
-        public float MAXVELOCITY = 0.1f;
-        public float ACCELERATION = 0.01f;
+        public float MAXVELOCITY = 0.3f;
+        public float ACCELERATION = 1.0f;
+        public Direction currentDirection = Direction.NONE;
 
         public Vector3 worldPosition
         {
@@ -75,31 +77,37 @@ namespace lightseeds
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
-            this.position.X += XVelocity;
+            var timeFactor = gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
+            if (XVelocity < MAXVELOCITY && Direction.RIGHT == currentDirection)
+                XVelocity += ACCELERATION * timeFactor;
+            if (XVelocity > -MAXVELOCITY && Direction.LEFT == currentDirection)
+                XVelocity -= ACCELERATION * timeFactor;
+            if (Direction.NONE == currentDirection && XVelocity > 0)
+                XVelocity -= ACCELERATION * timeFactor;
+            if (Direction.NONE == currentDirection && XVelocity < 0)
+                XVelocity += ACCELERATION * timeFactor;
+            
+            position.X += XVelocity;
             base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
-            game.spriteBatch.Draw(texture, this.screenPosition, Color.White);
-
+            game.spriteBatch.Draw(texture, new Vector2(screenPosition.X, getWobblyPosition(gameTime)), Color.White);
             base.Draw(gameTime);
+        }
+
+        private float getWobblyPosition(GameTime gameTime)
+        {
+            var sin = wobbleHeight * (float)Math.Sin((gameTime.TotalGameTime.TotalMilliseconds % (360.0f * 95.0f * wobbleSpeed)) / (95.0f * wobbleSpeed));
+            var cos = wobbleHeight * (float)Math.Cos((gameTime.TotalGameTime.TotalMilliseconds%(360.0f*120.0f*wobbleSpeed))/(120.0f*wobbleSpeed));
+            return position.Y + cos + sin;
         }
 
         public void move(Direction d)
         {
-
-            if (XVelocity < MAXVELOCITY && Direction.RIGHT == d)
-                XVelocity += ACCELERATION;
-            if (XVelocity > -MAXVELOCITY && Direction.LEFT == d)
-                XVelocity -= ACCELERATION;
+            currentDirection = d;
         }
-        public void stop()
-        {
-            if (XVelocity > 0)
-                XVelocity -= ACCELERATION;
-            else if (XVelocity < 0)
-                XVelocity += ACCELERATION;
-        }
+        
     }
 }
