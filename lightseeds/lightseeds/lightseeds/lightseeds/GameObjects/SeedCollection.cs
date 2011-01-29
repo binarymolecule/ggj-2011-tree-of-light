@@ -20,7 +20,7 @@ namespace lightseeds.GameObjects
         public void Load()
         {
             content = GameServices.GetService<ContentManager>();
-            texture = content.Load<Texture2D>("glowing");
+            texture = content.Load<Texture2D>("textures/glowing");
         }
 
         public SeedCollection(Game1 game)

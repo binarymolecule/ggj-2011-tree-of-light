@@ -19,7 +19,7 @@ namespace lightseeds.GameObjects
         {
             this.game = game;
 
-            tex = game.Content.Load<Texture2D>("smoke");
+            tex = game.Content.Load<Texture2D>("textures/smoke");
         }
 
         public void Update(GameTime gt)

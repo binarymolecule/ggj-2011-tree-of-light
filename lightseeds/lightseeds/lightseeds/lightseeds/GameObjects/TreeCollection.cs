@@ -36,7 +36,7 @@ namespace lightseeds.GameObjects
         public void Load()
         {
             content = GameServices.GetService<ContentManager>();
-            texture = content.Load<Texture2D>("treeDummy");
+            texture = content.Load<Texture2D>("textures/treeDummy");
         }
 
         public void Update(GameTime gameTime)

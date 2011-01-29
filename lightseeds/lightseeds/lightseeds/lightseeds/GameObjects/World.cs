@@ -37,7 +37,7 @@ namespace lightseeds.GameObjects
         {
             graphicsDevice = GameServices.GetService<GraphicsDevice>();
             content = GameServices.GetService<ContentManager>();
-            tile = content.Load<Texture2D>("testtile");
+            tile = content.Load<Texture2D>("textures/testtile");
             grassTopping = content.Load<Texture2D>("ground/Grass");
             spriteEffect = content.Load<Effect>("effects/sprite");
 

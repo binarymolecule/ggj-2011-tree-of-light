@@ -88,8 +88,8 @@ namespace lightseeds
 
             world = new World();
             world.Load();
-       
-            playerTexture = Content.Load<Texture2D>("playerTexture");
+
+            playerTexture = Content.Load<Texture2D>("textures/playerTexture");
 
             players = new PlayerSprite[2];
             players[0] = new PlayerSprite(this, 0, playerTexture);
@@ -105,7 +105,7 @@ namespace lightseeds
             splitScreens[0] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
             splitScreens[1] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
 
-            spriteFont = Content.Load<SpriteFont>("Geo");
+            spriteFont = Content.Load<SpriteFont>("fonts/Geo");
 
             treeCollection = new TreeCollection(this);
             treeCollection.Load();
