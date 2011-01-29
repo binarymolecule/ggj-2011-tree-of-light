@@ -29,22 +29,33 @@ namespace lightseeds.GameObjects
         private VertexBuffer groundVbo;
         private VertexBuffer toppingVbo;
         private Effect spriteEffect;
+        private Texture2D grassTopping;
 
         public void Load()
         {
             graphicsDevice = GameServices.GetService<GraphicsDevice>();
             content = GameServices.GetService<ContentManager>();
             tile = content.Load<Texture2D>("testtile");
+            grassTopping = content.Load<Texture2D>("ground/Grass");
             spriteEffect = content.Load<Effect>("effects/sprite");
 
-            heights = new List<Vector2>()
+            heights = new List<Vector2>();
+
+            Random randomizer = new Random();
+            Vector2 lastHeight = new Vector2(-200, 5);
+            while (lastHeight.X < 200)
             {
-                new Vector2(0,5),
-                new Vector2(1,5.2f),
-                new Vector2(2.5f,5.1f),
-                new Vector2(3.8f,4.8f),
-                new Vector2(6.9f,4.7f),
-            };
+                float angle = (float)randomizer.NextDouble();
+                float length = (float)randomizer.NextDouble() * 2f + 0.5f;
+
+                Vector2 upVector = new Vector2(length, (float)Math.Min(9f-lastHeight.Y, 1f));
+                Vector2 downVector = new Vector2(length, (float)Math.Max(3f-lastHeight.Y, -1f));
+
+                Vector2 stepVector = Vector2.Lerp(upVector, downVector, angle);
+
+                lastHeight += stepVector;
+                heights.Add(lastHeight);
+            }
 
             GenerateChunks();
             GenerateTerrain();
@@ -127,6 +138,9 @@ namespace lightseeds.GameObjects
 
             graphicsDevice.SetVertexBuffer(groundVbo);
             graphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, (heights.Count - 1) * 2);
+
+            graphicsDevice.Textures[0] = grassTopping;
+            spriteEffect.CurrentTechnique.Passes[0].Apply();
 
             graphicsDevice.SetVertexBuffer(toppingVbo);
             graphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, (heights.Count - 1) * 2);
