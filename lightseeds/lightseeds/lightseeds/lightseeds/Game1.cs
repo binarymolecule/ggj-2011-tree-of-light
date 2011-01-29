@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using lightseeds.GameObjects;
+using lightseeds.Helpers;
 
 namespace lightseeds
 {
@@ -18,6 +20,7 @@ namespace lightseeds
     {
         GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch;
+        private World world;
 
         public Matrix[] worldToScreen;
         PlayerSprite[] players;
@@ -51,7 +54,12 @@ namespace lightseeds
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+
+            GameServices.AddService(GraphicsDevice);
+            GameServices.AddService(Content);
+
             base.Initialize();
+
         }
 
         /// <summary>
@@ -63,6 +71,9 @@ namespace lightseeds
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            world = new World();
+            world.Load();
+       
             playerTexture = Content.Load<Texture2D>("playerTexture");
 
             players = new PlayerSprite[2];
@@ -91,6 +102,8 @@ namespace lightseeds
             foreach (PlayerSprite p in players)
                 p.Update(gameTime);
 
+            world.Update(gameTime);
+            
             base.Update(gameTime);
         }
 
@@ -102,6 +115,8 @@ namespace lightseeds
         {
             GraphicsDevice.Clear(Color.Black);
 
+            world.Draw(spriteBatch, gameTime, -1000, 2000);
+       
             // Draw players
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             foreach (PlayerSprite p in players)
