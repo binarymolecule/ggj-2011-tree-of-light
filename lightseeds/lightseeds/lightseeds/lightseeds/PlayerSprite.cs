@@ -32,6 +32,8 @@ namespace lightseeds
         public float xVelocity = 0.0f;
         public float yVelocity = 0.0f;
 
+        public Color color;
+
         public int collectedSeeds;
 
         public Vector2 offset;
@@ -145,7 +147,7 @@ namespace lightseeds
         {
             var x = screenPosition.X + 2* (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 120);
             var y = WobblyPosition(screenPosition.Y, wobbleHeight, gameTime);
-            game.spriteBatch.Draw(texture, new Vector2(x,y) + offset, Color.White);
+            game.spriteBatch.Draw(texture, new Vector2(x,y) + offset, color);
             base.Draw(gameTime);
         }
 

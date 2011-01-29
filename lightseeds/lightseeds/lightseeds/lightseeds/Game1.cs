@@ -97,8 +97,14 @@ namespace lightseeds
             playerTexture = Content.Load<Texture2D>("textures/playerTexture");
 
             players = new PlayerSprite[2];
-            players[0] = new PlayerSprite(this, 0, playerTexture);
-            players[1] = new PlayerSprite(this, 1, playerTexture);
+            players[0] = new PlayerSprite(this, 0, playerTexture)
+            {
+                color = new Color(220, 220, 255, 255)
+            };
+            players[1] = new PlayerSprite(this, 1, playerTexture)
+            {
+                color = new Color(255, 220, 220, 255)
+            };
 
             cameras = new GameCamera[2];
             cameras[0] = new GameCamera(this, 0, players[0].worldPosition);
@@ -124,13 +130,13 @@ namespace lightseeds
             voids.Add(new TheVoid(this)
             {
                 direction = new Vector3(1, 0, 0),
-                horizontalPosition = -World.WorldWidth/5
+                horizontalPosition = -World.WorldWidth/2
             });
 
             voids.Add(new TheVoid(this)
             {
                 direction = new Vector3(-1, 0, 0),
-                horizontalPosition = World.WorldWidth / 5
+                horizontalPosition = World.WorldWidth / 2
             });
         }
 
@@ -192,7 +198,9 @@ namespace lightseeds
                                   cameras[i].screenTransform);
                 treeCollection.Draw(spriteBatch);
                 seedCollection.Draw(spriteBatch);
-                players[i].Draw(gameTime);
+                foreach(var player in players) {
+                  player.Draw(gameTime);   
+                }
                 spriteBatch.End();
                 GameCamera.CurrentCamera = cameras[i];
                 world.Draw(this, gameTime, -1000, 2000);
