@@ -208,6 +208,12 @@ namespace lightseeds
             spriteBatch.Begin();
             spriteBatch.DrawString(spriteFont, String.Format("P1: {0:0.0} / {1:0.0}", players[0].worldPosition.X, players[0].worldPosition.Y), Vector2.Zero, Color.White);
             spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, 20), Color.Red);
+            if (blueprint1 != null)
+            {
+                spriteBatch.DrawString(spriteFont, String.Format("simple Tree"), new Vector2(SCREEN_WIDTH-150, 0), Color.White);
+                spriteBatch.DrawString(spriteFont, String.Format("is simple"), new Vector2(SCREEN_WIDTH - 150, 20), Color.White);
+            }
+            
             spriteBatch.End();
 
             base.Draw(gameTime);
@@ -228,6 +234,8 @@ namespace lightseeds
 
             if (waitForBPConfirm)
             {
+                if (players[0].xVelocity == 0)
+                    showBlueprint(players[0]);
                 players[0].Move(0, 0);
                 if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
                 {
@@ -240,26 +248,25 @@ namespace lightseeds
                 if (gamepadState.IsButtonDown(Buttons.B) && !waitForReleaseB)
                 {
                     treeCollection.trees.Remove(blueprint1);
+                    blueprint1 = null;
                     waitForBPConfirm = false;
                     waitForReleaseB = true;
                 }
                 if (gamepadState.ThumbSticks.Left.X < 0.0f)
                 {
-                    
                     ;//prev blueprint
                 }
                 if (gamepadState.ThumbSticks.Left.X > 0.0f)
                 {
                     ;//next blueprint
-                    
                 }
                 
                     
             } else {
                 players[0].Move(stick.X, stick.Y);
+                
                 if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
                 {
-                    showBlueprint(players[0]);
                     waitForBPConfirm = true;
                     waitForReleaseA = true;
                 }
