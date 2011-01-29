@@ -34,8 +34,6 @@ namespace lightseeds
 
         public TreeCollection treeCollection;
         public SeedCollection seedCollection;
-        public Tree[] blueprints = new Tree[2];
-        public TreeType lastUsedType = TreeType.PAWN;
 
         public List<TheVoid> voids = new List<TheVoid>();
 
@@ -45,12 +43,7 @@ namespace lightseeds
         static public int SPLIT_SCREEN_HEIGHT = 384;
         static public int WORLD_SCREEN_WIDTH = 24;
         static public int WORLD_SCREEN_HEIGHT = 9;
-        private bool waitForReleaseA;
-        private bool waitForReleaseB;
-        private bool waitForReleaseLeft;
-        private bool waitForReleaseRight;
 
-        private bool waitForBPConfirm;
         public ParticleCollection particleCollection;
 
         public Game1()
@@ -101,11 +94,11 @@ namespace lightseeds
             playerTexture = Content.Load<Texture2D>("textures/playerTexture");
 
             players = new PlayerSprite[2];
-            players[0] = new PlayerSprite(this, 0, playerTexture)
+            players[0] = new PlayerSprite(this, 0, new Vector3(2.0f, 7.0f, 1.0f), playerTexture)
             {
                 color = new Color(220, 220, 255, 255)
             };
-            players[1] = new PlayerSprite(this, 1, playerTexture)
+            players[1] = new PlayerSprite(this, 1, new Vector3(-2.0f, 6.5f, 1.0f), playerTexture)
             {
                 color = new Color(255, 220, 220, 255)
             };
@@ -232,18 +225,20 @@ namespace lightseeds
             spriteBatch.End();
 
             spriteBatch.Begin();
-            spriteBatch.DrawString(spriteFont, String.Format("P1: {0:0.0} / {1:0.0}", players[0].worldPosition.X, players[0].worldPosition.Y), Vector2.Zero, Color.White);
-            spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, 20), Color.Red);
-            if (blueprints[0] != null)
+            foreach (var p in players)
             {
-                var y = 0;
-                foreach (var descriptionLine in blueprints[0].descriptionLines)
+                spriteBatch.DrawString(spriteFont, String.Format("P{0:0}: {1:0.0} / {2:0.0}", p.index, p.worldPosition.X, p.worldPosition.Y), splitScreenPositions[p.index], Color.White);
+                spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, 20) + splitScreenPositions[p.index], Color.Red);
+                if (p.blueprint != null)
                 {
-                    spriteBatch.DrawString(spriteFont, String.Format("{0}", descriptionLine), new Vector2(SCREEN_WIDTH-180, y), Color.White);
-                    y += 20;
+                    var y = 0;
+                    foreach (var descriptionLine in p.blueprint.descriptionLines)
+                    {
+                        spriteBatch.DrawString(spriteFont, String.Format("{0}", descriptionLine), new Vector2(SPLIT_SCREEN_WIDTH - 180, y) + splitScreenPositions[p.index], Color.White);
+                        y += 20;
+                    }
                 }
-            }
-            
+            }            
             spriteBatch.End();
 
             base.Draw(gameTime);
@@ -251,86 +246,17 @@ namespace lightseeds
 
         public void handleControls()
         {
-            var gamepadState = GamePad.GetState(PlayerIndex.One);
             var keyboardState = Keyboard.GetState();
-            var stick = gamepadState.ThumbSticks.Left;
-
             if (keyboardState.IsKeyDown(Keys.Escape) ||
-                gamepadState.Buttons.Back == ButtonState.Pressed)
+                GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            {
                 this.Exit();
-
-            // controls for player 1
-            // buttons
-
-            if (waitForBPConfirm)
-            {
-                if (players[0].xVelocity == 0)
-                    showBlueprint(players[0]);
-                players[0].Move(0, 0);
-                if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
-                {
-                    treeCollection.trees.Remove(blueprints[0]);
-                    createTree(players[0], blueprints[0].treeType);
-                    lastUsedType = blueprints[0].treeType;
-                    blueprints[0] = null;
-                    waitForBPConfirm = false;
-                    waitForReleaseA = true;
-                }
-                if (gamepadState.IsButtonDown(Buttons.B) && !waitForReleaseB)
-                {
-                    treeCollection.trees.Remove(blueprints[0]);
-                    lastUsedType = blueprints[0].treeType;
-                    blueprints[0] = null;
-                    waitForBPConfirm = false;
-                    waitForReleaseB = true;
-                }
-                if (gamepadState.ThumbSticks.Left.X < 0.0f && !waitForReleaseLeft && !waitForReleaseA)
-                {
-                    var type = blueprints[0].treeType;
-                    treeCollection.trees.Remove(blueprints[0]);
-                    blueprints[0] = treeCollection.CreateTree(players[0].worldPosition, type.Previous(), true);
-                    waitForReleaseLeft = true;
-                }
-                if (gamepadState.ThumbSticks.Left.X > 0.0f && !waitForReleaseRight)
-                {
-                    var type = blueprints[0].treeType;
-                    treeCollection.trees.Remove(blueprints[0]);
-                    blueprints[0] = treeCollection.CreateTree(players[0].worldPosition, type.Next(), true);
-                    waitForReleaseRight = true;
-                }
-                
-                    
-            } else {
-                players[0].Move(stick.X, stick.Y);
-                
-                if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
-                {
-                    blueprints[0] = treeCollection.CreateTree(players[0].worldPosition, lastUsedType, true);
-                    waitForBPConfirm = true;
-                    waitForReleaseA = true;
-                }
             }
-            if (gamepadState.IsButtonUp(Buttons.A))
-                waitForReleaseA = false;
-            if (gamepadState.IsButtonUp(Buttons.B))
-                waitForReleaseB = false;
-            if (gamepadState.ThumbSticks.Left.X == 0)
-            {
-                waitForReleaseLeft = false;
-                waitForReleaseRight = false;
-            }
-        }
 
- 
-
-        private void showBlueprint(PlayerSprite player)
-        {
-            if (!treeCollection.HasTreeAtPosition(player.worldPosition.X))
+            foreach (var p in players)
             {
-                if (player.index == 0)
-                    blueprints[0] = treeCollection.CreateTree(player.worldPosition, TreeType.PAWN, true);
-                if (player.index == 1)
-                    blueprints[1] = treeCollection.CreateTree(player.worldPosition, TreeType.PAWN, true);
+                var gamepadState = GamePad.GetState(p.index == 0 ? PlayerIndex.One : PlayerIndex.Two);
+                p.HandleInput(gamepadState);
             }
         }
 

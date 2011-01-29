@@ -1,6 +1,9 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using lightseeds.GameObjects;
+using lightseeds.Helpers;
 
 namespace lightseeds
 {
@@ -14,7 +17,7 @@ namespace lightseeds
 
         public int index;
         
-        Vector3 position;
+        Vector3 position, initialPosition;
 
         Texture2D texture;
         public const float XBOUNDARY = 180.0f;
@@ -31,6 +34,18 @@ namespace lightseeds
         public float currentYAcceleration = 0.0f;
         public float xVelocity = 0.0f;
         public float yVelocity = 0.0f;
+
+        private float stunTimer = 0.0f;
+        private bool isStunned = false;
+
+        private bool waitForReleaseA = false;
+        private bool waitForReleaseB = false;
+        private bool waitForReleaseLeft = false;
+        private bool waitForReleaseRight = false;
+        private bool waitForBPConfirm = false;
+
+        public Tree blueprint;
+        private TreeType lastUsedType = TreeType.PAWN;
 
         Random random = new Random();
 
@@ -63,28 +78,42 @@ namespace lightseeds
             }
         }
         
-        public PlayerSprite(Game game, int index, Texture2D tex) : base(game)
+        public PlayerSprite(Game game, int index, Vector3 pos, Texture2D tex) : base(game)
         {
             this.game = (Game1)game;
             this.index = index;
             texture = tex;
-            position = new Vector3(0.0f, 8.0f, 1.0f);
+            initialPosition = pos;
+            position = initialPosition;
             offset = new Vector2(-0.5f * texture.Width, -0.5f * texture.Height);
         }
 
         public override void Update(GameTime gameTime)
         {
-            UpdateXPosition(gameTime);
-            UpdateYPosition(gameTime);
-
+            if (isStunned)
+            {
+                stunTimer -= gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
+                if (stunTimer < 0.0f)
+                {
+                    stunTimer = 0.0f;
+                    isStunned = false;
+                }
+            }
+            else
+            {
+                UpdateXPosition(gameTime);
+                UpdateYPosition(gameTime);
+            }
+           
             scaleTransition += (float)gameTime.ElapsedGameTime.TotalSeconds * 6f;
 
-            if(scaleTransition >= 1) {
-                oldScale = scale;
-                scale = 0.8f + (float)random.NextDouble() * 0.2f;
-                scaleTransition = 0;
+            if (scaleTransition >= 1)
+            {
+               oldScale = scale;
+               scale = 0.8f + (float)random.NextDouble() * 0.2f;
+               scaleTransition = 0;
             }
-
+          
             currentScale = oldScale + scaleTransition * (scale - oldScale);
 
             base.Update(gameTime);
@@ -92,7 +121,17 @@ namespace lightseeds
 
         public void Respawn()
         {
-            this.position.X = 0;
+            position = initialPosition;
+            stunTimer = 2.0f;
+            isStunned = true;
+
+            // reset controls
+            waitForReleaseA = false;
+            waitForReleaseB = false;
+            waitForReleaseLeft = false;
+            waitForReleaseRight = false;
+            waitForBPConfirm = false;
+            blueprint = null;
         }
 
         private void UpdateXPosition(GameTime gameTime)
@@ -163,9 +202,17 @@ namespace lightseeds
 
         public override void Draw(GameTime gameTime)
         {
-            var x = screenPosition.X + 2* (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 120);
+            var x = screenPosition.X + 2 * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 120);
             var y = WobblyPosition(screenPosition.Y, wobbleHeight, gameTime);
-            game.spriteBatch.Draw(texture, new Vector2(x,y) + offset, null, color, 0, Vector2.Zero, currentScale, SpriteEffects.None, 0);
+            if (isStunned)
+            {
+                if ((int)(stunTimer * 20.0f) % 2 == 0)
+                    game.spriteBatch.Draw(texture, new Vector2(x, y) + offset, null, color, 0, Vector2.Zero, currentScale, SpriteEffects.None, 0);                
+            }
+            else
+            {
+                game.spriteBatch.Draw(texture, new Vector2(x, y) + offset, null, color, 0, Vector2.Zero, currentScale, SpriteEffects.None, 0);
+            }
             base.Draw(gameTime);
         }
 
@@ -181,6 +228,80 @@ namespace lightseeds
         {
             currentXAcceleration = x * ACCELERATION;
             currentYAcceleration = y * ACCELERATION;
+        }
+
+        private void showBlueprint()
+        {
+            if (!game.treeCollection.HasTreeAtPosition(worldPosition.X))
+            {
+                blueprint = game.treeCollection.CreateTree(worldPosition, TreeType.PAWN, true);
+            }
+        }
+
+
+        public void HandleInput(GamePadState gamepadState)
+        {
+            if (!isStunned)
+            {
+                var stick = gamepadState.ThumbSticks.Left;
+                if (waitForBPConfirm)
+                {
+                    if (xVelocity == 0)
+                        showBlueprint();
+                    Move(0, 0);
+                    if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
+                    {
+                        game.treeCollection.trees.Remove(blueprint);
+                        game.createTree(this, blueprint.treeType);
+                        lastUsedType = blueprint.treeType;
+                        blueprint = null;
+                        waitForBPConfirm = false;
+                        waitForReleaseA = true;
+                    }
+                    if (gamepadState.IsButtonDown(Buttons.B) && !waitForReleaseB)
+                    {
+                        game.treeCollection.trees.Remove(blueprint);
+                        lastUsedType = blueprint.treeType;
+                        blueprint = null;
+                        waitForBPConfirm = false;
+                        waitForReleaseB = true;
+                    }
+                    if (gamepadState.ThumbSticks.Left.X < 0.0f && !waitForReleaseLeft && !waitForReleaseA)
+                    {
+                        var type = blueprint.treeType;
+                        game.treeCollection.trees.Remove(blueprint);
+                        blueprint = game.treeCollection.CreateTree(worldPosition, type.Previous(), true);
+                        waitForReleaseLeft = true;
+                    }
+                    if (gamepadState.ThumbSticks.Left.X > 0.0f && !waitForReleaseRight)
+                    {
+                        var type = blueprint.treeType;
+                        game.treeCollection.trees.Remove(blueprint);
+                        blueprint = game.treeCollection.CreateTree(worldPosition, type.Next(), true);
+                        waitForReleaseRight = true;
+                    }
+                }
+                else
+                {
+                    Move(stick.X, stick.Y);
+
+                    if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
+                    {
+                        blueprint = game.treeCollection.CreateTree(worldPosition, lastUsedType, true);
+                        waitForBPConfirm = true;
+                        waitForReleaseA = true;
+                    }
+                }
+                if (gamepadState.IsButtonUp(Buttons.A))
+                    waitForReleaseA = false;
+                if (gamepadState.IsButtonUp(Buttons.B))
+                    waitForReleaseB = false;
+                if (gamepadState.ThumbSticks.Left.X == 0)
+                {
+                    waitForReleaseLeft = false;
+                    waitForReleaseRight = false;
+                }
+            }
         }
     }
 }
