@@ -22,8 +22,10 @@ namespace lightseeds
         public SpriteBatch spriteBatch;
         private World world;
 
-        public Matrix[] worldToScreen;
+        public Matrix worldToScreen;
+        Matrix[] screenToGlobal;
         PlayerSprite[] players;
+        GameCamera[] cameras;
 
         Texture2D playerTexture;
 
@@ -36,13 +38,14 @@ namespace lightseeds
             
             float screenWidth = 1024.0f;
             float screenHeight = 768.0f;
-            float screenWidthWorld = 10.0f;
-            float screenHeightWorld = 8.0f;
+            float screenWidthWorld = 24.0f;
+            float screenHeightWorld = 9.0f;
 
-            worldToScreen = new Matrix[2];
-            worldToScreen[0] = Matrix.CreateScale(screenWidth / screenWidthWorld, -0.5f*screenHeight / screenHeightWorld, 1.0f) *
+            worldToScreen = Matrix.CreateScale(screenWidth / screenWidthWorld, -0.5f * screenHeight / screenHeightWorld, 1.0f) *
                                Matrix.CreateTranslation(0.5f * screenWidth, 0.5f * screenHeight, 0.0f);
-            worldToScreen[1] = worldToScreen[0] * Matrix.CreateTranslation(0.0f, 0.5f * screenHeight, 0.0f);
+            screenToGlobal = new Matrix[2];
+            screenToGlobal[0] = Matrix.Identity;
+            screenToGlobal[1] = Matrix.CreateTranslation(0.0f, 0.5f * screenHeight, 0.0f);
         }
 
         /// <summary>
@@ -79,6 +82,12 @@ namespace lightseeds
             players = new PlayerSprite[2];
             players[0] = new PlayerSprite(this, 0, playerTexture);
             players[1] = new PlayerSprite(this, 1, playerTexture);
+
+            cameras = new GameCamera[2];
+            cameras[0] = new GameCamera(this, 0, players[0].worldPosition);
+            cameras[0].FollowPlayer(players[0]);
+            cameras[1] = new GameCamera(this, 1, players[1].worldPosition);
+            cameras[1].FollowPlayer(players[1]);
         }
 
         /// <summary>
@@ -102,6 +111,10 @@ namespace lightseeds
             foreach (PlayerSprite p in players)
                 p.Update(gameTime);
 
+            // Update cameras
+            foreach (GameCamera c in cameras)
+                c.Update(gameTime);
+
             world.Update(gameTime);
             
             base.Update(gameTime);
@@ -115,13 +128,19 @@ namespace lightseeds
         {
             GraphicsDevice.Clear(Color.Black);
 
+            // Draw screen of player 1
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
+                              screenToGlobal[0] * cameras[0].screenTransform);
+            players[0].Draw(gameTime);
             world.Draw(spriteBatch, gameTime, -1000, 2000);
-       
-            // Draw players
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-            foreach (PlayerSprite p in players)
-                p.Draw(gameTime);
             spriteBatch.End();
+       
+            // Draw screen of player 2
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
+                              screenToGlobal[1] * cameras[1].screenTransform);
+            players[1].Draw(gameTime);
+            spriteBatch.End();
+            world.Draw(spriteBatch, gameTime, -1000, 2000);
 
             base.Draw(gameTime);
         }
@@ -129,8 +148,11 @@ namespace lightseeds
         public void handleControls()
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-                   Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+         
                 this.Exit();
+            }
             if (Keyboard.GetState().IsKeyDown(Keys.Left))
                 players[0].move(Direction.LEFT);
             if (Keyboard.GetState().IsKeyDown(Keys.Right))

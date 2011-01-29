@@ -45,7 +45,7 @@ namespace lightseeds
         {
             get
             {
-                Vector3 screenPos = Vector3.Transform(position, game.worldToScreen[index]);
+                Vector3 screenPos = Vector3.Transform(position, game.worldToScreen);
                 return new Vector2(screenPos.X, screenPos.Y);
             }
         }
