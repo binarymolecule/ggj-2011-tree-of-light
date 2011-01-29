@@ -93,6 +93,7 @@ namespace lightseeds.GameObjects
         }
 
         public TreeStatus status;
+        public string[] descriptionLines = new string[4];
 
         public Vector3 worldPosition
         {
@@ -121,6 +122,7 @@ namespace lightseeds.GameObjects
             fruitOffset = new Vector2(-0.5f * fruitSize.X, -screenSize.Y + 32.0f);
             growth = 0.1f;
             status = TreeStatus.PLANTED;
+            
             if (isBlueprint)
                 status = TreeStatus.BLUEPRINT;
 
@@ -129,22 +131,33 @@ namespace lightseeds.GameObjects
                 case TreeType.BASE:
                     this.status = TreeStatus.MATURE;
                     this.growth = 0.1f;
+                    this.descriptionLines[0] = "Basic Tree";
+                    this.descriptionLines[1] = "is Basic";
+                    
                     break;
                 case TreeType.FIGHTER:
                     this.growthTime = 20.0f;
                     this.fruitTime = 40.0f;
+                    this.descriptionLines[0] = "Fighter Tree";
+                    this.descriptionLines[1] = "is very angry";
                     break;
                 case TreeType.MOTHER:
                     this.growthTime = 30.0f;
                     this.fruitTime = 10.0f;
+                    this.descriptionLines[0] = "The Mana Tree";
+                    this.descriptionLines[1] = "ya know?!";
                     break;
                 case TreeType.PAWN:
                     this.growthTime = 10.0f;
                     this.fruitTime = 20.0f;
+                    this.descriptionLines[0] = "Pawn Tree";
+                    this.descriptionLines[1] = "The Ace of Rage";
                     break;
                 case TreeType.TANK:
                     this.growthTime = 60.0f;
                     this.fruitTime = 30.0f;
+                    this.descriptionLines[0] = "Tank Tree";
+                    this.descriptionLines[1] = "guess";
                     break;
             }
         }

@@ -224,8 +224,12 @@ namespace lightseeds
             spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, 20), Color.Red);
             if (blueprints[0] != null)
             {
-                spriteBatch.DrawString(spriteFont, String.Format("simple Tree"), new Vector2(SCREEN_WIDTH-150, 0), Color.White);
-                spriteBatch.DrawString(spriteFont, String.Format("is simple"), new Vector2(SCREEN_WIDTH - 150, 20), Color.White);
+                var y = 0;
+                foreach (var descriptionLine in blueprints[0].descriptionLines)
+                {
+                    spriteBatch.DrawString(spriteFont, String.Format("{0}", descriptionLine), new Vector2(SCREEN_WIDTH-180, y), Color.White);
+                    y += 20;
+                }
             }
             
             spriteBatch.End();
@@ -298,9 +302,9 @@ namespace lightseeds
             if (!treeCollection.HasTreeAtPosition(posX))
             {
                 if (player.index == 0)
-                    blueprints[0] = treeCollection.CreateTree(posX, TreeType.BASE, true);
+                    blueprints[0] = treeCollection.CreateTree(posX, TreeType.PAWN, true);
                 if (player.index == 1)
-                    blueprints[1] = treeCollection.CreateTree(posX, TreeType.BASE, true);
+                    blueprints[1] = treeCollection.CreateTree(posX, TreeType.PAWN, true);
             }
         }
 
