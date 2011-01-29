@@ -32,11 +32,18 @@ namespace lightseeds
         public float xVelocity = 0.0f;
         public float yVelocity = 0.0f;
 
+        Random random = new Random();
+
         public Color color;
 
         public int collectedSeeds;
 
+        public float scale = 1f;
+        public float currentScale = 1f;
+        public float scaleTransition = 1f;
+
         public Vector2 offset;
+        private float oldScale = 1f;
 
         public Vector3 worldPosition
         {
@@ -69,6 +76,17 @@ namespace lightseeds
         {
             UpdateXPosition(gameTime);
             UpdateYPosition(gameTime);
+
+            scaleTransition += (float)gameTime.ElapsedGameTime.TotalSeconds * 6f;
+
+            if(scaleTransition >= 1) {
+                oldScale = scale;
+                scale = 0.8f + (float)random.NextDouble() * 0.2f;
+                scaleTransition = 0;
+            }
+
+            currentScale = oldScale + scaleTransition * (scale - oldScale);
+
             base.Update(gameTime);
         }
 
@@ -147,7 +165,7 @@ namespace lightseeds
         {
             var x = screenPosition.X + 2* (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 120);
             var y = WobblyPosition(screenPosition.Y, wobbleHeight, gameTime);
-            game.spriteBatch.Draw(texture, new Vector2(x,y) + offset, color);
+            game.spriteBatch.Draw(texture, new Vector2(x,y) + offset, null, color, 0, Vector2.Zero, currentScale, SpriteEffects.None, 0);
             base.Draw(gameTime);
         }
 
