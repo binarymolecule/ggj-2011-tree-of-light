@@ -59,22 +59,24 @@ namespace lightseeds.GameObjects
     public class Tree
     {
         public const float MIN_DISTANCE = 4.0f;
-        
+
+        public const float SEED_FALL_SPEED = 4.0f;
+
         public Vector3 position;
         public Vector2 offset;
         public Vector2 screenSize;
         public Vector2 fruitOffset;
         public Vector2 fruitSize;
+        public float groundHeight;
 
         public TreeCollection parentCollection;
-
 
         #region gameplay properties
 
         public float growthTime;
         public float growth;
         public float lifeSpan;
-        public float resistance = 0.5f;
+        public float resistance;
         public float fruitTime;
         public int price;
         public string name;
@@ -85,6 +87,7 @@ namespace lightseeds.GameObjects
         public bool RemoveOnNextUpdate = false;
         public enum TreeStatus
         {
+            SEED,
             PLANTED,
             MATURE,
             DIED,
@@ -112,9 +115,9 @@ namespace lightseeds.GameObjects
             }
         }
 
-        public Tree(TreeCollection coll, Vector3 position, TreeType type, bool isBlueprint)
+        public Tree(TreeCollection coll, Vector3 pos, TreeType type, bool isBlueprint)
         {
-            this.position = position;
+            position = pos;
             parentCollection = coll;
             screenSize = new Vector2(parentCollection.texture.Width, parentCollection.texture.Height);
             offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 4.0f);
@@ -122,40 +125,48 @@ namespace lightseeds.GameObjects
             fruitOffset = new Vector2(-0.5f * fruitSize.X, -screenSize.Y + 32.0f);
             growth = 0.1f;
             status = TreeStatus.PLANTED;
-            
+
             if (isBlueprint)
+            {
                 status = TreeStatus.BLUEPRINT;
+                position.Y = groundHeight;
+            }
 
             switch (type)
             {
                 case TreeType.BASE:
+                    this.position.Y = groundHeight;
                     this.status = TreeStatus.MATURE;
                     this.growth = 0.1f;
+                    this.resistance = 1.0f;
                     this.descriptionLines[0] = "Basic Tree";
                     this.descriptionLines[1] = "is Basic";
-                    
                     break;
                 case TreeType.FIGHTER:
                     this.growthTime = 20.0f;
                     this.fruitTime = 40.0f;
+                    this.resistance = 2.0f;
                     this.descriptionLines[0] = "Fighter Tree";
                     this.descriptionLines[1] = "is very angry";
                     break;
                 case TreeType.MOTHER:
                     this.growthTime = 30.0f;
                     this.fruitTime = 10.0f;
+                    this.resistance = 0.5f;
                     this.descriptionLines[0] = "The Mana Tree";
                     this.descriptionLines[1] = "ya know?!";
                     break;
                 case TreeType.PAWN:
                     this.growthTime = 10.0f;
                     this.fruitTime = 20.0f;
+                    this.resistance = 0.25f;
                     this.descriptionLines[0] = "Pawn Tree";
                     this.descriptionLines[1] = "The Ace of Rage";
                     break;
                 case TreeType.TANK:
                     this.growthTime = 60.0f;
                     this.fruitTime = 30.0f;
+                    this.resistance = 5.0f;
                     this.descriptionLines[0] = "Tank Tree";
                     this.descriptionLines[1] = "guess";
                     break;
@@ -166,6 +177,14 @@ namespace lightseeds.GameObjects
         {
             switch (status)
             {
+                case TreeStatus.SEED:
+                    position.Y -= (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) * SEED_FALL_SPEED;
+                    if (position.Y < groundHeight)
+                    {
+                        status = TreeStatus.PLANTED;
+                        position.Y = groundHeight;
+                    }
+                    break;
                 case TreeStatus.PLANTED:
                     growth += (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) / growthTime;
                     if (growth > 1.0f)
@@ -174,20 +193,20 @@ namespace lightseeds.GameObjects
                         growth = 1.0f;
                     }
                     break;
-                case TreeStatus.KILLED:
-                    growth -= (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) / growthTime;
-                    if (growth < 0.0f)
-                    {
-                        this.RemoveOnNextUpdate = true;
-                        growth = 0.0f;
-                    }
-                    break;
                 case TreeStatus.MATURE:
                     currentFruitTime += gameTime.ElapsedGameTime.TotalSeconds;
                     if (currentFruitTime > this.fruitTime)
                     {
                         this.parentCollection.game.seedCollection.SpawnSeed(worldPosition + new Vector3(0, 2, 0));
                         currentFruitTime = 0;
+                    }
+                    break;
+                case TreeStatus.KILLED:
+                    growth -= (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) / growthTime;
+                    if (growth < 0.0f)
+                    {
+                        this.RemoveOnNextUpdate = true;
+                        growth = 0.0f;
                     }
                     break;
                 case TreeStatus.BLUEPRINT:
@@ -200,6 +219,23 @@ namespace lightseeds.GameObjects
         {
             switch (status)
             {
+                case TreeStatus.SEED:
+                    {
+                        float fruitScale = 0.25f;
+                        Rectangle fruitRect = new Rectangle((int)(screenPosition.X - 0.5f * fruitScale * fruitSize.X),
+                                                            (int)(screenPosition.Y - 0.5f * fruitScale * fruitSize.Y),
+                                                            (int)(fruitScale * fruitSize.X), (int)(fruitScale * fruitSize.Y));
+                        spriteBatch.Draw(parentCollection.fruitTexture, fruitRect, Color.White);
+                    }
+                    break;
+                case TreeStatus.PLANTED:
+                    {
+                        Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * growth * screenSize.X),
+                                                            (int)(screenPosition.Y - growth * screenSize.Y + 4.0f),
+                                                            (int)(growth * screenSize.X), (int)(growth * screenSize.Y));
+                        spriteBatch.Draw(parentCollection.texture, rectangle, Color.White);
+                    }
+                    break;
                 case TreeStatus.MATURE:
                     {
                         float fruitScale = (float)currentFruitTime / (float)fruitTime;
@@ -212,14 +248,6 @@ namespace lightseeds.GameObjects
                         spriteBatch.Draw(parentCollection.fruitTexture, fruitRect, Color.White);
                     }
                     break;
-                case TreeStatus.PLANTED:
-                    {
-                        Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * growth * screenSize.X),
-                                                            (int)(screenPosition.Y - growth * screenSize.Y + 4.0f),
-                                                            (int)(growth * screenSize.X), (int)(growth * screenSize.Y));
-                        spriteBatch.Draw(parentCollection.texture, rectangle, Color.White);
-                    }
-                    break;
                 case TreeStatus.KILLED:
                     {
                         Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * growth * screenSize.X), (int)(screenPosition.Y - growth * screenSize.Y + 4.0f),
@@ -229,15 +257,15 @@ namespace lightseeds.GameObjects
                     break;
                 case TreeStatus.DIED:
                     {
-                        Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * screenSize.X), (int)(screenPosition.Y - screenSize.Y + 4.0f),
+                        Rectangle rectangle = new Rectangle((int)(screenPosition.X + offset.X), (int)(screenPosition.Y + offset.Y),
                                                             (int)screenSize.X, (int)screenSize.Y);
                         spriteBatch.Draw(parentCollection.texture, rectangle, Color.Gray);
                     }
                     break;
                 case TreeStatus.BLUEPRINT:
                     {
-                        Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * screenSize.X), (int)(screenPosition.Y - screenSize.Y + 4.0f),
-                                                  (int)screenSize.X, (int)screenSize.Y);
+                        Rectangle rectangle = new Rectangle((int)(screenPosition.X + offset.X), (int)(screenPosition.Y + offset.Y),
+                                                            (int)screenSize.X, (int)screenSize.Y);
                         spriteBatch.Draw(parentCollection.texture, rectangle, Color.Black);
                         break;
                     }

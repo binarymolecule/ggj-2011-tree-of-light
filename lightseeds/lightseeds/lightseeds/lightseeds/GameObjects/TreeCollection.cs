@@ -16,8 +16,6 @@ namespace lightseeds.GameObjects
         MOTHER,
         PAWN,
         TANK,
-        BLUEPRINT
-
     };
 
     public class TreeCollection
@@ -71,9 +69,9 @@ namespace lightseeds.GameObjects
             }
         }
 
-        internal Tree CreateTree(float x, TreeType type, bool isBlueprint)
+        internal Tree CreateTree(Vector3 seedPos, TreeType type, bool isBlueprint)
         {
-            Tree newTree = new Tree(this, new Vector3(x, game.world.getHeigth(x), 0.0f), type, isBlueprint);
+            Tree newTree = new Tree(this, seedPos, type, isBlueprint);
             trees.Add(newTree);
             return newTree;
         }
