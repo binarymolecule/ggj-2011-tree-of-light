@@ -27,13 +27,17 @@ namespace lightseeds
         Vector3 position;
 
         Texture2D texture;
+        
+        public float WOBBLYNESS = 1.0f;
         public float wobbleSpeed = 1.0f;
-        public float wobbleHeight = 2.0f;
-        public float XVelocity = 0.0f;
+        public float wobbleHeight = 3.0f;
+
         public float MAXVELOCITY = 0.3f;
         public float ACCELERATION = 1.0f;
-        public Direction currentDirection = Direction.NONE;
+        public float XVelocity = 0.0f;
 
+        public Direction currentDirection = Direction.NONE;
+        
         public Vector3 worldPosition
         {
             get
@@ -99,14 +103,20 @@ namespace lightseeds
 
         private float getWobblyPosition(GameTime gameTime)
         {
-            var sin = wobbleHeight * (float)Math.Sin((gameTime.TotalGameTime.TotalMilliseconds % (360.0f * 95.0f * wobbleSpeed)) / (95.0f * wobbleSpeed));
-            var cos = wobbleHeight * (float)Math.Cos((gameTime.TotalGameTime.TotalMilliseconds%(360.0f*120.0f*wobbleSpeed))/(120.0f*wobbleSpeed));
+            var sin = wobbleHeight * (float)Math.Sin((gameTime.TotalGameTime.TotalMilliseconds % (360.0f * 97.0f * wobbleSpeed)) / (97.0f / wobbleSpeed));
+            var cos = wobbleHeight * (float)Math.Cos((gameTime.TotalGameTime.TotalMilliseconds%(360.0f * 127.0f * wobbleSpeed)) / (127.0f / wobbleSpeed));
             return position.Y + cos + sin;
         }
 
         public void move(Direction d)
         {
             currentDirection = d;
+            if (d != Direction.NONE)
+                wobbleSpeed = 3.0f * WOBBLYNESS;
+            else
+                wobbleSpeed = 1.0f * WOBBLYNESS;
+            
+
         }
         
     }
