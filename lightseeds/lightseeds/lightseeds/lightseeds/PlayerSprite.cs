@@ -22,8 +22,8 @@ namespace lightseeds
         Texture2D texture;
         public const float WOBBLEBPM = 60.0f;
         public const float WOBBLYNESS = 3.0f;
-        public const float MAXVELOCITY = 5.0f;
-        public const float ACCELERATION = 10.0f;
+        public const float MAXVELOCITY = 25.0f;
+        public const float ACCELERATION = 100.0f;
         
         public Direction currentDirection = Direction.None;
         public float xAcceleration = 0.0f;

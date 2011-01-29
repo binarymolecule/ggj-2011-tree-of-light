@@ -15,13 +15,13 @@ namespace lightseeds
 
         public const float MAX_RANGE = 5.0f;
 
-        public const float BRAKE_DIST = 1.0f;
+        public const float BRAKE_DIST = 5.0f;
 
         public const float MIN_DIST = 0.01f;
 
-        public const float MIN_SPEED = 0.1f, MAX_SPEED = 5.0f;
+        public const float MIN_SPEED = 5.0f, MAX_SPEED = 30.0f;
 
-        public const float ACCELERATION = 8.0f;
+        public const float ACCELERATION = 100.0f, BRAKE_ACCELERATION = 80.0f;
 
         public Vector2 WORLD_OFFSET = new Vector2(0.0f, 3.0f);
 
@@ -96,11 +96,7 @@ namespace lightseeds
             if (player != null)
             {
                 target = new Vector2(player.worldPosition.X, player.worldPosition.Y);
-
-                this.translation = target;
             }
-
-            return;
 
             Vector2 direction = target - translation;
             float seconds = 0.001f * gameTime.ElapsedGameTime.Milliseconds;
@@ -127,7 +123,7 @@ namespace lightseeds
                 {
                     if (distance < BRAKE_DIST)
                     {
-                        speed -= seconds * ACCELERATION;
+                        speed -= seconds * BRAKE_ACCELERATION;
                         if (speed < MIN_SPEED)
                             speed = MIN_SPEED;
                     }
