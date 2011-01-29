@@ -12,7 +12,7 @@ namespace lightseeds
     {
         Game1 game;
 
-        int index;
+        public int index;
         
         Vector3 position;
 

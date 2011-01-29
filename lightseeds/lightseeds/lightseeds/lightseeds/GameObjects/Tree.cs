@@ -88,7 +88,8 @@ namespace lightseeds.GameObjects
             PLANTED,
             MATURE,
             DIED,
-            KILLED
+            KILLED,
+            BLUEPRINT
         }
 
         public TreeStatus status;
@@ -143,6 +144,9 @@ namespace lightseeds.GameObjects
                     this.growthTime = 60.0f;
                     this.fruitTime = 30.0f;
                     break;
+                case TreeType.BLUEPRINT:
+                    this.status = TreeStatus.BLUEPRINT;
+                    break;
             }
         }
 
@@ -174,11 +178,14 @@ namespace lightseeds.GameObjects
                         currentFruitTime = 0;
                     }
                     break;
+                case TreeStatus.BLUEPRINT:
+                    growth = 1.0f;
+                    break;
             }
         }
 
         public void Draw(SpriteBatch spriteBatch)
-        {            
+        {
             switch (status)
             {
                 case TreeStatus.MATURE:
@@ -215,6 +222,14 @@ namespace lightseeds.GameObjects
                         spriteBatch.Draw(parentCollection.texture, rectangle, Color.Gray);
                     }
                     break;
+                case TreeStatus.BLUEPRINT:
+                    {
+                        Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * screenSize.X), (int)(screenPosition.Y - screenSize.Y + 4.0f),
+                                                  (int)screenSize.X, (int)screenSize.Y);
+                        spriteBatch.Draw(parentCollection.texture, rectangle, Color.Black);
+                        break;
+                    }
+
             }
         }
 

@@ -34,6 +34,8 @@ namespace lightseeds
 
         public TreeCollection treeCollection;
         public SeedCollection seedCollection;
+        public Tree blueprint1;
+        public Tree blueprint2;
 
         public List<TheVoid> voids = new List<TheVoid>();
 
@@ -43,7 +45,9 @@ namespace lightseeds
         static public int SPLIT_SCREEN_HEIGHT = 384;
         static public int WORLD_SCREEN_WIDTH = 24;
         static public int WORLD_SCREEN_HEIGHT = 9;
-        private bool waitForRelease;
+        private bool waitForReleaseA;
+        private bool waitForReleaseB;
+        private bool waitForBPConfirm;
 
         public Game1()
         {
@@ -220,19 +224,63 @@ namespace lightseeds
                 this.Exit();
 
             // controls for player 1
-            players[0].Move(stick.X, stick.Y);
-
             // buttons
-            if (gamepadState.IsButtonDown(Buttons.X) && !waitForRelease)
-            {
-                createTree(players[0]);
-                waitForRelease = true;
-            }
 
-            if (gamepadState.IsButtonUp(Buttons.X))
+            if (waitForBPConfirm)
             {
-                waitForRelease = false;
-            }             
+                players[0].Move(0, 0);
+                if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
+                {
+                    treeCollection.trees.Remove(blueprint1);
+                    blueprint1 = null;
+                    createTree(players[0]);
+                    waitForBPConfirm = false;
+                    waitForReleaseA = true;
+                }
+                if (gamepadState.IsButtonDown(Buttons.B) && !waitForReleaseB)
+                {
+                    treeCollection.trees.Remove(blueprint1);
+                    waitForBPConfirm = false;
+                    waitForReleaseB = true;
+                }
+                if (gamepadState.ThumbSticks.Left.X < 0.0f)
+                {
+                    
+                    ;//prev blueprint
+                }
+                if (gamepadState.ThumbSticks.Left.X > 0.0f)
+                {
+                    ;//next blueprint
+                    
+                }
+                
+                    
+            } else {
+                players[0].Move(stick.X, stick.Y);
+                if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
+                {
+                    showBlueprint(players[0]);
+                    waitForBPConfirm = true;
+                    waitForReleaseA = true;
+                }
+            }
+            if (gamepadState.IsButtonUp(Buttons.A))
+                waitForReleaseA = false;
+            if (gamepadState.IsButtonUp(Buttons.B))
+                waitForReleaseB = false;
+        }
+
+        private void showBlueprint(PlayerSprite player)
+        {
+
+            float posX = player.worldPosition.X;
+            if (!treeCollection.HasTreeAtPosition(posX))
+            {
+                if (player.index == 0)
+                    blueprint1 = treeCollection.CreateTree(posX, TreeType.BLUEPRINT);
+                if (player.index == 1)
+                    blueprint2 = treeCollection.CreateTree(posX, TreeType.BLUEPRINT);
+            }
         }
 
         public void createTree(PlayerSprite player)
@@ -241,7 +289,7 @@ namespace lightseeds
             float posX = player.worldPosition.X;
             if (seedCollection.collectedSeedCount > 0 && !treeCollection.HasTreeAtPosition(posX))
             {
-                treeCollection.CreateTree(posX, TreeType.PAWN);
+                blueprint1 = treeCollection.CreateTree(posX, TreeType.PAWN);
                 seedCollection.collectedSeedCount--;
             }
         }

@@ -15,7 +15,9 @@ namespace lightseeds.GameObjects
         FIGHTER,
         MOTHER,
         PAWN,
-        TANK
+        TANK,
+        BLUEPRINT
+
     };
 
     public class TreeCollection
@@ -69,9 +71,11 @@ namespace lightseeds.GameObjects
             }
         }
 
-        internal void CreateTree(float x, TreeType type)
+        internal Tree CreateTree(float x, TreeType type)
         {
-            trees.Add(new Tree(this, new Vector3(x, game.world.getHeigth(x), 0.0f), type));            
+            Tree newTree = new Tree(this, new Vector3(x, game.world.getHeigth(x), 0.0f), type);
+            trees.Add(newTree);
+            return newTree;
         }
 
         public bool HasTreeAtPosition(float posX)
