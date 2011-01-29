@@ -32,8 +32,8 @@ namespace lightseeds
         public float wobbleSpeed = 1.0f;
         public float wobbleHeight = 3.0f;
         
-        public float MAXVELOCITY = 10.0f;
-        public float ACCELERATION = 100.0f;
+        public float MAXVELOCITY = 5.0f;
+        public float ACCELERATION = 10.0f;
         public float XVelocity = 0.0f;
 
         public Direction currentDirection = Direction.NONE;

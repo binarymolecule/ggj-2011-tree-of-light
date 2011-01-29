@@ -23,30 +23,36 @@ namespace lightseeds
         private World world;
 
         public Matrix worldToScreen;
-        public Matrix[] screenToGlobal;
         PlayerSprite[] players;
         public GameCamera[] cameras;
 
         Texture2D playerTexture;
         private SpriteFont spriteFont;
 
+        RenderTarget2D[] splitScreens;
+        public Vector2[] splitScreenPositions;
+
+        public const int SCREEN_WIDTH = 1024;
+        public const int SCREEN_HEIGHT = 768;
+        public const int SPLIT_SCREEN_WIDTH = 1024;
+        public const int SPLIT_SCREEN_HEIGHT = 384;
+        public const int WORLD_SCREEN_WIDTH = 24;
+        public const int WORLD_SCREEN_HEIGHT = 9;
+
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.PreferredBackBufferWidth = 1024;
-            graphics.PreferredBackBufferHeight = 768;
-            
-            float screenWidth = 1024.0f;
-            float screenHeight = 768.0f;
-            float screenWidthWorld = 24.0f;
-            float screenHeightWorld = 9.0f;
+            graphics.PreferredBackBufferWidth = SCREEN_WIDTH;
+            graphics.PreferredBackBufferHeight = SCREEN_HEIGHT;
 
-            worldToScreen = Matrix.CreateScale(screenWidth / screenWidthWorld, -0.5f * screenHeight / screenHeightWorld, 1.0f) *
-                               Matrix.CreateTranslation(0.5f * screenWidth, 0.5f * screenHeight, 0.0f);
-            screenToGlobal = new Matrix[2];
-            screenToGlobal[0] = Matrix.Identity;
-            screenToGlobal[1] = Matrix.CreateTranslation(0.0f, 0.5f * screenHeight, 0.0f);
+            worldToScreen = Matrix.CreateScale((float)SPLIT_SCREEN_WIDTH / (float)WORLD_SCREEN_WIDTH,
+                                               -(float)SPLIT_SCREEN_HEIGHT / (float)WORLD_SCREEN_HEIGHT, 1.0f) *
+                            Matrix.CreateTranslation(0.5f * (float)SPLIT_SCREEN_WIDTH, (float)SPLIT_SCREEN_HEIGHT, 0.0f);
+            splitScreenPositions = new Vector2[2];
+            splitScreenPositions[0] = Vector2.Zero;
+            splitScreenPositions[1] = new Vector2(0.0f, (float)SPLIT_SCREEN_HEIGHT);
         }
 
         /// <summary>
@@ -90,6 +96,10 @@ namespace lightseeds
             cameras[1] = new GameCamera(this, 1, players[1].worldPosition);
             cameras[1].FollowPlayer(players[1]);
 
+            splitScreens = new RenderTarget2D[2];
+            splitScreens[0] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
+            splitScreens[1] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
+
             spriteFont = Content.Load<SpriteFont>("Geo");
         }
 
@@ -130,25 +140,26 @@ namespace lightseeds
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(new Color(40,40,40));
-
-
-            // Draw screen of player 1
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
-                              screenToGlobal[0] * cameras[0].screenTransform);
-            players[0].Draw(gameTime);
-            spriteBatch.End();
-       
-            // Draw screen of player 2
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
-                              screenToGlobal[1] * cameras[1].screenTransform);
-            players[1].Draw(gameTime);
-            spriteBatch.End();
-
-            foreach(var camera in cameras) {
-                // todo: set render target
-                GameCamera.CurrentCamera = camera;
+            
+            // Draw worlds
+            for (int i = 0; i < 2; i++)
+            {
+                GraphicsDevice.SetRenderTarget(splitScreens[i]);
+                GraphicsDevice.Clear(new Color(40, 40, 40));
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
+                                  cameras[i].screenTransform);
+                players[i].Draw(gameTime);
+                spriteBatch.End();
+                GameCamera.CurrentCamera = cameras[i];
                 world.Draw(this, gameTime, -1000, 2000);
             }
+            GraphicsDevice.SetRenderTarget(null);
+
+            // Draw split screens
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
+            for (int i = 0; i < 2; i++)
+                spriteBatch.Draw(splitScreens[i], splitScreenPositions[i], Color.White);
+            spriteBatch.End();
 
             spriteBatch.Begin();
             spriteBatch.DrawString(spriteFont, String.Format("P1: {0:0.0} / {1:0.0}", players[0].worldPosition.X, players[0].worldPosition.Y), Vector2.Zero, Color.White);
