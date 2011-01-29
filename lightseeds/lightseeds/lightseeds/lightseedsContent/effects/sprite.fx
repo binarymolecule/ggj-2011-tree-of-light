@@ -123,7 +123,7 @@ void SpriteVertexShader(inout float4 position : POSITION0,
 void SpritePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 {
     //color *= tex2D(TextureSampler, texCoord);
-	color = float4(1,0,0,1);
+	//color = float4(1,0,0,1);
 }
 
 

@@ -40,10 +40,10 @@ namespace lightseeds.GameObjects
             heights = new List<Vector2>()
             {
                 new Vector2(0,5),
-                new Vector2(1,5),
-                new Vector2(2,8),
-                new Vector2(3,4),
-                new Vector2(4,9),
+                new Vector2(1,5.2f),
+                new Vector2(2.5f,5.1f),
+                new Vector2(3.8f,4.8f),
+                new Vector2(6.9f,4.7f),
             };
 
             GenerateChunks();
@@ -79,8 +79,8 @@ namespace lightseeds.GameObjects
                 vertices[i * 2] = new VertexPositionColorTexture(new Vector3(x, 0, 0), Color.White, Vector2.Zero);
                 vertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y, 0), Color.White, Vector2.Zero);
 
-                topVertices[i * 2] = new VertexPositionColorTexture(new Vector3(x, y - 0.2f, 0), Color.White, Vector2.Zero);
-                topVertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y + 0.2f, 0), Color.White, Vector2.Zero);
+                topVertices[i * 2] = new VertexPositionColorTexture(new Vector3(x, y - 0.2f, 0), Color.Green, Vector2.Zero);
+                topVertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y + 0.2f, 0), Color.Green, Vector2.Zero);
             }
 
             groundVbo.SetData(vertices);
@@ -105,7 +105,6 @@ namespace lightseeds.GameObjects
                 //sb.Draw(tile, Vector2.Zero, Color.White);
             }
 
-            graphicsDevice.SetVertexBuffer(groundVbo);
             graphicsDevice.Textures[0] = tile;
             graphicsDevice.SamplerStates[0] = new SamplerState()
             {
@@ -125,8 +124,11 @@ namespace lightseeds.GameObjects
             //spriteEffect.Parameters["MatrixTransform"].SetValue(Matrix.CreateScale(0.05f));
             //spriteEffect.Parameters["TextureSampler"].SetValue(tile);
             spriteEffect.CurrentTechnique.Passes[0].Apply();
-            
 
+            graphicsDevice.SetVertexBuffer(groundVbo);
+            graphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, (heights.Count - 1) * 2);
+
+            graphicsDevice.SetVertexBuffer(toppingVbo);
             graphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, (heights.Count - 1) * 2);
         }
     }
