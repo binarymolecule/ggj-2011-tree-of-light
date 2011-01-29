@@ -107,6 +107,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameCamera.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PlayerSprite.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />

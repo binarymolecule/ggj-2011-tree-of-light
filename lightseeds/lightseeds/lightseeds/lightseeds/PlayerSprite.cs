@@ -20,9 +20,27 @@ namespace lightseeds
 
         int index;
         
-        public Vector3 position;
+        Vector3 position;
 
         Texture2D texture;
+
+        public Vector3 worldPosition
+        {
+            get
+            {
+                return position;
+            }
+        }
+
+
+        public Vector2 screenPosition
+        {
+            get
+            {
+                Vector3 screenPos = Vector3.Transform(position, game.worldToScreen[index]);
+                return new Vector2(screenPos.X, screenPos.Y);
+            }
+        }
         
         public PlayerSprite(Game game, int index, Texture2D tex) : base(game)
         {
@@ -56,9 +74,7 @@ namespace lightseeds
 
         public override void Draw(GameTime gameTime)
         {
-            Vector3 screenPos = Vector3.Transform(position, game.worldToScreen[index]);
-
-            game.spriteBatch.Draw(texture, new Vector2(screenPos.X, screenPos.Y), Color.White);
+            game.spriteBatch.Draw(texture, this.screenPosition, Color.White);
 
             base.Draw(gameTime);
         }
