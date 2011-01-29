@@ -11,7 +11,7 @@ namespace lightseeds.GameObjects
 {
     public enum TreeType
     {
-        BASE,
+        BASE = 0,
         FIGHTER,
         MOTHER,
         PAWN,
@@ -26,9 +26,8 @@ namespace lightseeds.GameObjects
 
         public ContentManager content;
 
-        public Texture2D texture;
+        public Texture2D[] textures;
         public Texture2D fruitTexture;
-        public Texture2D baseTexture;
 
         public TreeCollection(Game1 game)
         {
@@ -38,9 +37,13 @@ namespace lightseeds.GameObjects
         public void Load()
         {
             content = GameServices.GetService<ContentManager>();
-            texture = content.Load<Texture2D>("textures/treeDummy");
+            textures = new Texture2D[5];
+            textures[0] = content.Load<Texture2D>("Tree Previews/Treeoflife_Small");
+            textures[1] = content.Load<Texture2D>("Tree Previews/Tree1_preview");
+            textures[2] = content.Load<Texture2D>("Tree Previews/Tree2_preview");
+            textures[3] = content.Load<Texture2D>("Tree Previews/Tree3_preview");
+            textures[4] = content.Load<Texture2D>("Tree Previews/Tree4_preview");
             fruitTexture = content.Load<Texture2D>("textures/glowing");
-            baseTexture = content.Load<Texture2D>("Tree Previews/Treeoflife_Small");
         }
 
         public void Update(GameTime gameTime)

@@ -69,6 +69,8 @@ namespace lightseeds.GameObjects
         public Vector2 fruitSize;
         public float groundHeight;
 
+        private Texture2D texture;
+
         public TreeCollection parentCollection;
 
         public TreeType treeType;
@@ -123,16 +125,16 @@ namespace lightseeds.GameObjects
             treeType = type;
             parentCollection = coll;
             fruitSize = new Vector2(parentCollection.fruitTexture.Width, parentCollection.fruitTexture.Height);
+            texture = parentCollection.textures[(int)treeType];
+            screenSize = new Vector2(texture.Width, texture.Height);
             if (treeType == TreeType.BASE)
             {
-                screenSize = new Vector2(parentCollection.baseTexture.Width, parentCollection.baseTexture.Height);
                 offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 64.0f);
                 fruitOffset = new Vector2(0.0f, -96.0f);
             }
             else
             {
-                screenSize = new Vector2(parentCollection.texture.Width, parentCollection.texture.Height);
-                offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 4.0f);
+                offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 8.0f);
                 fruitOffset = new Vector2(0.0f, -96.0f);
             }
             growth = 0.1f;
@@ -238,7 +240,7 @@ namespace lightseeds.GameObjects
         {
             if (treeType == TreeType.BASE)
             {
-                spriteBatch.Draw(parentCollection.baseTexture, screenPosition + offset, Color.White);
+                spriteBatch.Draw(texture, screenPosition + offset, Color.White);
                 if (status == TreeStatus.MATURE)
                 {
                     float fruitScale = (float)currentFruitTime / (float)fruitTime;
@@ -264,9 +266,9 @@ namespace lightseeds.GameObjects
                     case TreeStatus.PLANTED:
                         {
                             Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * growth * screenSize.X),
-                                                                (int)(screenPosition.Y - growth * screenSize.Y + 4.0f),
+                                                                (int)(screenPosition.Y - growth * screenSize.Y + 8.0f),
                                                                 (int)(growth * screenSize.X), (int)(growth * screenSize.Y));
-                            spriteBatch.Draw(parentCollection.texture, rectangle, Color.White);
+                            spriteBatch.Draw(texture, rectangle, Color.White);
                         }
                         break;
                     case TreeStatus.MATURE:
@@ -275,26 +277,26 @@ namespace lightseeds.GameObjects
                             Rectangle fruitRect = new Rectangle((int)(screenPosition.X + fruitOffset.X - 0.5f * fruitScale * fruitSize.X),
                                                                 (int)(screenPosition.Y + fruitOffset.Y - 0.5f * fruitScale * fruitSize.Y),
                                                                 (int)(fruitScale * fruitSize.X), (int)(fruitScale * fruitSize.Y));
-                            spriteBatch.Draw(parentCollection.texture, screenPosition + offset, Color.Green);
+                            spriteBatch.Draw(texture, screenPosition + offset, Color.White);
                             spriteBatch.Draw(parentCollection.fruitTexture, fruitRect, Color.White);
                         }
                         break;
                     case TreeStatus.KILLED:
                         {
                             Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * growth * screenSize.X),
-                                                                (int)(screenPosition.Y - growth * screenSize.Y + 4.0f),
+                                                                (int)(screenPosition.Y - growth * screenSize.Y + 8.0f),
                                                                 (int)(growth * screenSize.X), (int)(growth * screenSize.Y));
-                            spriteBatch.Draw(parentCollection.texture, rectangle, Color.White);
+                            spriteBatch.Draw(texture, rectangle, Color.White);
                         }
                         break;
                     case TreeStatus.DIED:
                         {
-                            spriteBatch.Draw(parentCollection.texture, screenPosition + offset, Color.Gray);
+                            spriteBatch.Draw(texture, screenPosition + offset, Color.Gray);
                         }
                         break;
                     case TreeStatus.BLUEPRINT:
                         {
-                            spriteBatch.Draw(parentCollection.texture, screenPosition + offset, Color.Black);
+                            spriteBatch.Draw(texture, screenPosition + offset, Color.Black);
                             break;
                         }
                 }
