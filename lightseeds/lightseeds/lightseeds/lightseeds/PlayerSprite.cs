@@ -10,7 +10,11 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
 namespace lightseeds
-{    
+{
+    public enum Direction
+    {
+        LEFT, RIGHT
+    }
     /// <summary>
     /// This is a game component that implements IUpdateable.
     /// </summary>
@@ -24,8 +28,9 @@ namespace lightseeds
 
         Texture2D texture;
 
-        public float playerSpeed = 0.08f;
-
+        public float XVelocity = 0.0f;
+        public float MAXVELOCITY = 0.1f;
+        public float ACCELERATION = 0.01f;
 
         public Vector3 worldPosition
         {
@@ -70,6 +75,7 @@ namespace lightseeds
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
+            this.position.X += XVelocity;
             base.Update(gameTime);
         }
 
@@ -80,10 +86,20 @@ namespace lightseeds
             base.Draw(gameTime);
         }
 
-        public void move(float p0)
+        public void move(Direction d)
         {
-            this.position.X += p0;
 
+            if (XVelocity < MAXVELOCITY && Direction.RIGHT == d)
+                XVelocity += ACCELERATION;
+            if (XVelocity > -MAXVELOCITY && Direction.LEFT == d)
+                XVelocity -= ACCELERATION;
+        }
+        public void stop()
+        {
+            if (XVelocity > 0)
+                XVelocity -= ACCELERATION;
+            else if (XVelocity < 0)
+                XVelocity += ACCELERATION;
         }
     }
 }

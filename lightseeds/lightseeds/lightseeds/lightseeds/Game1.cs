@@ -117,13 +117,12 @@ namespace lightseeds
                    Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
             if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            {
-                players[0].move(-players[0].playerSpeed);
-            }
+                players[0].move(Direction.LEFT);
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            {
-                players[0].move(players[0].playerSpeed);
-            }
+                players[0].move(Direction.RIGHT);
+            if (!Keyboard.GetState().IsKeyDown(Keys.Right) && !Keyboard.GetState().IsKeyDown(Keys.Left))
+                players[0].stop();
+            
         }
     }
 }
