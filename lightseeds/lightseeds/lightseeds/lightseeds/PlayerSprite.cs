@@ -31,7 +31,8 @@ namespace lightseeds
         public const float WOBBLYNESS = 1.0f;
         public const float MAXVELOCITY = 5.0f;
         public const float ACCELERATION = 10.0f;
-        
+
+        public float currentAcceleration = 0.0f;
         public float wobbleSpeed = 1.0f;
         public float wobbleHeight = 3.0f;
 
@@ -61,33 +62,18 @@ namespace lightseeds
         {
             this.game = (Game1)game;
             this.index = index;
-            this.texture = tex;
-            this.position = new Vector3(0.0f, 5.0f, 1.0f);
+            texture = tex;
+            position = new Vector3(0.0f, 5.0f, 1.0f);
             
         }
 
-        /// <summary>
-        /// Allows the game component to perform any initialization it needs to before starting
-        /// to run.  This is where it can query for any required services and load content.
-        /// </summary>
-        public override void Initialize()
-        {
-            // TODO: Add your initialization code here
-
-            base.Initialize();
-        }
-
-        /// <summary>
-        /// Allows the game component to update itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
             var timeFactor = gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
             if (XVelocity < MAXVELOCITY && Direction.RIGHT == currentDirection)
-                XVelocity += ACCELERATION * timeFactor;
+                XVelocity += currentAcceleration * timeFactor;
             if (XVelocity > -MAXVELOCITY && Direction.LEFT == currentDirection)
-                XVelocity -= ACCELERATION * timeFactor;
+                XVelocity -= currentAcceleration * timeFactor;
             if (Direction.NONE == currentDirection)
             {
                 if (XVelocity > 0)
@@ -104,19 +90,20 @@ namespace lightseeds
 
         public override void Draw(GameTime gameTime)
         {
-            game.spriteBatch.Draw(texture, new Vector2(screenPosition.X, getWobblyPosition(screenPosition.Y, gameTime)), Color.White);
+            game.spriteBatch.Draw(texture, new Vector2(screenPosition.X, WobblyPosition(screenPosition.Y, gameTime)), Color.White);
             base.Draw(gameTime);
         }
 
-        private float getWobblyPosition(float pos, GameTime gameTime)
+        private float WobblyPosition(float pos, GameTime gameTime)
         {
             var sin1 = wobbleHeight * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 60);
             return pos + sin1;
         }
 
-        public void move(Direction d)
+        public void Move(Direction d, float strength)
         {
             currentDirection = d;
+            currentAcceleration = ACCELERATION*strength;
             if (d != Direction.NONE)
                 wobbleSpeed = 3.0f * WOBBLYNESS;
             else
