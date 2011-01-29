@@ -30,7 +30,7 @@ namespace lightseeds
 
         Vector2 translation;
 
-        Vector2 source, target;
+        Vector2 target;
 
         Game1 game;
 

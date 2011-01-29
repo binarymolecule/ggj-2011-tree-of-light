@@ -61,6 +61,7 @@ namespace lightseeds.GameObjects
         public const float MIN_DISTANCE = 4.0f;
         
         public Vector3 position;
+        public Vector2 offset;
 
         public TreeCollection parentCollection;
 
@@ -84,9 +85,7 @@ namespace lightseeds.GameObjects
         public bool RemoveOnNextUpdate = false;
 
         public Vector2 screenSize;
-
-        public Vector2 origin;
-
+        
         public Vector3 worldPosition
         {
             get
@@ -108,8 +107,8 @@ namespace lightseeds.GameObjects
         {
             this.parentCollection = coll;
             this.position = position;
-            this.origin = new Vector2(0.0f, parentCollection.texture.Height);
             this.screenSize = new Vector2(parentCollection.texture.Width, parentCollection.texture.Height);
+            this.offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 4.0f);
             this.growth = 0.1f;
             this.isMature = false;
 

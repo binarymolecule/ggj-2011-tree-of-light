@@ -32,7 +32,9 @@ namespace lightseeds
         public float yVelocity = 0.0f;
 
         public int collectedSeeds;
-        
+
+        public Vector2 offset;
+
         public Vector3 worldPosition
         {
             get
@@ -56,7 +58,8 @@ namespace lightseeds
             this.game = (Game1)game;
             this.index = index;
             texture = tex;
-            position = new Vector3(0.0f, 8.0f, 1.0f);            
+            position = new Vector3(0.0f, 8.0f, 1.0f);
+            offset = new Vector2(-0.5f * texture.Width, -0.5f * texture.Height);
         }
 
         public override void Update(GameTime gameTime)
@@ -136,7 +139,7 @@ namespace lightseeds
         {
             var x = screenPosition.X + 2* (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 120);
             var y = WobblyPosition(screenPosition.Y, wobbleHeight, gameTime);
-            game.spriteBatch.Draw(texture, new Vector2(x,y), Color.White);
+            game.spriteBatch.Draw(texture, new Vector2(x,y) + offset, Color.White);
             base.Draw(gameTime);
         }
 

@@ -12,13 +12,16 @@ namespace lightseeds.GameObjects
     public class Seed
     {
         public Vector3 position;
+        public Vector2 offset;
         public bool RemoveOnNextUpdate = false;
         public bool collected = false;
         private SeedCollection parentCollection;
 
+
         public Seed(SeedCollection collection)
         {
             parentCollection = collection;
+            offset = new Vector2(-0.5f * parentCollection.texture.Width, -0.5f * parentCollection.texture.Height);
         }
 
 
@@ -31,9 +34,8 @@ namespace lightseeds.GameObjects
 
             foreach (var player in parentCollection.game.players)
             {
-                var distance = (player.worldPosition - position).Length();
-                distance = Math.Abs(player.worldPosition.X - position.X);
-                if (distance < 0.2f)
+                float distance = (player.worldPosition - position).Length();
+                if (distance < 2.0f)
                 {
                     RemoveOnNextUpdate = true;
                     collected = true;
@@ -46,7 +48,7 @@ namespace lightseeds.GameObjects
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(parentCollection.texture, (Vector3.Transform(position, parentCollection.game.worldToScreen)).ToVector2(), Color.White);
+            spriteBatch.Draw(parentCollection.texture, (Vector3.Transform(position, parentCollection.game.worldToScreen)).ToVector2() + offset, Color.White);
         }
     }
 }
