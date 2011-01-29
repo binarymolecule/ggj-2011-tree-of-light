@@ -194,7 +194,7 @@ namespace lightseeds
 
                 GameCamera.CurrentCamera = cameras[i];
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, bgMatrix(i));
-                spriteBatch.Draw(backgroundTexture, new Rectangle((int)(-SCREEN_WIDTH*0.1f), (int)(-SCREEN_HEIGHT*0.1f), (int)(SCREEN_WIDTH * 1.2), (int)(SCREEN_HEIGHT*1.2)), Color.White);
+                spriteBatch.Draw(backgroundTexture, new Rectangle((int)(-SCREEN_WIDTH*0.1f), (int)(-SCREEN_HEIGHT*0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT*1.2)), Color.White);
                 spriteBatch.End();
                 
                 world.Draw(this, gameTime, -1000, 2000);
@@ -279,7 +279,7 @@ namespace lightseeds
         public Matrix bgMatrix(int index)
         {
             Vector3 v = new Vector3(-(players[index].worldPosition.X), 
-                                    -(players[index].worldPosition.Y), 0);
+                                    (players[index].worldPosition.Y), 0);
             return Matrix.CreateTranslation(v);
             
         }
