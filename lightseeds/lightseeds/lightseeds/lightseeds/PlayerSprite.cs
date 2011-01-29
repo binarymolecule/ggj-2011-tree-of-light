@@ -22,7 +22,8 @@ namespace lightseeds
 
         public const float WOBBLEBPM = 60.0f;
         public const float WOBBLYNESS = 3.0f;
-        public const float MAXVELOCITY = 25.0f;
+        public const float MAXVELOCITY_X = 25.0f;
+        public const float MAXVELOCITY_Y = 10.0f;
         public const float ACCELERATION = 100.0f;
         public float wobbleHeight = 2.0f;
         
@@ -77,10 +78,10 @@ namespace lightseeds
             if (position.X < XBOUNDARY && position.X > -XBOUNDARY)
             {
                 xVelocity += currentXAcceleration * timeFactor;
-                if (xVelocity > MAXVELOCITY)
-                    xVelocity = MAXVELOCITY;
-                if (xVelocity < -MAXVELOCITY)
-                    xVelocity = -MAXVELOCITY;
+                if (xVelocity > MAXVELOCITY_X)
+                    xVelocity = MAXVELOCITY_X;
+                if (xVelocity < -MAXVELOCITY_X)
+                    xVelocity = -MAXVELOCITY_X;
             }
             
             //backbounce
@@ -110,17 +111,17 @@ namespace lightseeds
             if (position.Y < YBOUNDARY)
             {
                 yVelocity += currentYAcceleration * timeFactor;
-                if (yVelocity > MAXVELOCITY)
-                    yVelocity = MAXVELOCITY;
-                if (yVelocity < -MAXVELOCITY)
-                    yVelocity = -MAXVELOCITY;
+                if (yVelocity > MAXVELOCITY_Y)
+                    yVelocity = MAXVELOCITY_Y;
+                if (yVelocity < -MAXVELOCITY_Y)
+                    yVelocity = -MAXVELOCITY_Y;
             }
 
             //backbounce
             if (position.Y > YBOUNDARY)
                 yVelocity -= 2 * ACCELERATION * timeFactor;
             float diff = game.world.getHeigth(position.X) + 3.0f - position.Y;
-            if (diff > 0 && yVelocity < MAXVELOCITY/2)
+            if (diff > 0 && yVelocity < MAXVELOCITY_Y / 2)
                 yVelocity += 4 * diff * ACCELERATION * timeFactor;
 
 

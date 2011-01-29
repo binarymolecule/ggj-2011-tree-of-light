@@ -13,17 +13,17 @@ namespace lightseeds
 
         bool isMoving;
 
-        public const float MAX_RANGE = 5.0f;
+        public const float MAX_RANGE_X = 5.0f, MAX_RANGE_Y = 0.5f;
 
-        public const float BRAKE_DIST = 5.0f;
+        public const float BRAKE_DIST_X = 5.0f, BRAKE_DIST_Y = 2.0f;
 
         public const float MIN_DIST = 0.1f;
 
-        public const float MIN_SPEED = 5.0f, MAX_SPEED = 30.0f;
+        public const float MIN_SPEED = 5.0f, MAX_SPEED = 32.0f;
 
         public const float ACCELERATION = 100.0f, BRAKE_ACCELERATION = 60.0f;
 
-        static public Vector2 WORLD_OFFSET = new Vector2(0.0f, 3.0f);
+        static public Vector2 WORLD_OFFSET = new Vector2(0.0f, 2.0f);
 
         static public Vector2 MIN_COORDS = new Vector2(-180.0f + 0.25f * Game1.WORLD_SCREEN_WIDTH, 0.5f * Game1.WORLD_SCREEN_HEIGHT) + WORLD_OFFSET;
         static public Vector2 MAX_COORDS = new Vector2(180.0f - 0.25f * Game1.WORLD_SCREEN_WIDTH, 100.0f) + WORLD_OFFSET;
@@ -114,11 +114,13 @@ namespace lightseeds
 
             Vector2 direction = target - translation;
             float seconds = 0.001f * gameTime.ElapsedGameTime.Milliseconds;
-            float distance = direction.Length();
+            //float distance = direction.Length();
+            float distanceX = Math.Abs(direction.X);
+            float distanceY = Math.Abs(direction.Y);
 
             if (!isMoving)
             {
-                if (distance > MAX_RANGE)
+                if (distanceX > MAX_RANGE_X || distanceY > MAX_RANGE_Y)
                 {
                     isMoving = true;
                 }
@@ -126,7 +128,7 @@ namespace lightseeds
 
             if (isMoving)
             {
-                if (distance < MIN_DIST && !targetIsMoving)
+                if (Math.Max(distanceX, distanceY) < MIN_DIST && !targetIsMoving)
                 {
                     translation = target;
                     speed = 0.0f;
@@ -135,7 +137,7 @@ namespace lightseeds
                 }
                 else 
                 {
-                    if (distance < BRAKE_DIST)
+                    if (distanceX < BRAKE_DIST_X && distanceY < BRAKE_DIST_Y)
                     {
                         speed -= seconds * BRAKE_ACCELERATION;
                         if (speed < MIN_SPEED)
