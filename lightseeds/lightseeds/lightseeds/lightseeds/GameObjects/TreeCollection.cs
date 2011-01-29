@@ -9,6 +9,15 @@ using Microsoft.Xna.Framework;
 
 namespace lightseeds.GameObjects
 {
+    public enum TreeType
+    {
+        BASE,
+        FIGHTER,
+        MOTHER,
+        PAWN,
+        TANK
+    };
+
     public class TreeCollection
     {
         public List<Tree> trees = new List<Tree>();
@@ -58,12 +67,9 @@ namespace lightseeds.GameObjects
             }
         }
 
-        internal void CreateTree(float x)
+        internal void CreateTree(float x, TreeType type)
         {
-            trees.Add(new Tree(this, new Vector3(x, game.world.getHeigth(x), 0.0f))
-            {
-                status = Tree.TreeStatus.NORMAL
-            });
+            trees.Add(new Tree(this, new Vector3(x, game.world.getHeigth(x), 0.0f), type));            
         }
 
         public bool HasTreeAtPosition(float posX)

@@ -72,12 +72,9 @@ namespace lightseeds.GameObjects
         public float growth;
         public float lifeSpan;
         public float resistance = 0.5f;
-        //public float fruitsPerMinute;
-        public float fruitTime = 2;
+        public float fruitTime;
         public int price;
         public string name;
-
-        public bool isMature;
         public double currentFruitTime;
         
         #endregion
@@ -85,10 +82,10 @@ namespace lightseeds.GameObjects
         public bool RemoveOnNextUpdate = false;
         public enum TreeStatus
         {
-            NORMAL,
+            PLANTED,
+            MATURE,
             DIED,
-            KILLED,
-            PLANTED
+            KILLED
         }
 
         public TreeStatus status;
@@ -112,53 +109,84 @@ namespace lightseeds.GameObjects
             }
         }
 
-        public Tree(TreeCollection coll, Vector3 position)
+        public Tree(TreeCollection coll, Vector3 position, TreeType type)
         {
             this.parentCollection = coll;
             this.position = position;
             this.screenSize = new Vector2(parentCollection.texture.Width, parentCollection.texture.Height);
             this.offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 4.0f);
             this.growth = 0.1f;
-            this.isMature = false;
+            this.status = TreeStatus.PLANTED;
 
-            this.growthTime = 10.0f;
+            switch (type)
+            {
+                case TreeType.BASE:
+                    this.status = TreeStatus.MATURE;
+                    this.growth = 0.1f;
+                    break;
+                case TreeType.FIGHTER:
+                    this.growthTime = 20.0f;
+                    this.fruitTime = 40.0f;
+                    break;
+                case TreeType.MOTHER:
+                    this.growthTime = 30.0f;
+                    this.fruitTime = 10.0f;
+                    break;
+                case TreeType.PAWN:
+                    this.growthTime = 10.0f;
+                    this.fruitTime = 20.0f;
+                    break;
+                case TreeType.TANK:
+                    this.growthTime = 60.0f;
+                    this.fruitTime = 30.0f;
+                    break;
+            }
         }
 
         public void Update(GameTime gameTime)
         {
-            if (!isMature)
+            switch (status)
             {
-                growth += (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) / growthTime;
-                if (growth > 1.0f)
-                {
-                    isMature = true;
-                    growth = 1.0f;
-                }
-            }
-            else
-            {
-                currentFruitTime += gameTime.ElapsedGameTime.TotalSeconds;
-                if (currentFruitTime > this.fruitTime)
-                {
-                    this.parentCollection.game.seedCollection.SpawnSeed(worldPosition + new Vector3(0, 2, 0));
-                    currentFruitTime = 0;
-                }
+                case TreeStatus.PLANTED:
+                    growth += (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) / growthTime;
+                    if (growth > 1.0f)
+                    {
+                        status = TreeStatus.MATURE;
+                        growth = 1.0f;
+                    }
+                    break;
+                case TreeStatus.MATURE:
+                    currentFruitTime += gameTime.ElapsedGameTime.TotalSeconds;
+                    if (currentFruitTime > this.fruitTime)
+                    {
+                        this.parentCollection.game.seedCollection.SpawnSeed(worldPosition + new Vector3(0, 2, 0));
+                        currentFruitTime = 0;
+                    }
+                    break;
             }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (isMature)
+            Rectangle rectangle;
+            switch (status)
             {
-                Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * screenSize.X), (int)(screenPosition.Y - screenSize.Y + 4.0f),
-                                                    (int)screenSize.X, (int)screenSize.Y);
-                spriteBatch.Draw(parentCollection.texture, rectangle, Color.Green);
-            }
-            else
-            {
-                Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * growth * screenSize.X), (int)(screenPosition.Y - growth * screenSize.Y + 4.0f),
+                case TreeStatus.MATURE:
+                    rectangle = new Rectangle((int)(screenPosition.X - 0.5f * screenSize.X), (int)(screenPosition.Y - screenSize.Y + 4.0f),
+                                              (int)screenSize.X, (int)screenSize.Y);
+                    spriteBatch.Draw(parentCollection.texture, rectangle, Color.Green);
+                    break;
+                case TreeStatus.PLANTED:
+                    rectangle = new Rectangle((int)(screenPosition.X - 0.5f * growth * screenSize.X), (int)(screenPosition.Y - growth * screenSize.Y + 4.0f),
                                                     (int)(growth * screenSize.X), (int)(growth * screenSize.Y));
-                spriteBatch.Draw(parentCollection.texture, rectangle, Color.White);
+                    spriteBatch.Draw(parentCollection.texture, rectangle, Color.White);
+                    break;
+                case TreeStatus.KILLED:
+                case TreeStatus.DIED:
+                    rectangle = new Rectangle((int)(screenPosition.X - 0.5f * screenSize.X), (int)(screenPosition.Y - screenSize.Y + 4.0f),
+                                              (int)screenSize.X, (int)screenSize.Y);
+                    spriteBatch.Draw(parentCollection.texture, rectangle, Color.Gray);
+                    break;
             }
         }
 

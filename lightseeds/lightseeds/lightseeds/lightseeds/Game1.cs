@@ -241,7 +241,7 @@ namespace lightseeds
             float posX = player.worldPosition.X;
             if (seedCollection.collectedSeedCount > 0 && !treeCollection.HasTreeAtPosition(posX))
             {
-                treeCollection.CreateTree(posX);
+                treeCollection.CreateTree(posX, TreeType.PAWN);
                 seedCollection.collectedSeedCount--;
             }
         }

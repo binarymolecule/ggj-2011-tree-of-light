@@ -37,7 +37,7 @@ namespace lightseeds.GameObjects
                 }
                 else if (distance < 10)
                 {
-                    if (tree.status == Tree.TreeStatus.NORMAL)
+                    if (tree.status == Tree.TreeStatus.MATURE)
                     {
                         var realResistance = tree.resistance;
                         // todo: apply curve
