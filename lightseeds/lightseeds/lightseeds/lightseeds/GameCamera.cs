@@ -9,17 +9,19 @@ namespace lightseeds
     {
         int index;
 
-        Vector2 speed;
+        float speed;
 
-        bool reachedSpeedX, reachedSpeedY;
+        bool isMoving;
 
-        public const float APPROACH_DIST = 1.0f;
+        public const float MAX_RANGE = 5.0f;
+
+        public const float BRAKE_DIST = 1.0f;
 
         public const float MIN_DIST = 0.01f;
 
-        public const float MAX_SPEED = 5.0f;
+        public const float MIN_SPEED = 0.1f, MAX_SPEED = 5.0f;
 
-        public const float ACCELERATION = 0.25f;
+        public const float ACCELERATION = 8.0f;
 
         Vector3 translation;
 
@@ -60,8 +62,8 @@ namespace lightseeds
         public void FollowPlayer(PlayerSprite player)
         {
             this.player = player;
-            this.speed = Vector2.Zero;
-            reachedSpeedX = reachedSpeedY = false;
+            this.speed = 0.0f;
+            isMoving = false;
         }
 
         public void Center(Vector3 position)
@@ -69,8 +71,8 @@ namespace lightseeds
             this.player = null;
             this.translation = position;
             this.target = position;
-            this.speed = Vector2.Zero;
-            reachedSpeedX = reachedSpeedY = false;
+            this.speed = 0.0f;
+            isMoving = false;
         }
 
         public void Reset()
@@ -82,8 +84,8 @@ namespace lightseeds
         {
             this.player = null;
             this.target = position;
-            this.speed = Vector2.Zero;
-            reachedSpeedX = reachedSpeedY = false;
+            this.speed = 0.0f;
+            isMoving = false;
         }
 
         public void Update(GameTime gameTime)
@@ -92,59 +94,46 @@ namespace lightseeds
             {
                 target = player.worldPosition;
             }
+
             Vector3 direction = target - translation;
             float seconds = 0.001f * gameTime.ElapsedGameTime.Milliseconds;
+            float distance = direction.Length();
 
-            if (Math.Abs(direction.X) > (reachedSpeedX ? APPROACH_DIST : MIN_DIST))
+            if (!isMoving)
             {
-                speed.X += Math.Sign(direction.X) * seconds * ACCELERATION;
-                translation.X += speed.X;
-                reachedSpeedX = (Math.Abs(direction.X) > APPROACH_DIST);
-            }
-            else if (Math.Abs(direction.X) > MIN_DIST)
-            {
-                speed.X -= Math.Sign(direction.X) * seconds * ACCELERATION;
-                translation.X += speed.X;
-                if ((speed.X > 0 && translation.X > target.X) ||
-                    (speed.X < 0 && translation.X < target.X))
+                if (distance > MAX_RANGE)
                 {
-                    translation.X = target.X;
-                    speed.X = 0.0f;
-                    reachedSpeedX = false;
-                }
-
-            }
-            else
-            {
-                translation.X = target.X;
-                speed.X = 0.0f;
-                reachedSpeedX = false;
-            }
-            if (Math.Abs(direction.Y) > (reachedSpeedY ? APPROACH_DIST : MIN_DIST))
-            {
-                speed.Y += Math.Sign(direction.Y) * seconds * ACCELERATION;
-                translation.Y += speed.Y;
-                reachedSpeedY = (Math.Abs(direction.Y) > APPROACH_DIST);
-            }
-            else if (Math.Abs(direction.Y) > MIN_DIST)
-            {
-                speed.Y -= Math.Sign(direction.Y) * seconds * ACCELERATION;
-                translation.Y += speed.Y;
-                if ((speed.Y > 0 && translation.Y > target.Y) ||
-                    (speed.Y < 0 && translation.Y < target.Y))
-                {
-                    translation.Y = target.Y;
-                    speed.Y = 0.0f;
-                    reachedSpeedY = false;
+                    isMoving = true;
                 }
             }
-            else
-            {
-                translation.Y = target.Y;
-                speed.Y = 0.0f;
-                reachedSpeedY = false;
-            }
 
+            if (isMoving)
+            {
+                if (distance < MIN_DIST)
+                {
+                    translation = target;
+                    speed = 0.0f;
+                    direction = Vector3.Zero;
+                    isMoving = false;
+                }
+                else 
+                {
+                    if (distance < BRAKE_DIST)
+                    {
+                        speed -= seconds * ACCELERATION;
+                        if (speed < MIN_SPEED)
+                            speed = MIN_SPEED;
+                    }
+                    else
+                    {
+                        speed += seconds * ACCELERATION;
+                        if (speed > MAX_SPEED)
+                            speed = MAX_SPEED;
+                    }
+                    direction.Normalize();
+                    translation += speed * seconds * direction;
+                }            
+            }
         }
     }
 }
