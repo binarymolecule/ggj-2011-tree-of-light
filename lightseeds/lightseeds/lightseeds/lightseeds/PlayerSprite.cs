@@ -32,8 +32,8 @@ namespace lightseeds
         public float wobbleSpeed = 1.0f;
         public float wobbleHeight = 3.0f;
 
-        public float MAXVELOCITY = 0.3f;
-        public float ACCELERATION = 1.0f;
+        public float MAXVELOCITY = 10.0f;
+        public float ACCELERATION = 100.0f;
         public float XVelocity = 0.0f;
 
         public Direction currentDirection = Direction.NONE;
@@ -91,7 +91,7 @@ namespace lightseeds
             if (Direction.NONE == currentDirection && XVelocity < 0)
                 XVelocity += ACCELERATION * timeFactor;
             
-            position.X += XVelocity;
+            position.X += XVelocity * timeFactor;
             base.Update(gameTime);
         }
 
@@ -115,9 +115,6 @@ namespace lightseeds
                 wobbleSpeed = 3.0f * WOBBLYNESS;
             else
                 wobbleSpeed = 1.0f * WOBBLYNESS;
-            
-
         }
-        
     }
 }
