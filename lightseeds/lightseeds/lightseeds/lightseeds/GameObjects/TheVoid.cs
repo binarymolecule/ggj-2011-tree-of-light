@@ -23,7 +23,7 @@ namespace lightseeds.GameObjects
         {
             this.game = game;
 
-            tex = game.Content.Load<Texture2D>("textures/smoke");
+            tex = game.Content.Load<Texture2D>("black");
         }
 
         public void Update(GameTime gt)
@@ -87,7 +87,23 @@ namespace lightseeds.GameObjects
 
         internal void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(tex, Vector3.Transform(new Vector3(horizontalPosition, 5, 0), game.worldToScreen).ToVector2(), Color.White);
+            Vector2 v1, v2;
+
+            if (direction.X > 0)
+            {
+                v1 = Vector3.Transform(new Vector3(horizontalPosition - 30, 30, 0), game.worldToScreen).ToVector2();
+                v2 = Vector3.Transform(new Vector3(horizontalPosition - 2, 0, 0), game.worldToScreen).ToVector2();
+            }
+            else
+            {
+                v1 = Vector3.Transform(new Vector3(horizontalPosition + 2, 30, 0), game.worldToScreen).ToVector2();
+                v2 = Vector3.Transform(new Vector3(horizontalPosition + 30, 0, 0), game.worldToScreen).ToVector2();
+            }
+            
+            var vd = v2 - v1;
+            var rect = new Rectangle((int)v1.X, (int)v1.Y, (int)vd.X, (int)vd.Y);
+            spriteBatch.Draw(tex, rect, new Rectangle(0,0,1,1), Color.White);
+
         }
     }
 }
