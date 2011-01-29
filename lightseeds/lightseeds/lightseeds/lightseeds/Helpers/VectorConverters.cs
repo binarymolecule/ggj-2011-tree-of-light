@@ -30,8 +30,10 @@ namespace lightseeds.Helpers
             var l = new List<TreeType>();
             foreach (var tt in a)
             {
-                l.Add((TreeType)tt);
-
+                if ((TreeType)tt != TreeType.BASE)
+                {
+                    l.Add((TreeType)tt);
+                }
             }
             var i = l.FindIndex(((x) => x == type)) + 1;
             return (i > l.Count-1 ? l.First() : l[i]);

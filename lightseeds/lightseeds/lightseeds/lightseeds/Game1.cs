@@ -35,6 +35,7 @@ namespace lightseeds
         public TreeCollection treeCollection;
         public SeedCollection seedCollection;
         public Tree[] blueprints = new Tree[2];
+        public TreeType lastUsedType = TreeType.PAWN;
 
         public List<TheVoid> voids = new List<TheVoid>();
 
@@ -270,6 +271,7 @@ namespace lightseeds
                 {
                     treeCollection.trees.Remove(blueprints[0]);
                     createTree(players[0], blueprints[0].treeType);
+                    lastUsedType = blueprints[0].treeType;
                     blueprints[0] = null;
                     waitForBPConfirm = false;
                     waitForReleaseA = true;
@@ -277,11 +279,12 @@ namespace lightseeds
                 if (gamepadState.IsButtonDown(Buttons.B) && !waitForReleaseB)
                 {
                     treeCollection.trees.Remove(blueprints[0]);
+                    lastUsedType = blueprints[0].treeType;
                     blueprints[0] = null;
                     waitForBPConfirm = false;
                     waitForReleaseB = true;
                 }
-                if (gamepadState.ThumbSticks.Left.X < 0.0f && !waitForReleaseLeft)
+                if (gamepadState.ThumbSticks.Left.X < 0.0f && !waitForReleaseLeft && !waitForReleaseA)
                 {
                     var type = blueprints[0].treeType;
                     treeCollection.trees.Remove(blueprints[0]);
@@ -302,6 +305,7 @@ namespace lightseeds
                 
                 if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
                 {
+                    blueprints[0] = treeCollection.CreateTree(players[0].worldPosition, lastUsedType, true);
                     waitForBPConfirm = true;
                     waitForReleaseA = true;
                 }
