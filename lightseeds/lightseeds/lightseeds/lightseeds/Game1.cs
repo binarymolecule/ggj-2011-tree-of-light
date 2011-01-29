@@ -139,8 +139,8 @@ namespace lightseeds
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
                               screenToGlobal[1] * cameras[1].screenTransform);
             players[1].Draw(gameTime);
-            spriteBatch.End();
             world.Draw(spriteBatch, gameTime, -1000, 2000);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
