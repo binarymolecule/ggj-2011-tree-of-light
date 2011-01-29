@@ -63,6 +63,45 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ground\Grass.png">
+      <Name>Grass</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="random objects\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="tree 1\BL13lef1.png">
+      <Name>BL13lef1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="tree 1\BL13lef1_a.png">
+      <Name>BL13lef1_a</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="tree 1\OC19brk2.png">
+      <Name>OC19brk2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="tree 1\Root.FBX">
+      <Name>Root</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="tree 1\Trunk.FBX">
+      <Name>Trunk</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="effects\simpleEffect.fx">
       <Name>simpleEffect</Name>
       <Importer>EffectImporter</Importer>
