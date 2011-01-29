@@ -112,7 +112,7 @@ namespace lightseeds
 
             seedCollection = new SeedCollection(this);
             seedCollection.Load();
-            seedCollection.SpawnSeed(new Vector3(4, 6, 0));
+            seedCollection.SpawnSeed(new Vector3(4.0f, world.getHeigth(4.0f) + 2.0f, 0.0f));
 
             voids.Add(new TheVoid(this)
             {

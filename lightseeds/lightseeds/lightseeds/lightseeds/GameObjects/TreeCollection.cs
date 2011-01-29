@@ -27,6 +27,7 @@ namespace lightseeds.GameObjects
         public ContentManager content;
 
         public Texture2D texture;
+        public Texture2D fruitTexture;
 
         public TreeCollection(Game1 game)
         {
@@ -37,6 +38,7 @@ namespace lightseeds.GameObjects
         {
             content = GameServices.GetService<ContentManager>();
             texture = content.Load<Texture2D>("textures/treeDummy");
+            fruitTexture = content.Load<Texture2D>("textures/glowing");
         }
 
         public void Update(GameTime gameTime)

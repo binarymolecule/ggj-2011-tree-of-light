@@ -19,7 +19,7 @@ namespace lightseeds
 
         public const float MIN_DIST = 0.1f;
 
-        public const float MIN_SPEED = 5.0f, MAX_SPEED = 32.0f;
+        public const float MIN_SPEED = 5.0f, MAX_SPEED = 30.0f;
 
         public const float ACCELERATION = 100.0f, BRAKE_ACCELERATION = 60.0f;
 

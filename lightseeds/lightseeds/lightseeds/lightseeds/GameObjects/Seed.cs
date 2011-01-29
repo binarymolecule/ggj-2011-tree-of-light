@@ -35,7 +35,7 @@ namespace lightseeds.GameObjects
             foreach (var player in parentCollection.game.players)
             {
                 float distance = (player.worldPosition - position).Length();
-                if (distance < 2.0f)
+                if (distance < 1.5f)
                 {
                     RemoveOnNextUpdate = true;
                     collected = true;
