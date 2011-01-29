@@ -1,19 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace lightseeds
 {
     public enum Direction
     {
-        LEFT, RIGHT, NONE
+        Left, Right, None
     }
     /// <summary>
     /// This is a game component that implements IUpdateable.
@@ -28,17 +21,14 @@ namespace lightseeds
 
         Texture2D texture;
         public const float WOBBLEBPM = 60.0f;
-        public const float WOBBLYNESS = 1.0f;
+        public const float WOBBLYNESS = 3.0f;
         public const float MAXVELOCITY = 5.0f;
         public const float ACCELERATION = 10.0f;
-
-        public float currentAcceleration = 0.0f;
-        public float wobbleSpeed = 1.0f;
-        public float wobbleHeight = 3.0f;
-
-        public float XVelocity = 0.0f;
-
-        public Direction currentDirection = Direction.NONE;
+        
+        public Direction currentDirection = Direction.None;
+        public float xAcceleration = 0.0f;
+        public float xVelocity = 0.0f;
+        public float wobbleHeight = 1.0f;
         
         public Vector3 worldPosition
         {
@@ -69,21 +59,21 @@ namespace lightseeds
         public override void Update(GameTime gameTime)
         {
             var timeFactor = gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
-            if (XVelocity < MAXVELOCITY && Direction.RIGHT == currentDirection)
-                XVelocity += currentAcceleration * timeFactor;
-            if (XVelocity > -MAXVELOCITY && Direction.LEFT == currentDirection)
-                XVelocity -= currentAcceleration * timeFactor;
-            if (Direction.NONE == currentDirection)
+            if (xVelocity < MAXVELOCITY && Direction.Right == currentDirection)
+                xVelocity += xAcceleration * timeFactor;
+            if (xVelocity > -MAXVELOCITY && Direction.Left == currentDirection)
+                xVelocity -= xAcceleration * timeFactor;
+            if (Direction.None == currentDirection)
             {
-                if (XVelocity > 0)
-                    XVelocity -= ACCELERATION * timeFactor;
-                if (XVelocity < 0)
-                    XVelocity += ACCELERATION * timeFactor;
-                if (Math.Abs(XVelocity) <= ACCELERATION * timeFactor)
-                    XVelocity = 0;
+                if (xVelocity > 0)
+                    xVelocity -= ACCELERATION * timeFactor;
+                if (xVelocity < 0)
+                    xVelocity += ACCELERATION * timeFactor;
+                if (Math.Abs(xVelocity) <= ACCELERATION * timeFactor)
+                    xVelocity = 0;
             }   
             
-            position.X += XVelocity * timeFactor;
+            position.X += xVelocity * timeFactor;
             base.Update(gameTime);
         }
 
@@ -96,17 +86,15 @@ namespace lightseeds
         private float WobblyPosition(float pos, GameTime gameTime)
         {
             var sin1 = wobbleHeight * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 60);
-            return pos + sin1;
+            var sin2 = 0.7f * wobbleHeight * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 97);
+            var sin3 = 0.2f * wobbleHeight * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 23);
+            return pos + sin1 + sin2 + sin3 ;
         }
 
         public void Move(Direction d, float strength)
         {
             currentDirection = d;
-            currentAcceleration = ACCELERATION*strength;
-            if (d != Direction.NONE)
-                wobbleSpeed = 3.0f * WOBBLYNESS;
-            else
-                wobbleSpeed = 1.0f * WOBBLYNESS;
+            xAcceleration = ACCELERATION*strength;
         }
     }
 }
