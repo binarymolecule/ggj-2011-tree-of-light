@@ -120,6 +120,7 @@ namespace lightseeds
 
             treeCollection = new TreeCollection(this);
             treeCollection.Load();
+            treeCollection.CreateTree(Vector3.Zero, TreeType.BASE, false);
 
             seedCollection = new SeedCollection(this);
             seedCollection.Load();
