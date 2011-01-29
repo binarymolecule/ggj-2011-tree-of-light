@@ -28,6 +28,7 @@ namespace lightseeds
         public GameCamera[] cameras;
 
         Texture2D playerTexture;
+        private SpriteFont spriteFont;
 
         public Game1()
         {
@@ -88,6 +89,8 @@ namespace lightseeds
             cameras[0].FollowPlayer(players[0]);
             cameras[1] = new GameCamera(this, 1, players[1].worldPosition);
             cameras[1].FollowPlayer(players[1]);
+
+            spriteFont = Content.Load<SpriteFont>("Geo");
         }
 
         /// <summary>
@@ -146,7 +149,10 @@ namespace lightseeds
                 GameCamera.CurrentCamera = camera;
                 world.Draw(this, gameTime, -1000, 2000);
             }
-            
+
+            spriteBatch.Begin();
+            spriteBatch.DrawString(spriteFont, String.Format("P1: {0:0.0} / {1:0.0}", players[0].worldPosition.X, players[0].worldPosition.Y), Vector2.Zero, Color.White);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
