@@ -62,12 +62,20 @@ namespace lightseeds.GameObjects
 
         public TreeCollection parentCollection;
 
-        // gameplay properties
-        public float growthTime;
 
+        #region gameplay properties
+        public float growthTime;
         public float growthAmount = 0.0f;
-        
+        public float lifeSpan;
+        public float resistance;
+        //public float fruitsPerMinute;
+        public float fruitTime = 2;
         public int price;
+        public string name;
+
+        public double currentFruitTime;
+        #endregion
+
 
         public bool RemoveOnNextUpdate;
 
@@ -96,7 +104,13 @@ namespace lightseeds.GameObjects
 
         public void Update(GameTime gameTime)
         {
-        
+            currentFruitTime += gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (currentFruitTime > this.fruitTime)
+            {
+                this.parentCollection.game.seedCollection.SpawnSeed(worldPosition + new Vector3(0,2,0));
+                currentFruitTime = 0;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)

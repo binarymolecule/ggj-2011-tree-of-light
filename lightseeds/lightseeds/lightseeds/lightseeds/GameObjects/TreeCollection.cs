@@ -58,9 +58,9 @@ namespace lightseeds.GameObjects
             }
         }
 
-        internal void CreateTree(Vector3 position)
+        internal void CreateTree(float x)
         {
-            trees.Add(new Tree(this, position));
+            trees.Add(new Tree(this, new Vector3(x, game.world.getMinHeigth(x), 0.0f)));
         }
     }
 }

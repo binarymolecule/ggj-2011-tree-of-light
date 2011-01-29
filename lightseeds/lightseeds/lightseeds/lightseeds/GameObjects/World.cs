@@ -46,10 +46,10 @@ namespace lightseeds.GameObjects
             while (lastHeight.X < 200)
             {
                 float angle = (float)randomizer.NextDouble();
-                float length = (float)randomizer.NextDouble() * 2f + 0.5f;
+                float length = (float)randomizer.NextDouble() * 3.5f + 0.5f;
 
-                Vector2 upVector = new Vector2(length, (float)Math.Min(4.5f-lastHeight.Y, 1f));
-                Vector2 downVector = new Vector2(length, (float)Math.Max(0.75f-lastHeight.Y, -1f));
+                Vector2 upVector = new Vector2(length, (float)Math.Min(6.5f-lastHeight.Y, 0.5f));
+                Vector2 downVector = new Vector2(length, (float)Math.Max(0.75f-lastHeight.Y, -0.5f));
 
                 Vector2 stepVector = Vector2.Lerp(upVector, downVector, angle);
 

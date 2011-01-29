@@ -33,7 +33,7 @@ namespace lightseeds
         public Vector2[] splitScreenPositions;
 
         public TreeCollection treeCollection;
-        private SeedCollection seedCollection;
+        public SeedCollection seedCollection;
 
         static public int SCREEN_WIDTH = 1024;
         static public int SCREEN_HEIGHT = 768;
@@ -41,6 +41,7 @@ namespace lightseeds
         static public int SPLIT_SCREEN_HEIGHT = 384;
         static public int WORLD_SCREEN_WIDTH = 24;
         static public int WORLD_SCREEN_HEIGHT = 9;
+        private bool waitForRelease;
 
         public Game1()
         {
@@ -106,7 +107,7 @@ namespace lightseeds
 
             treeCollection = new TreeCollection(this);
             treeCollection.Load();
-            treeCollection.CreateTree(new Vector3(0.0f, world.getMinHeigth(0.0f), 0.0f));
+            treeCollection.CreateTree(8);
 
             seedCollection = new SeedCollection(this);
             seedCollection.Load();
@@ -190,7 +191,8 @@ namespace lightseeds
 
         public void handleControls()
         {
-            var stick = GamePad.GetState(PlayerIndex.One).ThumbSticks.Left;
+            GamePadState gps = GamePad.GetState(PlayerIndex.One);
+            var stick = gps.ThumbSticks.Left;
             
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
@@ -202,6 +204,18 @@ namespace lightseeds
                 players[0].Move(Direction.Up, stick.Y > 0 ? stick.Y : 1);
             else if (!Keyboard.GetState().IsKeyDown(Keys.Right) && !Keyboard.GetState().IsKeyDown(Keys.Left))
                 players[0].Move(Direction.None, 0);
+
+            // buttons
+            if (gps.IsButtonDown(Buttons.X) && !waitForRelease)
+            {
+                treeCollection.CreateTree(players[0].worldPosition.X);
+                waitForRelease = true;
+            }
+
+            if (gps.IsButtonUp(Buttons.X))
+            {
+                waitForRelease = false;
+            }
             
         }
     }
