@@ -39,9 +39,11 @@ namespace lightseeds.GameObjects
 
             heights = new List<Vector2>()
             {
-                new Vector2(0,0),
-                new Vector2(10,2),
-                new Vector2(20,4)
+                new Vector2(0,5),
+                new Vector2(1,5),
+                new Vector2(2,8),
+                new Vector2(3,4),
+                new Vector2(4,9),
             };
 
             GenerateChunks();
@@ -74,14 +76,11 @@ namespace lightseeds.GameObjects
                 var x = heights[i].X;
                 var y = heights[i].Y;
 
-                x = i * 50;
-                y = 50;
-
                 vertices[i * 2] = new VertexPositionColorTexture(new Vector3(x, 0, 0), Color.White, Vector2.Zero);
                 vertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y, 0), Color.White, Vector2.Zero);
 
-                topVertices[i * 2] = new VertexPositionColorTexture(new Vector3(x, y - 26, 0), Color.White, Vector2.Zero);
-                topVertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y + 6, 0), Color.White, Vector2.Zero);
+                topVertices[i * 2] = new VertexPositionColorTexture(new Vector3(x, y - 0.2f, 0), Color.White, Vector2.Zero);
+                topVertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y + 0.2f, 0), Color.White, Vector2.Zero);
             }
 
             groundVbo.SetData(vertices);
@@ -95,7 +94,7 @@ namespace lightseeds.GameObjects
 
 
 
-        public void Draw(SpriteBatch sb, GameTime gameTime, int x, int w)
+        public void Draw(Game1 game, GameTime gameTime, int x, int w)
         {
             foreach (var chunk in chunks.Select((c) => c.ShouldBeDrawn(x, w)))
             {
@@ -122,7 +121,8 @@ namespace lightseeds.GameObjects
 
             spriteEffect.Parameters["ViewportSize"].SetValue(graphicsDevice.Viewport.ToVector());
             spriteEffect.Parameters["TextureSize"].SetValue(tile.ToVector());
-            spriteEffect.Parameters["MatrixTransform"].SetValue(Matrix.Identity);
+            spriteEffect.Parameters["MatrixTransform"].SetValue(game.worldToScreen);
+            //spriteEffect.Parameters["MatrixTransform"].SetValue(Matrix.CreateScale(0.05f));
             //spriteEffect.Parameters["TextureSampler"].SetValue(tile);
             spriteEffect.CurrentTechnique.Passes[0].Apply();
             

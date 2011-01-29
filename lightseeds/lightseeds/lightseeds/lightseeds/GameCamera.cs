@@ -29,6 +29,8 @@ namespace lightseeds
 
         PlayerSprite player;
 
+        public static GameCamera CurrentCamera;
+
         public Matrix screenTransform
         {
             get

@@ -23,9 +23,9 @@ namespace lightseeds
         private World world;
 
         public Matrix worldToScreen;
-        Matrix[] screenToGlobal;
+        public Matrix[] screenToGlobal;
         PlayerSprite[] players;
-        GameCamera[] cameras;
+        public GameCamera[] cameras;
 
         Texture2D playerTexture;
 
@@ -126,21 +126,27 @@ namespace lightseeds
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(new Color(40,40,40));
+
 
             // Draw screen of player 1
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
                               screenToGlobal[0] * cameras[0].screenTransform);
             players[0].Draw(gameTime);
-            world.Draw(spriteBatch, gameTime, -1000, 2000);
             spriteBatch.End();
        
             // Draw screen of player 2
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
                               screenToGlobal[1] * cameras[1].screenTransform);
             players[1].Draw(gameTime);
-            world.Draw(spriteBatch, gameTime, -1000, 2000);
             spriteBatch.End();
+
+            foreach(var camera in cameras) {
+                // todo: set render target
+                GameCamera.CurrentCamera = camera;
+                world.Draw(this, gameTime, -1000, 2000);
+            }
+            
 
             base.Draw(gameTime);
         }

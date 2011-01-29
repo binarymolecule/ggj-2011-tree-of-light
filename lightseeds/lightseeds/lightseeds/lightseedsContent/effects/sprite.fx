@@ -100,7 +100,7 @@ void SpriteVertexShader(inout float4 position : POSITION0,
 						inout float2 texCoord : TEXCOORD0)
 {
     // Apply the matrix transform.
-    position = mul(position, transpose(MatrixTransform));
+    position = mul(position, MatrixTransform);
     
 	// Half pixel offset for correct texel centering.
 	position.xy -= 0.5;
@@ -111,7 +111,8 @@ void SpriteVertexShader(inout float4 position : POSITION0,
 	position.xy -= float2(1, -1);
 
 	// Compute the texture coordinate.
-	texCoord /= TextureSize;
+	// texCoord /= TextureSize;
+	texCoord = position;
 }
 
 
@@ -121,7 +122,8 @@ void SpriteVertexShader(inout float4 position : POSITION0,
 // Pixel shader for rendering sprites (shared between Windows and Xbox).
 void SpritePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 {
-    color *= tex2D(TextureSampler, texCoord);
+    //color *= tex2D(TextureSampler, texCoord);
+	color = float4(1,0,0,1);
 }
 
 
