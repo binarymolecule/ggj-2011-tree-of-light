@@ -31,6 +31,8 @@ namespace lightseeds.GameObjects
         private Effect spriteEffect;
         private Texture2D grassTopping;
 
+        public const int WorldWidth = 200;
+
         public void Load()
         {
             graphicsDevice = GameServices.GetService<GraphicsDevice>();
@@ -42,8 +44,8 @@ namespace lightseeds.GameObjects
             heights = new List<Vector2>();
 
             Random randomizer = new Random();
-            Vector2 lastHeight = new Vector2(-200, 5);
-            while (lastHeight.X < 200)
+            Vector2 lastHeight = new Vector2(-World.WorldWidth, 5);
+            while (lastHeight.X < World.WorldWidth)
             {
                 float angle = (float)randomizer.NextDouble();
                 float length = (float)randomizer.NextDouble() * 3.5f + 0.5f;

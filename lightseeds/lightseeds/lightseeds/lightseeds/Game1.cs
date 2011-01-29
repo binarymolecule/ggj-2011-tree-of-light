@@ -35,6 +35,8 @@ namespace lightseeds
         public TreeCollection treeCollection;
         public SeedCollection seedCollection;
 
+        public List<TheVoid> voids = new List<TheVoid>();
+
         static public int SCREEN_WIDTH = 1024;
         static public int SCREEN_HEIGHT = 768;
         static public int SPLIT_SCREEN_WIDTH = 1024;
@@ -111,6 +113,18 @@ namespace lightseeds
             seedCollection = new SeedCollection(this);
             seedCollection.Load();
             seedCollection.SpawnSeed(new Vector3(4, 6, 0));
+
+            voids.Add(new TheVoid(this)
+            {
+                direction = new Vector3(1, 0, 0),
+                horizontalPosition = -World.WorldWidth/20
+            });
+
+            voids.Add(new TheVoid(this)
+            {
+                direction = new Vector3(-1, 0, 0),
+                horizontalPosition = World.WorldWidth / 20
+            });
         }
 
         /// <summary>
@@ -144,6 +158,8 @@ namespace lightseeds
 
             world.Update(gameTime);
             
+            voids.ForEach((v) => v.Update(gameTime));
+
             base.Update(gameTime);
         }
 
@@ -171,6 +187,11 @@ namespace lightseeds
                 spriteBatch.End();
                 GameCamera.CurrentCamera = cameras[i];
                 world.Draw(this, gameTime, -1000, 2000);
+
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
+                                  cameras[i].screenTransform);
+                voids.ForEach((v) => v.Draw(spriteBatch));
+                spriteBatch.End();
             }
             GraphicsDevice.SetRenderTarget(null);
 

@@ -11,7 +11,7 @@ namespace lightseeds.GameObjects
 {
     public class TreeCollection
     {
-        List<Tree> trees = new List<Tree>();
+        public List<Tree> trees = new List<Tree>();
 
         public Game1 game;
 
@@ -60,7 +60,10 @@ namespace lightseeds.GameObjects
 
         internal void CreateTree(float x)
         {
-            trees.Add(new Tree(this, new Vector3(x, game.world.getHeigth(x), 0.0f)));
+            trees.Add(new Tree(this, new Vector3(x, game.world.getHeigth(x), 0.0f))
+            {
+                status = Tree.TreeStatus.NORMAL
+            });
         }
 
         public bool HasTreeAtPosition(float posX)

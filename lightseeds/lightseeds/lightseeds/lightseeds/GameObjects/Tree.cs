@@ -71,7 +71,7 @@ namespace lightseeds.GameObjects
         public float growthTime;
         public float growth;
         public float lifeSpan;
-        public float resistance;
+        public float resistance = 0.5f;
         //public float fruitsPerMinute;
         public float fruitTime = 2;
         public int price;
@@ -83,9 +83,18 @@ namespace lightseeds.GameObjects
         #endregion
 
         public bool RemoveOnNextUpdate = false;
+        public enum TreeStatus
+        {
+            NORMAL,
+            DIED,
+            KILLED,
+            PLANTED
+        }
 
+        public TreeStatus status;
         public Vector2 screenSize;
-        
+
+
         public Vector3 worldPosition
         {
             get

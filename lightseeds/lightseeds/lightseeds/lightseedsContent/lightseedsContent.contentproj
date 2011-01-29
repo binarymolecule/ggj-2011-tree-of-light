@@ -139,8 +139,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Background\Background.png">
+    <None Include="Background\Background.png">
       <Name>Background</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="smoke.jpg">
+      <Name>smoke</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
