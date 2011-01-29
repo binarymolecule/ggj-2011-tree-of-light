@@ -71,8 +71,14 @@ namespace lightseeds
             
             var timeFactor = gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
             //movement
-            if (Math.Abs(xVelocity) < MAXVELOCITY && position.X < XBOUNDARY && position.X > -XBOUNDARY)
+            if (position.X < XBOUNDARY && position.X > -XBOUNDARY)
+            {
                 xVelocity += currentXAcceleration * timeFactor;
+                if (xVelocity > MAXVELOCITY)
+                    xVelocity = MAXVELOCITY;
+                if (xVelocity < -MAXVELOCITY)
+                    xVelocity = -MAXVELOCITY;
+            }
             
             //backbounce
             if (position.X < -XBOUNDARY)
@@ -98,8 +104,14 @@ namespace lightseeds
         {
             var timeFactor = gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
             //movement
-            if (Math.Abs(yVelocity) < MAXVELOCITY && position.Y < YBOUNDARY)
+            if (position.Y < YBOUNDARY)
+            {
                 yVelocity += currentYAcceleration * timeFactor;
+                if (yVelocity > MAXVELOCITY)
+                    yVelocity = MAXVELOCITY;
+                if (yVelocity < -MAXVELOCITY)
+                    yVelocity = -MAXVELOCITY;
+            }
 
             //backbounce
             if (position.Y > YBOUNDARY)
