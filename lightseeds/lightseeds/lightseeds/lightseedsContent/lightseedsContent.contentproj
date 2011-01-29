@@ -108,11 +108,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Background\Background.png">
+    <Compile Include="Background\Background.png">
       <Name>Background</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
-    </None>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tree Previews\Tree1_preview.png">

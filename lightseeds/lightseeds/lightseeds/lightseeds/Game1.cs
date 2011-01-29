@@ -27,6 +27,7 @@ namespace lightseeds
         public GameCamera[] cameras;
 
         Texture2D playerTexture;
+        Texture2D backgroundTexture;
         private SpriteFont spriteFont;
 
         RenderTarget2D[] splitScreens;
@@ -92,6 +93,7 @@ namespace lightseeds
             world.Load();
 
             playerTexture = Content.Load<Texture2D>("textures/playerTexture");
+            backgroundTexture = Content.Load<Texture2D>("Background/Background");
 
             players = new PlayerSprite[2];
             players[0] = new PlayerSprite(this, 0, new Vector3(2.0f, 7.0f, 1.0f), playerTexture)
@@ -189,10 +191,14 @@ namespace lightseeds
             {
                 GraphicsDevice.SetRenderTarget(splitScreens[i]);
                 GraphicsDevice.Clear(new Color(40, 40, 40));
-            
-                GameCamera.CurrentCamera = cameras[i];
-                world.Draw(this, gameTime, -1000, 2000);
 
+                GameCamera.CurrentCamera = cameras[i];
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, bgMatrix(i));
+                spriteBatch.Draw(backgroundTexture, new Rectangle((int)(-SCREEN_WIDTH*0.1f), (int)(-SCREEN_HEIGHT*0.1f), (int)(SCREEN_WIDTH * 1.2), (int)(SCREEN_HEIGHT*1.2)), Color.White);
+                spriteBatch.End();
+                
+                world.Draw(this, gameTime, -1000, 2000);
+                
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
                                   cameras[i].screenTransform);
                 treeCollection.Draw(spriteBatch);
@@ -269,6 +275,13 @@ namespace lightseeds
                 treeCollection.CreateTree(player.worldPosition, tt, false);
                 seedCollection.collectedSeedCount--;
             }
+        }
+        public Matrix bgMatrix(int index)
+        {
+            Vector3 v = new Vector3(-(players[index].worldPosition.X), 
+                                    -(players[index].worldPosition.Y), 0);
+            return Matrix.CreateTranslation(v);
+            
         }
     }
 }
