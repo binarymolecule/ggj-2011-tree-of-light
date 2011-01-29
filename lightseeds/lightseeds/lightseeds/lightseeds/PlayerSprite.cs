@@ -186,7 +186,7 @@ namespace lightseeds
                 yVelocity -= 2 * ACCELERATION * timeFactor;
             float diff = game.world.getHeigth(position.X) + 3.0f - position.Y;
             if (diff > 0 && yVelocity < MAXVELOCITY_Y / 2)
-                yVelocity += 4 * diff * ACCELERATION * timeFactor;
+                yVelocity += (float)Math.Pow(diff,2) * ACCELERATION * timeFactor;
 
 
             //slowdown
