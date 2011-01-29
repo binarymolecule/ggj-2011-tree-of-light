@@ -17,6 +17,7 @@ namespace lightseeds.GameObjects
 
         public float spawnTimer = 0.5f;
         private int particlePool;
+        private const int PARTICLE_FILL = 75;
 
         public TheVoid(Game1 game)
         {
@@ -65,7 +66,7 @@ namespace lightseeds.GameObjects
             // adding new particles
 
             spawnTimer -= (float)gt.ElapsedGameTime.TotalSeconds;
-            if (spawnTimer < 0 || particlePool < 50)
+            if (spawnTimer < 0 || particlePool < PARTICLE_FILL)
             {
                 particlePool++;
                 float xpos = this.horizontalPosition + direction.X * ((float)game.particleCollection.random.NextDouble() * 6.5f - 6);

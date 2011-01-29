@@ -60,7 +60,7 @@ namespace lightseeds.GameObjects
                 texture = smokeTextures[random.Next(smokeTextures.Count-1)],
                 lifeTime = 1.5f + (float)random.NextDouble() * 2.5f,
                 rotation = (float)random.NextDouble(),
-                spin = (float)random.NextDouble() * 0.01f
+                spin = (float)random.NextDouble() * 0.7f
             };
 
             particles.Add(p);
@@ -79,7 +79,7 @@ namespace lightseeds.GameObjects
                 p.rotation += p.spin * dt;
                 p.age += dt;
 
-                float ramp = 0.4f;
+                float ramp = 0.9f;
                 float slope = 1;
                 //p.scale = (p.age < ramp ? (1f - slope) + slope * (p.age / ramp) : 1);
                 p.scale = (1 - ramp) + ramp * (p.age / p.lifeTime);
@@ -89,7 +89,7 @@ namespace lightseeds.GameObjects
                 p.alpha = (p.age < alphaRamp ? (1f - alphaSlope) + slope * (p.age / alphaRamp) : 1);
 
                 float remainingLife = p.lifeTime - p.age;
-                float alphaOut = 0.2f;
+                float alphaOut = 1f;
                 p.alpha = (remainingLife < alphaOut ? remainingLife / alphaOut : p.alpha);
 
                 if (p.age > p.lifeTime)
@@ -115,7 +115,7 @@ namespace lightseeds.GameObjects
                 var screenPos = Vector3.Transform(p.position, game.worldToScreen).ToVector2();
                 var srcRect = new Rectangle((int)screenPos.X, (int)screenPos.Y, p.texture.Width, p.texture.Height);
                 var color = new Color(1f,1f,1f,p.alpha);
-                spriteBatch.Draw(p.texture, screenPos, null, color, p.rotation, 0.5f * p.texture.ToVector(), p.scale, SpriteEffects.None, 0);
+                spriteBatch.Draw(p.texture, screenPos, null, color, p.rotation, 0.5f * p.texture.ToVector(), p.scale * 1.5f, SpriteEffects.None, 0);
             }
         }
     }
