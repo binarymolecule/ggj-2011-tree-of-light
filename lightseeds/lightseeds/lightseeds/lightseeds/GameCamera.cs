@@ -9,13 +9,17 @@ namespace lightseeds
     {
         int index;
 
-        int timer;
+        Vector2 speed;
 
-        float speed;
+        bool reachedSpeedX, reachedSpeedY;
 
-        public const float MIN_SPEED = 0.04f, MAX_SPEED = 0.08f;
+        public const float APPROACH_DIST = 1.0f;
 
-        public const float ACCELERATION = 1.1f;
+        public const float MIN_DIST = 0.01f;
+
+        public const float MAX_SPEED = 5.0f;
+
+        public const float ACCELERATION = 0.25f;
 
         Vector3 translation;
 
@@ -25,7 +29,8 @@ namespace lightseeds
 
         PlayerSprite player;
 
-        public Matrix screenTransform {
+        public Matrix screenTransform
+        {
             get
             {
                 return Matrix.CreateTranslation(-translation.X * game.worldToScreen.M11,
@@ -33,11 +38,12 @@ namespace lightseeds
             }
         }
 
-        public Matrix worldTransform {
+        public Matrix worldTransform
+        {
             get
             {
                 return Matrix.CreateTranslation(-translation);
-            } 
+            }
         }
 
         public GameCamera(Game1 game, int index, Vector3 position)
@@ -52,62 +58,91 @@ namespace lightseeds
         public void FollowPlayer(PlayerSprite player)
         {
             this.player = player;
-            this.timer = 0;
+            this.speed = Vector2.Zero;
+            reachedSpeedX = reachedSpeedY = false;
         }
 
         public void Center(Vector3 position)
         {
-            timer = 0;
-            speed = 0.0f;
-            translation = position;
+            this.player = null;
+            this.translation = position;
+            this.target = position;
+            this.speed = Vector2.Zero;
+            reachedSpeedX = reachedSpeedY = false;
         }
 
         public void Reset()
         {
-            translation = Vector3.Zero;
+            Center(Vector3.Zero);
         }
-        
-        public void MoveTo(Vector3 position, int milliseconds)
+
+        public void MoveTo(Vector3 position)
         {
-            player = null;
-            timer = milliseconds;
-            source = translation;
-            target = position;
-            speed = 1.0f / (float)milliseconds;
+            this.player = null;
+            this.target = position;
+            this.speed = Vector2.Zero;
+            reachedSpeedX = reachedSpeedY = false;
         }
 
         public void Update(GameTime gameTime)
         {
             if (player != null)
             {
-                Vector3 direction = player.worldPosition - translation;
-                if (direction.LengthSquared() < 0.01f)
-                {
+                target = player.worldPosition;
+            }
+            Vector3 direction = target - translation;
+            float seconds = 0.001f * gameTime.ElapsedGameTime.Milliseconds;
 
-                }
-                else
+            if (Math.Abs(direction.X) > (reachedSpeedX ? APPROACH_DIST : MIN_DIST))
+            {
+                speed.X += Math.Sign(direction.X) * seconds * ACCELERATION;
+                translation.X += speed.X;
+                reachedSpeedX = (Math.Abs(direction.X) > APPROACH_DIST);
+            }
+            else if (Math.Abs(direction.X) > MIN_DIST)
+            {
+                speed.X -= Math.Sign(direction.X) * seconds * ACCELERATION;
+                translation.X += speed.X;
+                if ((speed.X > 0 && translation.X > target.X) ||
+                    (speed.X < 0 && translation.X < target.X))
                 {
-                    translation += speed * direction;
+                    translation.X = target.X;
+                    speed.X = 0.0f;
+                    reachedSpeedX = false;
+                }
+
+            }
+            else
+            {
+                translation.X = target.X;
+                speed.X = 0.0f;
+                reachedSpeedX = false;
+            }
+            if (Math.Abs(direction.Y) > (reachedSpeedY ? APPROACH_DIST : MIN_DIST))
+            {
+                speed.Y += Math.Sign(direction.Y) * seconds * ACCELERATION;
+                translation.Y += speed.Y;
+                reachedSpeedY = (Math.Abs(direction.Y) > APPROACH_DIST);
+            }
+            else if (Math.Abs(direction.Y) > MIN_DIST)
+            {
+                speed.Y -= Math.Sign(direction.Y) * seconds * ACCELERATION;
+                translation.Y += speed.Y;
+                if ((speed.Y > 0 && translation.Y > target.Y) ||
+                    (speed.Y < 0 && translation.Y < target.Y))
+                {
+                    translation.Y = target.Y;
+                    speed.Y = 0.0f;
+                    reachedSpeedY = false;
                 }
             }
             else
             {
-                if (timer > 0)
-                {
-                    timer -= gameTime.ElapsedGameTime.Milliseconds;
-                    if (timer <= 0)
-                    {
-                        Center(target);
-                    }
-                    else
-                    {
-                        float a = speed * timer;
-                        float b = 1.0f - a;
-                        translation.X = (int)Math.Round(a * source.X + b * target.X);
-                        translation.Y = (int)Math.Round(a * source.Y + b * target.Y);
-                    }
-                }
+                translation.Y = target.Y;
+                speed.Y = 0.0f;
+                reachedSpeedY = false;
             }
+
         }
     }
 }
