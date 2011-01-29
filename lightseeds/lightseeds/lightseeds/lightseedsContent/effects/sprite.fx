@@ -122,7 +122,7 @@ void SpriteVertexShader(inout float4 position : POSITION0,
 // Pixel shader for rendering sprites (shared between Windows and Xbox).
 void SpritePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
 {
-    //color *= tex2D(TextureSampler, texCoord);
+    color *= tex2D(TextureSampler, texCoord);
 	//color = float4(1,0,0,1);
 }
 
