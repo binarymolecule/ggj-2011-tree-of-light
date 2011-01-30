@@ -244,11 +244,12 @@ namespace lightseeds
         }
 
 
-        public void HandleInput(GamePadState gamepadState)
+        public void HandleInput(GamePadState gamepadState, KeyboardState kbs)
         {
             if (!isStunned)
             {
                 var stick = gamepadState.ThumbSticks.Left;
+
                 if (waitForBPConfirm)
                 {
                     if (xVelocity == 0)
@@ -288,7 +289,18 @@ namespace lightseeds
                 }
                 else
                 {
-                    Move(stick.X, stick.Y);
+                    float x = stick.X, y = stick.Y;
+
+                    if (kbs != null)
+                    {
+                        x = kbs.IsKeyDown(Keys.Right) ? 1 : x;
+                        x = kbs.IsKeyDown(Keys.Left) ? -1 : x;
+
+
+                        y = kbs.IsKeyDown(Keys.Up) ? 1 : y;
+                        y = kbs.IsKeyDown(Keys.Down) ? -1 : y;
+                    }
+                    Move(x, y);
 
                     if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
                     {

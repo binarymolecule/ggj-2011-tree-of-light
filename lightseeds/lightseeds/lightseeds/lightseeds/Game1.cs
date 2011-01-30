@@ -47,6 +47,8 @@ namespace lightseeds
 
         public ParticleCollection particleCollection;
         public GameState State;
+        private Texture2D backgroundTexture2;
+        private Texture2D backgroundTexture3;
 
         public double startTime;
 
@@ -103,6 +105,8 @@ namespace lightseeds
 
             playerTexture = Content.Load<Texture2D>("textures/playerTexture");
             backgroundTexture = Content.Load<Texture2D>("Background/Background_1");
+            backgroundTexture2 = Content.Load<Texture2D>("Background/Background_2");
+            backgroundTexture3 = Content.Load<Texture2D>("Background/Background_3");
 
             players = new PlayerSprite[2];
             players[0] = new PlayerSprite(this, 0, new Vector3(2.0f, 7.0f, 1.0f), playerTexture)
@@ -216,7 +220,15 @@ namespace lightseeds
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, bgMatrix(i));
                 spriteBatch.Draw(backgroundTexture, new Rectangle((int)(-SCREEN_WIDTH*0.1f), (int)(-SCREEN_HEIGHT*0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT*1.2)), Color.White);
                 spriteBatch.End();
-                
+
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, bgMatrix(i, 2f));
+                spriteBatch.Draw(backgroundTexture2, new Rectangle((int)(-SCREEN_WIDTH * 0.1f), (int)(-SCREEN_HEIGHT * 0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT * 1.2)), Color.White);
+                spriteBatch.End();
+
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, bgMatrix(i, 4f));
+                spriteBatch.Draw(backgroundTexture3, new Rectangle((int)(-SCREEN_WIDTH * 0.1f), (int)(-SCREEN_HEIGHT * 0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT * 1.2)), Color.White);
+                spriteBatch.End();
+
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
                                   cameras[i].screenTransform);
                 treeCollection.Draw(spriteBatch);
@@ -242,6 +254,14 @@ namespace lightseeds
                 voids.ForEach((v) => v.Draw(spriteBatch));
                 particleCollection.Draw(gameTime, spriteBatch);
                 spriteBatch.End();
+
+
+                Tree tree = treeCollection.FindTreeAtPosition(players[i].worldPosition.X);
+                if (tree != null)
+                {
+                    // show tree information
+                    //spriteBatch.DrawString(spriteFont, tree.GetStatusInfo(), new Vector2(SPLIT_SCREEN_WIDTH / 2 - 120, SPLIT_SCREEN_HEIGHT - 80) + splitScreenPositions[i], Color.White);
+                }
             }
             GraphicsDevice.SetRenderTarget(null);
 
@@ -267,13 +287,6 @@ namespace lightseeds
                         y += (int)msgDim.Y;
                     }
                 }
-
-                Tree tree = treeCollection.FindTreeAtPosition(p.worldPosition.X);
-                if (tree != null)
-                {
-                    // show tree information
-                    spriteBatch.DrawString(spriteFont, tree.GetStatusInfo(), new Vector2(SPLIT_SCREEN_WIDTH / 2 - 120, SPLIT_SCREEN_HEIGHT - 80) + splitScreenPositions[p.index], Color.White);
-                }
             }            
             spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, -40) + splitScreenPositions[1], Color.Red);
             
@@ -296,7 +309,7 @@ namespace lightseeds
             foreach (var p in players)
             {
                 var gamepadState = GamePad.GetState(p.index == 0 ? PlayerIndex.One : PlayerIndex.Two);
-                p.HandleInput(gamepadState);
+                p.HandleInput(gamepadState, p.index == 0 ? Keyboard.GetState() : new KeyboardState());
 
 
                 // debug input
@@ -324,10 +337,10 @@ namespace lightseeds
                 seedCollection.collectedSeedCount -= price;
             }
         }
-        public Matrix bgMatrix(int index)
+        public Matrix bgMatrix(int index, float factor = 1f)
         {
-            Vector3 v = new Vector3(-(players[index].worldPosition.X), 
-                                    (players[index].worldPosition.Y), 0);
+            Vector3 v = new Vector3(-(players[index].worldPosition.X) * factor, 
+                                    (players[index].worldPosition.Y) * factor, 0);
             return Matrix.CreateTranslation(v);
             
         }
