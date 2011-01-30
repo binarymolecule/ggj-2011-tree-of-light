@@ -259,6 +259,53 @@
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Trees\Fighter Tree\Fighter_Tree_noleafs.png">
+      <Name>Fighter_Tree_noleafs</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Trees\Fighter Tree\Fighter_Tree_tex.png">
+      <Name>Fighter_Tree_tex</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Trees\Fighter Tree\Fighter_Tree_xray.png">
+      <Name>Fighter_Tree_xray</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Trees\Mother Tree\Mother_tree_noleafs.png">
+      <Name>Mother_tree_noleafs</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Trees\Mother Tree\Mother_tree_tex.png">
+      <Name>Mother_tree_tex</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Trees\Mother Tree\Mother_tree_Xray.png">
+      <Name>Mother_tree_Xray</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Trees\Tank Tree\Tank_tree_noleafs.png">
+      <Name>Tank_tree_noleafs</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Trees\Tank Tree\Tank_tree_tex.png">
+      <Name>Tank_tree_tex</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Trees\Tank Tree\Tank_tree_xray.png">
+      <Name>Tank_tree_xray</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
