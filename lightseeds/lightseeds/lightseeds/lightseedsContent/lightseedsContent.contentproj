@@ -260,6 +260,27 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="textures\centerBar.png">
+      <Name>centerBar</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\mapIcons.png">
+      <Name>mapIcons</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\darkBar.png">
+      <Name>darkBar</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Trees\Fighter Tree\Fighter_Tree_noleafs.png">
       <Name>Fighter_Tree_noleafs</Name>
       <Importer>TextureImporter</Importer>
