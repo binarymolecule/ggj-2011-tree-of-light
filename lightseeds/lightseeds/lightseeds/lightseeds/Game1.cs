@@ -1,3 +1,5 @@
+#define SHOW_INTRO
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +38,11 @@ namespace lightseeds
         RenderTarget2D[] splitScreens;
         public Vector2[] splitScreenPositions;
 
+        RenderTarget2D joinedScreen;
+        public Vector2 joinedScreenPosition;
+        public Vector2 joinedScreenBottomPosition;
+        public GameCamera joinedCamera;
+
         MapPanel mapPanel;
 
         public TreeCollection treeCollection;
@@ -66,6 +73,8 @@ namespace lightseeds
         float storyTime = 0.0f;
         float[] storyTimeIntervalls = { 7.0f, 3.0f, 4.0f, 6.0f, 4.0f, 3.0f };
 
+        bool splitScreenMode = true;
+
         public enum GameState
         {
             INTRO,
@@ -88,7 +97,10 @@ namespace lightseeds
                             Matrix.CreateTranslation(0.5f * (float)SPLIT_SCREEN_WIDTH, 0.5f * (float)SPLIT_SCREEN_HEIGHT, 0.0f);
             splitScreenPositions = new Vector2[2];
             splitScreenPositions[0] = Vector2.Zero;
-            splitScreenPositions[1] = new Vector2(0.0f, (float)SPLIT_SCREEN_HEIGHT);            
+            splitScreenPositions[1] = new Vector2(0.0f, (float)SPLIT_SCREEN_HEIGHT);
+            
+            joinedScreenPosition = Vector2.Zero;
+            joinedScreenBottomPosition = new Vector2(0.0f, (float)SCREEN_HEIGHT - 8.0f);
         }
 
         /// <summary>
@@ -109,7 +121,6 @@ namespace lightseeds
 
         }
 
-
         private bool InitGraphicsMode(int iWidth, int iHeight, bool FullScreen)
         {
           foreach (DisplayMode dm in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes)
@@ -124,6 +135,7 @@ namespace lightseeds
 
           return false;
         }
+
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -171,10 +183,14 @@ namespace lightseeds
             cameras[1] = new GameCamera(this, 1, players[1].worldPosition);
             cameras[1].FollowPlayer(players[1]);
 
+            joinedCamera = new GameCamera(this, 2, new Vector3(0.0f, 16.0f, 1.0f));
+
             // createTree split screens
             splitScreens = new RenderTarget2D[2];
             splitScreens[0] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
             splitScreens[1] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
+            
+            joinedScreen = new RenderTarget2D(GraphicsDevice, SCREEN_WIDTH, SCREEN_HEIGHT);
 
             spriteFont = Content.Load<SpriteFont>("fonts/Geo");
             headlineFont = Content.Load<SpriteFont>("fonts/headline");
@@ -223,13 +239,14 @@ namespace lightseeds
                 introScreen.Update(gameTime);
                 if (introScreen.Status == GameScreen.ScreenStatus.DONE)
                 {
-                    //this.State = GameState.STORY;
-
-                    // skip intro for now
+#if SHOW_INTRO
+                    this.State = GameState.STORY;
+#else
+                    //skip intro
                     fadeColor = Color.White;
                     this.State = GameState.RUNNING;
                     startTime = gameTime.TotalGameTime.TotalSeconds;             
-
+#endif
                     musicManager.StartLoop();
                 }
                 return;
@@ -271,6 +288,7 @@ namespace lightseeds
             // Update cameras
             foreach (GameCamera c in cameras)
                 c.Update(gameTime);
+            joinedCamera.Update(gameTime);
 
             treeCollection.Update(gameTime);
 
@@ -313,37 +331,42 @@ namespace lightseeds
             GraphicsDevice.Clear(new Color(40, 40, 40));
             
             // Draw worlds
-            for (int i = 0; i < 2; i++)
+            for (int i = (splitScreenMode ? 0 : 2); i < (splitScreenMode ? 2 : 3); i++)
             {
-                GraphicsDevice.SetRenderTarget(splitScreens[i]);
+                if (splitScreenMode)
+                    GraphicsDevice.SetRenderTarget(splitScreens[i]);
+                else
+                    GraphicsDevice.SetRenderTarget(joinedScreen);
                 GraphicsDevice.Clear(new Color(40, 40, 40));
 
-                GameCamera.CurrentCamera = cameras[i];
+                GameCamera.CurrentCamera = (splitScreenMode ? cameras[i] : joinedCamera);
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, bgMatrix(i));
-                spriteBatch.Draw(backgroundTexture, new Rectangle((int)(-SCREEN_WIDTH*0.1f), (int)(-SCREEN_HEIGHT*0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT*1.2)), Color.Gray);
+                spriteBatch.Draw(backgroundTexture, new Rectangle((int)(-SCREEN_WIDTH*0.1f), (int)(-SCREEN_HEIGHT*0.1f),
+                                                                  (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT * 1.2f)), Color.Gray);
                 spriteBatch.End();
 
-                //spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, bgMatrix(i, 2f));
-                //spriteBatch.Draw(backgroundTexture2, new Rectangle((int)(-SCREEN_WIDTH * 0.1f), (int)(-SCREEN_HEIGHT * 0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT * 1.2)), Color.White);
-                //spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, bgMatrix(i, 2.0f));
+                spriteBatch.Draw(backgroundTexture2, new Rectangle((int)(-SCREEN_WIDTH * 0.1f), (int)(-SCREEN_HEIGHT * 0.1f),
+                                                                   (int)(SCREEN_WIDTH * 2.4f), (int)(SCREEN_HEIGHT * 1.2f)), Color.White);
+                spriteBatch.End();
 
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, bgMatrix(i, 4f));
-                spriteBatch.Draw(backgroundTexture3, new Rectangle((int)(-SCREEN_WIDTH * 0.1f), (int)(-SCREEN_HEIGHT * 0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT * 1.2)), Color.White);
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, bgMatrix(i, 4.0f));
+                spriteBatch.Draw(backgroundTexture3, new Rectangle((int)(-SCREEN_WIDTH * 0.1f), (int)(-SCREEN_HEIGHT * 0.1f),
+                                                                   (int)(SCREEN_WIDTH * 2.4f), (int)(SCREEN_HEIGHT * 1.2f)), Color.White);
                 spriteBatch.End();
 
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
-                                  cameras[i].screenTransform);
+                                  GameCamera.CurrentCamera.screenTransform);
                 treeCollection.trees.ForEach((t) => DrawForceField(spriteBatch, t));
                 treeCollection.Draw(spriteBatch);
                 seedCollection.Draw(spriteBatch);
-
-
                 spriteBatch.End();
+
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, null, null, null, null,
-                                  cameras[i].screenTransform);
+                                  GameCamera.CurrentCamera.screenTransform);
                 foreach (var player in players)
                 {
-                  player.Draw(gameTime);   
+                  player.Draw(gameTime);
                 }
                 spriteBatch.End();
                 
@@ -359,7 +382,7 @@ namespace lightseeds
                 };
 
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
-                                  cameras[i].screenTransform);
+                                  GameCamera.CurrentCamera.screenTransform);
                 voids.ForEach((v) => v.Draw(spriteBatch));
                 particleCollection.Draw(gameTime, spriteBatch);
                 spriteBatch.End();
@@ -373,7 +396,7 @@ namespace lightseeds
                 
                 spriteBatch.End();
 
-                if (this.State != GameState.STORY)
+                if (this.State != GameState.STORY && splitScreenMode)
                 {
                     Tree tree = treeCollection.FindTreeAtPosition(players[i].worldPosition.X);
                     if (tree != null)
@@ -406,20 +429,30 @@ namespace lightseeds
 
             // Draw split screens
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
-            for (int i = 0; i < 2; i++)
-                spriteBatch.Draw(splitScreens[i], splitScreenPositions[i], fadeColor);
+            if (splitScreenMode)
+            {
+                for (int i = 0; i < 2; i++)
+                    spriteBatch.Draw(splitScreens[i], splitScreenPositions[i], fadeColor);
+            }
+            else
+            {
+                spriteBatch.Draw(joinedScreen, joinedScreenPosition, fadeColor);
+            }
             spriteBatch.End();
 
             if (this.State != GameState.STORY)
             {
                 spriteBatch.Begin();
 
+                Vector2 edgePos = (splitScreenMode ? splitScreenPositions[1] : joinedScreenBottomPosition);
+
                 mapPanel.Draw(gameTime);
 
-                spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, -40) + splitScreenPositions[1], Color.Red);
+                spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, -40) + edgePos, Color.Red);
 
                 int totalTime = (int)(gameTime.TotalGameTime.TotalSeconds - startTime);
-                spriteBatch.DrawString(spriteFont, String.Format("DEBUG Time: {0:0}:{1:00}", totalTime / 60, totalTime % 60), splitScreenPositions[0], Color.Red);
+                spriteBatch.DrawString(spriteFont, String.Format("DEBUG Time: {0:0}:{1:00}", totalTime / 60, totalTime % 60),
+                                       (splitScreenMode ? splitScreenPositions[0] : joinedScreenPosition), Color.Red);
 
                 spriteBatch.End();
             }
@@ -475,14 +508,21 @@ namespace lightseeds
             }
         }
 
-        public Matrix bgMatrix(int index, float factor = 1f)
+        public Matrix bgMatrix(int index, float factor = 1.0f)
         {
-            Vector3 v = new Vector3(-(players[index].worldPosition.X) * factor, 
-                                    (players[index].worldPosition.Y) * factor, 0);
-            return Matrix.CreateTranslation(v);
-            
+            if (index < 2)
+            {
+                Vector3 v = new Vector3(-(players[index].worldPosition.X) * factor,
+                                        (players[index].worldPosition.Y) * factor, 0);
+                return Matrix.CreateTranslation(v);
+            }
+            else
+            {
+                Vector3 v = new Vector3(-0.5f * (players[0].worldPosition.X + players[1].worldPosition.X) * factor,
+                                         0.5f * (players[0].worldPosition.Y + players[1].worldPosition.Y) * factor, 0);
+                return Matrix.CreateTranslation(v);
+            }
         }
-
 
         public void Reset()
         {
@@ -497,6 +537,8 @@ namespace lightseeds
                 cameras[i].FollowPlayer(players[i]);
                 cameras[i].MoveTo(players[i].worldPosition.ToVector2(), 0.1f);
             }
+            joinedCamera.Center(new Vector3(0.0f, 16.0f, 1.0f));
+            splitScreenMode = true;
 
             // TODO care about music stuff
         }
@@ -522,10 +564,11 @@ namespace lightseeds
             if (storyProgress < 0)
             {
                 // initialization
+                splitScreenMode = false;
                 storyProgress = 0;
                 storyTime = 0.0f;
-                cameras[0].Center(new Vector3(0.0f, 40.0f, 1.0f));
-                cameras[0].MoveTo(new Vector2(0.0f, 8.0f), storyTimeIntervalls[storyProgress]);
+                joinedCamera.Center(new Vector3(0.0f, 48.0f, 1.0f));
+                joinedCamera.MoveTo(new Vector2(0.0f, 16.0f), storyTimeIntervalls[storyProgress]);
             }
 
             storyTime += gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
@@ -535,7 +578,7 @@ namespace lightseeds
                 case 0:
                     {
                         // scroll + fade in
-                        cameras[0].Update(gameTime);
+                        joinedCamera.Update(gameTime);
                         treeCollection.Update(gameTime);
                         float c = storyTime / storyTimeIntervalls[storyProgress];
                         fadeColor = new Color(c, c, c, 1.0f); 
@@ -555,15 +598,15 @@ namespace lightseeds
                         {
                             storyTime = 0.0f;
                             storyProgress++;
-                            cameras[0].MoveTo(new Vector2(-0.5f * World.WorldWidth + 0.5f * WORLD_SCREEN_WIDTH, 8.0f),
-                                              storyTimeIntervalls[storyProgress]);
+                            joinedCamera.MoveTo(new Vector2(-0.5f * World.WorldWidth + 0.5f * WORLD_SCREEN_WIDTH, 16.0f),
+                                                storyTimeIntervalls[storyProgress]);
                         }                        
                     }
                     break;
                 case 2:
                     {
                         // scroll left
-                        cameras[0].Update(gameTime);
+                        joinedCamera.Update(gameTime);
                         treeCollection.Update(gameTime);
                         if (storyTime > storyTimeIntervalls[storyProgress])
                         {
@@ -581,14 +624,14 @@ namespace lightseeds
                         {
                             storyTime = 0.0f;
                             storyProgress++;
-                            cameras[0].MoveTo(new Vector2(0.0f, 8.0f), storyTimeIntervalls[storyProgress]);
+                            joinedCamera.MoveTo(new Vector2(0.0f, 16.0f), storyTimeIntervalls[storyProgress]);
                         }
                     }
                     break;
                 case 4:
                     {
                         // scroll right
-                        cameras[0].Update(gameTime);
+                        joinedCamera.Update(gameTime);
                         treeCollection.Update(gameTime);
                         if (storyTime > storyTimeIntervalls[storyProgress])
                         {
@@ -612,7 +655,8 @@ namespace lightseeds
                     {
                         // start the game
                         this.State = GameState.RUNNING;
-                        cameras[0].FollowPlayer(players[0]);
+                        splitScreenMode = true;
+                        joinedCamera.Center(new Vector3(0.0f, 16.0f, 1.0f));
                         startTime = gameTime.TotalGameTime.TotalSeconds;
                     }
                     break;
@@ -626,8 +670,8 @@ namespace lightseeds
                 // start the game
                 fadeColor = Color.White;
                 this.State = GameState.RUNNING;
-                cameras[0].FollowPlayer(players[0]);
-                cameras[0].MoveTo(players[0].worldPosition.ToVector2(), 0.1f);
+                splitScreenMode = true;
+                joinedCamera.Center(new Vector3(0.0f, 16.0f, 1.0f));
                 startTime = gameTime.TotalGameTime.TotalSeconds;             
             }
         }
