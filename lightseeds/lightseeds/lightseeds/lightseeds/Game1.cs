@@ -375,7 +375,6 @@ namespace lightseeds
 
                         spriteBatch.DrawString(headlineFont, headlineText, textPos + new Vector2(2, 2), Color.Black);
                         spriteBatch.DrawString(headlineFont, headlineText, textPos, Color.White);
-
                         textPos.Y += headlineMeasure.Y;
 
                         spriteBatch.DrawString(spriteFont, bodyText, textPos + new Vector2(2, 2), Color.Black);

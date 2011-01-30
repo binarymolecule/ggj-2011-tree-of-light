@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -34,6 +35,8 @@ namespace lightseeds
         public float currentYAcceleration = 0.0f;
         public float xVelocity = 0.0f;
         public float yVelocity = 0.0f;
+        public List<Vector3> positions = new List<Vector3>();
+        public Vector3 drawingPosition;
 
         private float stunTimer = 0.0f;
         public bool isStunned = false;
@@ -43,6 +46,7 @@ namespace lightseeds
         private bool waitForReleaseLeft = false;
         private bool waitForReleaseRight = false;
         private bool waitForBPConfirm = false;
+
 
         public Tree blueprint;
         private TreeType lastUsedType = TreeType.PAWN;
@@ -90,6 +94,7 @@ namespace lightseeds
 
         public override void Update(GameTime gameTime)
         {
+            
             if (isStunned)
             {
                 stunTimer -= gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
@@ -104,7 +109,12 @@ namespace lightseeds
                 UpdateXPosition(gameTime);
                 UpdateYPosition(gameTime);
             }
-           
+            var x = screenPosition.X + 2 * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 120);
+            var y = WobblyPosition(screenPosition.Y, wobbleHeight, gameTime);
+            positions.Add(new Vector3(x,y,0));
+            if (positions.Count > 12)
+                positions.RemoveAt(0);
+            
             scaleTransition += (float)gameTime.ElapsedGameTime.TotalSeconds * 6f;
 
             if (scaleTransition >= 1)
@@ -207,16 +217,28 @@ namespace lightseeds
 
         public override void Draw(GameTime gameTime)
         {
-            var x = screenPosition.X + 2 * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 120);
-            var y = WobblyPosition(screenPosition.Y, wobbleHeight, gameTime);
             if (isStunned)
             {
                 if ((int)(stunTimer * 20.0f) % 2 == 0)
-                    game.spriteBatch.Draw(texture, new Vector2(x, y) + offset, null, color, 0, Vector2.Zero, currentScale, SpriteEffects.None, 0);                
+                {
+                    var pos = positions[11];
+                    game.spriteBatch.Draw(texture, new Vector2(pos.X, pos.Y) + offset, null, color, 0, Vector2.Zero, currentScale, SpriteEffects.None, 0);                
+                }
             }
             else
             {
-                game.spriteBatch.Draw(texture, new Vector2(x, y) + offset, null, color, 0, Vector2.Zero, currentScale, SpriteEffects.None, 0);
+                var tempColor = color;
+                tempColor.A = 10;
+                for (int i = 1; i < positions.Count; i++)
+                {
+                    tempColor.A += 5;
+                    game.spriteBatch.Draw(texture, new Vector2((positions[i].X + positions[i - 1].X) / 2, (positions[i].Y + positions[i - 1].Y) / 2) + offset, null, tempColor, 0, Vector2.Zero,
+                                          currentScale, SpriteEffects.None, 0);
+                    tempColor.A += 5;
+                    game.spriteBatch.Draw(texture, new Vector2(positions[i].X, positions[i].Y) + offset, null, tempColor, 0, Vector2.Zero,
+                                          currentScale, SpriteEffects.None, 0);
+
+                }
             }
             base.Draw(gameTime);
         }
