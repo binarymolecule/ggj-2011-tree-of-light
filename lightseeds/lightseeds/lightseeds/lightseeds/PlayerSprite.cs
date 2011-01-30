@@ -28,6 +28,7 @@ namespace lightseeds
         public const float WOBBLYNESS = 3.0f;
         public const float MAXVELOCITY_X = 25.0f;
         public const float MAXVELOCITY_Y = 10.0f;
+        public const float MAXVELOCITY_Y_DOWN = 25.0f;
         public const float ACCELERATION = 100.0f;
         public float wobbleHeight = 2.0f;
         
@@ -90,6 +91,15 @@ namespace lightseeds
             initialPosition = pos;
             position = initialPosition;
             offset = new Vector2(-0.5f * texture.Width, -0.5f * texture.Height);
+        }
+
+        public PlayerSprite(Game1 game1, Vector3 vector3, Texture2D playerTexture) : base(game1)
+        {
+            this.game = (Game1)game;
+            texture = playerTexture;
+            initialPosition = vector3;
+            position = initialPosition;
+            offset = new Vector2(-0.5f * texture.Width, -0.5f * texture.Height); 
         }
 
         public override void Update(GameTime gameTime)
@@ -222,8 +232,8 @@ namespace lightseeds
                 yVelocity += currentYAcceleration * timeFactor;
                 if (yVelocity > MAXVELOCITY_Y)
                     yVelocity = MAXVELOCITY_Y;
-                if (yVelocity < -MAXVELOCITY_Y)
-                    yVelocity = -MAXVELOCITY_Y;
+                if (yVelocity < -MAXVELOCITY_Y_DOWN)
+                    yVelocity = -MAXVELOCITY_Y_DOWN;
             }
 
             //backbounce
@@ -267,7 +277,6 @@ namespace lightseeds
                     tempColor.A += 2;
                     game.spriteBatch.Draw(texture, new Vector2(positions[i].X, positions[i].Y) + offset, null, tempColor, 0, Vector2.Zero,
                                           currentScale, SpriteEffects.None, 0);
-
                 }
             }
             base.Draw(gameTime);

@@ -121,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameCamera.cs" />
+    <Compile Include="GameObjects\FairyCollection.cs" />
     <Compile Include="MapPanel.cs" />
     <Compile Include="GameScreen.cs" />
     <Compile Include="GameObjects\ParticleCollection.cs" />

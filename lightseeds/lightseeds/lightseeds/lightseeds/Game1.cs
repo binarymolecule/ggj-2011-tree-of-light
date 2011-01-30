@@ -31,7 +31,7 @@ namespace lightseeds
         public PlayerSprite[] players;
         public GameCamera[] cameras;
 
-        Texture2D playerTexture;
+        public Texture2D playerTexture;
         Texture2D backgroundTexture;
         private SpriteFont spriteFont;
 
@@ -49,6 +49,7 @@ namespace lightseeds
 
         public TreeCollection treeCollection;
         public SeedCollection seedCollection;
+        public FairyCollection fairyCollection;
 
         public List<TheVoid> voids = new List<TheVoid>();
 
@@ -155,7 +156,6 @@ namespace lightseeds
             // Create main game related stuff
             world = new World();
             world.Load();
-
             // load textures
             playerTexture = Content.Load<Texture2D>("textures/playerTexture");
             backgroundTexture = Content.Load<Texture2D>("Background/Background_1");
@@ -210,6 +210,10 @@ namespace lightseeds
             seedCollection = new SeedCollection(this);
             seedCollection.Load();
             seedCollection.Reset();
+
+            fairyCollection = new FairyCollection(this);
+            fairyCollection.Load(playerTexture);
+            fairyCollection.SpawnFairy(new Vector3(0,6,0));
 
             // distribute some random seeds
             Random randomizer = new Random();
@@ -381,6 +385,7 @@ namespace lightseeds
                 treeCollection.trees.ForEach((t) => DrawForceField(spriteBatch, t));
                 treeCollection.Draw(spriteBatch);
                 seedCollection.Draw(spriteBatch);
+                fairyCollection.Draw(spriteBatch, gameTime);
                 spriteBatch.End();
 
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, null, null, null, null,
