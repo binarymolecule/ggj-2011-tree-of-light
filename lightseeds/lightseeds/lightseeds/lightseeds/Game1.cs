@@ -78,6 +78,7 @@ namespace lightseeds
 
         bool splitScreenMode = true;
         private SpriteFont scriptFont;
+        private ParallaxCollection parallaxCollection;
 
         public enum GameState
         {
@@ -163,6 +164,8 @@ namespace lightseeds
             backgroundTexture3 = Content.Load<Texture2D>("Background/Background_3");
             this.noise = Content.Load<Texture2D>("noise");
 
+            this.parallaxCollection = new ParallaxCollection(this);
+
             // create map panel
             mapPanel = new MapPanel(this, Content.Load<Texture2D>("textures/centerBar"),
                                     Content.Load<Texture2D>("textures/darkBar"),
@@ -224,12 +227,8 @@ namespace lightseeds
                 float offsetY = (float)randomizer.Next(2, 6);
                 seedCollection.SpawnSeed(new Vector3(posX, world.getHeigth(posX) + offsetY, 0.0f));
             }
-             /**
-             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
-                               GameCamera.CurrentCamera.screenTransform);
-                
-             foreground.Draw(this, gameTime, i);
-             **/
+             
+             
 
             for (int i = 0; i < NUM_INITIAL_SEEDS; i++)
             {
@@ -419,6 +418,8 @@ namespace lightseeds
                 particleCollection.Draw(gameTime, spriteBatch);
                 spriteBatch.End();
 
+                this.parallaxCollection.Draw(spriteBatch);
+
                 if (this.State != GameState.STORY)
                 {
                     spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
@@ -434,6 +435,7 @@ namespace lightseeds
                     }
                     spriteBatch.End();
                 }
+
 
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
                 float nx = this.particleCollection.random.Next(100), ny = particleCollection.random.Next(100);
@@ -573,18 +575,9 @@ namespace lightseeds
 
         public Matrix bgMatrix(int index, float factor = 1.0f)
         {
-            if (index < 2)
-            {
-                Vector3 v = new Vector3((cameras[index].worldTransform.Translation.X) * factor,
-                                    -(cameras[index].worldTransform.Translation.Y * 0.2f) * factor, 0);
+                Vector3 v = new Vector3((GameCamera.CurrentCamera.worldTransform.Translation.X) * factor,
+                                    -(GameCamera.CurrentCamera.worldTransform.Translation.Y * 0.2f) * factor, 0);
                 return Matrix.CreateTranslation(v);
-            }
-            else
-            {
-                Vector3 v = new Vector3(-0.5f * (players[0].worldPosition.X + players[1].worldPosition.X) * factor,
-                                         0.5f * (players[0].worldPosition.Y + players[1].worldPosition.Y) * factor, 0);
-                return Matrix.CreateTranslation(v);
-            }
         }
 
         public void Reset()
