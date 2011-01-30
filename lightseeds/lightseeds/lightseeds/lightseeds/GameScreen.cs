@@ -102,8 +102,7 @@ namespace lightseeds
                 KeyboardState keyboardState = Keyboard.GetState();
                 if (gamepadState.IsButtonDown(Buttons.Start) ||
                     gamepadState.IsButtonDown(Buttons.A) ||
-                    gamepadState.IsButtonDown(Buttons.X) ||
-                    gamepadState.IsButtonDown(Buttons.BigButton) ||
+                    gamepadState.IsButtonDown(Buttons.B) ||
                     keyboardState.IsKeyDown(Keys.Enter))
                 {
                     screenStatus = ScreenStatus.FADE_OUT;

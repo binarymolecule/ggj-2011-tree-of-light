@@ -463,7 +463,7 @@ namespace lightseeds
                             textPos.Y += headlineMeasure.Y;
 
                             spriteBatch.DrawString(spriteFont, bodyText, textPos + new Vector2(2, 2), Color.Black);
-                            spriteBatch.DrawString(spriteFont, bodyText, textPos, Color.White);
+                            spriteBatch.DrawString(spriteFont, bodyText, textPos, Color.WhiteSmoke);
                             textPos.Y += headlineMeasure.Y + menuButtons.Height;
 
                             // draw menu buttons for build menu
@@ -718,7 +718,8 @@ namespace lightseeds
             // skip intro
             GamePadState gamepadState = GamePad.GetState(PlayerIndex.One);
             KeyboardState keyboardState = Keyboard.GetState();
-            if (gamepadState.IsButtonDown(Buttons.Start) || keyboardState.IsKeyDown(Keys.Enter))
+            if (gamepadState.IsButtonDown(Buttons.Start) || gamepadState.IsButtonDown(Buttons.A) ||
+                gamepadState.IsButtonDown(Buttons.B) || keyboardState.IsKeyDown(Keys.Enter))
             {
                 // start the game
                 fadeColor = Color.White;
@@ -726,6 +727,11 @@ namespace lightseeds
                 splitScreenMode = true;
                 joinedCamera.Center(new Vector3(0.0f, 16.0f, 1.0f));
                 startTime = gameTime.TotalGameTime.TotalSeconds;             
+            }
+            else if (gamepadState.Buttons.Back == ButtonState.Pressed ||
+                     keyboardState.IsKeyDown(Keys.Escape))
+            {
+                this.Exit();
             }
         }
 
