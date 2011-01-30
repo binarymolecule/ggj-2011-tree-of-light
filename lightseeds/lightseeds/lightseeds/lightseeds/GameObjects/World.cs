@@ -118,6 +118,7 @@ namespace lightseeds.GameObjects
 
         public void Draw(Game1 game, GameTime gameTime, int x, int w)
         {
+            graphicsDevice.BlendState = BlendState.NonPremultiplied;
             foreach (var chunk in chunks.Select((c) => c.ShouldBeDrawn(x, w)))
             {
                 var texture = tile;
@@ -145,7 +146,6 @@ namespace lightseeds.GameObjects
             //spriteEffect.Parameters["MatrixTransform"].SetValue(Matrix.CreateScale(0.05f));
             //spriteEffect.Parameters["TextureSampler"].SetValue(tile);
             spriteEffect.CurrentTechnique.Passes[0].Apply();
-
             graphicsDevice.SetVertexBuffer(groundVbo);
             graphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, (heights.Count - 1) * 2);
 

@@ -253,10 +253,10 @@ namespace lightseeds
                 tempColor.A = 0;
                 for (int i = 1; i < positions.Count; i++)
                 {
-                    tempColor.A += 4;
+                    tempColor.A += 2;
                     game.spriteBatch.Draw(texture, new Vector2((positions[i].X + positions[i - 1].X) / 2, (positions[i].Y + positions[i - 1].Y) / 2) + offset, null, tempColor, 0, Vector2.Zero,
                                           currentScale, SpriteEffects.None, 0);
-                    tempColor.A += 4;
+                    tempColor.A += 2;
                     game.spriteBatch.Draw(texture, new Vector2(positions[i].X, positions[i].Y) + offset, null, tempColor, 0, Vector2.Zero,
                                           currentScale, SpriteEffects.None, 0);
 

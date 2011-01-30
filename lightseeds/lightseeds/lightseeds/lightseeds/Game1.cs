@@ -336,11 +336,16 @@ namespace lightseeds
                 treeCollection.Draw(spriteBatch);
                 seedCollection.Draw(spriteBatch);
 
-                foreach(var player in players) {
+
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, null, null, null, null,
+                                  cameras[i].screenTransform);
+                foreach (var player in players)
+                {
                   player.Draw(gameTime);   
                 }
                 spriteBatch.End();
-
+                
                 world.Draw(this, gameTime, -1000, 2000);
 
                 BlendState bs = new BlendState() {
