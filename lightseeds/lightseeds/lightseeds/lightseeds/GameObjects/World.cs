@@ -31,7 +31,7 @@ namespace lightseeds.GameObjects
         private Effect spriteEffect;
         private Texture2D grassTopping;
 
-        public const int WorldWidth = 200;
+        public const int WorldWidth = 300;
 
         public void Load()
         {

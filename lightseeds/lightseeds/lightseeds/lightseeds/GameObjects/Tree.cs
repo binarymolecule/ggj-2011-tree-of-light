@@ -237,7 +237,7 @@ namespace lightseeds.GameObjects
                     position.Y = groundHeight;
                     status = TreeStatus.MATURE;
                     growth = 1.0f;
-                    fruitTime = 25.0f;
+                    fruitTime = 15.0f;
                     resistance = 1.0f;
                     lifeSpan = 0.0f;
                     price = 0;
@@ -245,40 +245,40 @@ namespace lightseeds.GameObjects
                     descriptionLines[1] = "is Basic";
                     break;
                 case TreeType.FIGHTER:
-                    growthTime = 14.0f;
-                    fruitTime = 30.0f;
+                    growthTime = 8.0f;
+                    fruitTime = 20.0f;
                     resistance = 0.4f;
-                    lifeSpan = 90.0f;
-                    price = 12;
+                    lifeSpan = 60.0f;
+                    price = 3;
                     descriptionLines[0] = "Fighter Tree";
-                    descriptionLines[1] = "is very angry";
+                    descriptionLines[1] = "fight for the light";
                     break;
                 case TreeType.MOTHER:
-                    growthTime = 40.0f;
-                    fruitTime = 10.0f;
+                    growthTime = 15.0f;
+                    fruitTime = 5.0f;
                     resistance = 0.6f;
-                    lifeSpan = 150.0f;
-                    price = 18;
-                    descriptionLines[0] = "The Mana Tree";
-                    descriptionLines[1] = "ya know?!";
+                    lifeSpan = 80.0f;
+                    price = 8;
+                    descriptionLines[0] = "The Mother Tree";
+                    descriptionLines[1] = "a lot of children";
                     break;
                 case TreeType.PAWN:
-                    growthTime = 7.0f;
-                    fruitTime = 25.0f;
+                    growthTime = 5.0f;
+                    fruitTime = 7.0f;
                     resistance = 0.6f;
-                    lifeSpan = 30.0f;
-                    price = 3;
+                    lifeSpan = 25.0f;
+                    price = 2;
                     descriptionLines[0] = "Pawn Tree";
                     descriptionLines[1] = "The Ace of Rage";
                     break;
                 case TreeType.TANK:
-                    growthTime = 60.0f;
-                    fruitTime = 30.0f;
-                    resistance = 0.2f;
-                    lifeSpan = 200.0f;
-                    price = 18;
+                    growthTime = 25.0f;
+                    fruitTime = 25.0f;
+                    resistance = 0.3f;
+                    lifeSpan = 130.0f;
+                    price = 10;
                     descriptionLines[0] = "Tank Tree";
-                    descriptionLines[1] = "guess";
+                    descriptionLines[1] = "you shall not pass";
                     break;
             }
             descriptionLines[2] = "Price: " + price.ToString() + " seeds";
@@ -326,7 +326,7 @@ namespace lightseeds.GameObjects
                     glowStrength -= (float)gameTime.ElapsedGameTime.TotalSeconds;
                     glowStrength = Math.Max(glowStrength, 0);
                     lifeSpan -= gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
-                    if (lifeSpan < -10.0f)
+                    if (lifeSpan < -3.0f)
                         status = TreeStatus.KILLED;
                     break;
                 case TreeStatus.KILLED:
