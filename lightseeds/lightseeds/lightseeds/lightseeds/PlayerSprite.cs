@@ -304,9 +304,12 @@ namespace lightseeds
 
                     if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
                     {
-                        blueprint = game.treeCollection.CreateTree(worldPosition, lastUsedType, true, "");
-                        waitForBPConfirm = true;
-                        waitForReleaseA = true;
+                        if (!game.treeCollection.HasTreeAtPosition(worldPosition.X))
+                        {
+                            blueprint = game.treeCollection.CreateTree(worldPosition, lastUsedType, true, "");
+                            waitForBPConfirm = true;
+                            waitForReleaseA = true;
+                        }
                     }
                 }
                 if (gamepadState.IsButtonUp(Buttons.A))
