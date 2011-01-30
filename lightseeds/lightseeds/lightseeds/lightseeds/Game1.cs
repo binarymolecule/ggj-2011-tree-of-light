@@ -100,7 +100,7 @@ namespace lightseeds
             world.Load();
 
             playerTexture = Content.Load<Texture2D>("textures/playerTexture");
-            backgroundTexture = Content.Load<Texture2D>("Background/Background");
+            backgroundTexture = Content.Load<Texture2D>("Background/Background_1");
 
             players = new PlayerSprite[2];
             players[0] = new PlayerSprite(this, 0, new Vector3(2.0f, 7.0f, 1.0f), playerTexture)
@@ -212,16 +212,17 @@ namespace lightseeds
                 spriteBatch.Draw(backgroundTexture, new Rectangle((int)(-SCREEN_WIDTH*0.1f), (int)(-SCREEN_HEIGHT*0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT*1.2)), Color.White);
                 spriteBatch.End();
                 
-                world.Draw(this, gameTime, -1000, 2000);
-                
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
                                   cameras[i].screenTransform);
                 treeCollection.Draw(spriteBatch);
                 seedCollection.Draw(spriteBatch);
+
                 foreach(var player in players) {
                   player.Draw(gameTime);   
                 }
                 spriteBatch.End();
+
+                world.Draw(this, gameTime, -1000, 2000);
 
                 BlendState bs = new BlendState() {
                     AlphaBlendFunction = BlendFunction.Subtract,
