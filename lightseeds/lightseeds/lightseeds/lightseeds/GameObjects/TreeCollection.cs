@@ -67,6 +67,7 @@ namespace lightseeds.GameObjects
         }
 
         public void Draw(SpriteBatch sb)
+
         {
             foreach (var tree in trees)
             {
@@ -89,6 +90,16 @@ namespace lightseeds.GameObjects
                     return true;
             }
             return false;
+        }
+
+        public Tree FindTreeAtPosition(float posX)
+        {
+            foreach (Tree tree in trees)
+            {
+                if (tree.OccupiesPosition(posX))
+                    return tree;
+            }
+            return null;
         }
     }
 }

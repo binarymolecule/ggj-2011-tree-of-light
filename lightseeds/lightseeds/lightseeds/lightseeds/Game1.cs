@@ -48,6 +48,8 @@ namespace lightseeds
         public ParticleCollection particleCollection;
         public GameState State;
 
+        public double startTime;
+
         public enum GameState
         {
             RUNNING,
@@ -170,6 +172,9 @@ namespace lightseeds
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (startTime < 0)
+                startTime = gameTime.TotalGameTime.TotalSeconds;
+
             handleControls();
             
             // Update players
@@ -262,8 +267,18 @@ namespace lightseeds
                         y += (int)msgDim.Y;
                     }
                 }
-            }
-            spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, 20) + splitScreenPositions[1], Color.Red);
+
+                Tree tree = treeCollection.FindTreeAtPosition(p.worldPosition.X);
+                if (tree != null)
+                {
+                    // show tree information
+                    spriteBatch.DrawString(spriteFont, tree.GetStatusInfo(), new Vector2(SPLIT_SCREEN_WIDTH / 2 - 120, SPLIT_SCREEN_HEIGHT - 80) + splitScreenPositions[p.index], Color.White);
+                }
+            }            
+            spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, -40) + splitScreenPositions[1], Color.Red);
+            
+            int totalTime = (int)(gameTime.TotalGameTime.TotalSeconds - startTime);
+            spriteBatch.DrawString(spriteFont, String.Format("Time: {0:0}:{1:00}", totalTime / 60, totalTime % 60), splitScreenPositions[1], Color.Red);
             spriteBatch.End();
 
             base.Draw(gameTime);

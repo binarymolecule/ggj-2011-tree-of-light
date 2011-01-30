@@ -328,5 +328,24 @@ namespace lightseeds.GameObjects
         {
             return (Math.Abs(posX - worldPosition.X) < MIN_DISTANCE);
         }
+
+        public String GetStatusInfo()
+        {
+            String info = "";
+            switch (status)
+            {
+                case TreeStatus.PLANTED:
+                    info = "Growth: " + (int)(100.0f * (float)growth) + "%";
+                    break;
+                case TreeStatus.MATURE:
+                    info = "Fruit: " + (int)(100.0f * (float)currentFruitTime / (float)fruitTime) + "%";
+                    break;
+            }
+            if (status == TreeStatus.MATURE && treeType != TreeType.BASE)
+            {
+                info += "\nLife: " + (int)lifeSpan + " sec";
+            }
+            return info;
+        }
     }
 }
