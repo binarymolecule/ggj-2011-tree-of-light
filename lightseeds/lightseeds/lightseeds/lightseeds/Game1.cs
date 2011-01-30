@@ -60,6 +60,7 @@ namespace lightseeds
         static public int SPLIT_SCREEN_HEIGHT = SCREEN_HEIGHT / 2;
         static public int WORLD_SCREEN_WIDTH = 24;
         static public int WORLD_SCREEN_HEIGHT = 9;
+        const int NUM_INITIAL_SEEDS = 8;
 
         public ParticleCollection particleCollection;
         public GameState State;
@@ -213,29 +214,18 @@ namespace lightseeds
             seedCollection = new SeedCollection(this);
             seedCollection.Load();
             seedCollection.Reset();
+            CreateRandomSeeds(NUM_INITIAL_SEEDS, treeCollection.trees[0]);
 
             fairyCollection = new FairyCollection(this);
             fairyCollection.Load(playerTexture);
             fairyCollection.SpawnFairy(new Vector3(2.0f, 8.0f, 1.0f));
-
-            // distribute some random seeds
-            Random randomizer = new Random();
-            const int NUM_INITIAL_SEEDS = 4;
-            for (int i = 0; i < NUM_INITIAL_SEEDS; i++)
-            {
-                float posX = (float)randomizer.Next(15, (World.WorldWidth - WORLD_SCREEN_WIDTH) / 2 - 15);
-                float offsetY = (float)randomizer.Next(2, 6);
-                seedCollection.SpawnSeed(new Vector3(posX, world.getHeigth(posX) + offsetY, 0.0f));
-            }
-             
-             
-
-            for (int i = 0; i < NUM_INITIAL_SEEDS; i++)
-            {
-              float posX = -(float)randomizer.Next(15, (World.WorldWidth - WORLD_SCREEN_WIDTH) / 2 - 15);
-              float offsetY = (float)randomizer.Next(2, 6);
-              seedCollection.SpawnSeed(new Vector3(posX, world.getHeigth(posX) + offsetY, 0.0f));
-            }
+            
+            /*
+             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
+                               GameCamera.CurrentCamera.screenTransform);
+                
+             foreground.Draw(this, gameTime, i);
+            */            
 
             // reset "The Void"
             ResetVoids(1.0f);
@@ -460,7 +450,7 @@ namespace lightseeds
 
                             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
                                               GameCamera.CurrentCamera.screenTransform);
-                            var textPos = Vector3.Transform(tree.worldPosition + new Vector3(1.5f, 1f, 0), worldToScreen).ToVector2() + tree.fruitOffset;
+                            var textPos = Vector3.Transform(tree.worldPosition + new Vector3(1.5f, 1f, 0), worldToScreen).ToVector2();
 
                             var bodyText = tree.GetStatusInfo();
                             var headlineText = tree.descriptionLines[0];
@@ -584,6 +574,7 @@ namespace lightseeds
         {
             treeCollection.Reset();
             seedCollection.Reset();
+            CreateRandomSeeds(NUM_INITIAL_SEEDS, treeCollection.trees[0]);
             ResetVoids(1.0f);
             for (int i = 0; i < 2; i++)
             {
@@ -613,6 +604,15 @@ namespace lightseeds
                 direction = new Vector3(-1, 0, 0),
                 horizontalPosition = factor * World.WorldWidth / 2
             });
+        }
+
+        public void CreateRandomSeeds(int num, Tree tree)
+        {
+            for (int i = 0; i < num; i++)
+            {
+                //seedCollection.SpawnSeed(new Vector3(posX, world.getHeigth(posX) + offsetY, 0.0f));
+                seedCollection.SpawnSeed(tree.GetNextSeedPosition());
+            }
         }
 
         public void UpdateStoryMode(GameTime gameTime)

@@ -95,7 +95,7 @@ namespace lightseeds
 
         public PlayerSprite(Game1 game1, Vector3 vector3, Texture2D playerTexture) : base(game1)
         {
-            this.game = (Game1)game;
+            this.game = (Game1)game1;
             texture = playerTexture;
             initialPosition = vector3;
             position = initialPosition;

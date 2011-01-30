@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using lightseeds.Helpers;
 
 namespace lightseeds.GameObjects
 {
@@ -145,9 +146,10 @@ namespace lightseeds.GameObjects
         public Vector3 position;
         public Vector2 offset;
         public Vector2 screenSize;
-        public Vector2 fruitOffset;
         public Vector2 fruitSize;
         public float groundHeight;
+
+        public Vector3 nextSeedPosition;
 
         public Texture2D texture, deadTexture, xrayTexture;
 
@@ -230,12 +232,10 @@ namespace lightseeds.GameObjects
             if (treeType == TreeType.BASE)
             {
                 offset = new Vector2(-0.5f * screenSize.X - 20, -screenSize.Y + 210.0f);
-                fruitOffset = new Vector2(0.0f, -96.0f);
             }
             else
             {
                 offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 64.0f);
-                fruitOffset = new Vector2(0.0f, -96.0f);
             }
             growth = 0.1f;
             status = TreeStatus.SEED;
@@ -298,6 +298,12 @@ namespace lightseeds.GameObjects
                     break;
             }
             descriptionLines[2] = "Price: " + price.ToString() + " souls";
+            
+            // create first seed position
+            if (!isBlueprint)
+            {
+                nextSeedPosition = GetNextSeedPosition();
+            }
         }
 
         public void Update(GameTime gameTime)
@@ -331,7 +337,8 @@ namespace lightseeds.GameObjects
                     currentFruitTime += gameTime.ElapsedGameTime.TotalSeconds;
                     if (currentFruitTime > fruitTime)
                     {
-                        parentCollection.game.seedCollection.SpawnSeed(worldPosition + new Vector3(0, 2, 0));
+                        parentCollection.game.seedCollection.SpawnSeed(nextSeedPosition);
+                        nextSeedPosition = GetNextSeedPosition();
                         currentFruitTime = 0;
                     }
                     // decrease life span of tree
@@ -372,14 +379,6 @@ namespace lightseeds.GameObjects
             if (treeType == TreeType.BASE)
             {
                 spriteBatch.Draw(texture, screenPosition + offset, Color.White);
-                if (status == TreeStatus.MATURE)
-                {
-                    float fruitScale = (float)currentFruitTime / (float)fruitTime;
-                    Rectangle fruitRect = new Rectangle((int)(screenPosition.X + fruitOffset.X - 0.5f * fruitScale * fruitSize.X),
-                                                        (int)(screenPosition.Y + fruitOffset.Y - 0.5f * fruitScale * fruitSize.Y),
-                                                        (int)(fruitScale * fruitSize.X), (int)(fruitScale * fruitSize.Y));
-                    spriteBatch.Draw(parentCollection.fruitTexture, fruitRect, Color.White);
-                }
             }
             else
             {
@@ -404,12 +403,7 @@ namespace lightseeds.GameObjects
                         break;
                     case TreeStatus.MATURE:
                         {
-                            float fruitScale = (float)currentFruitTime / (float)fruitTime;
-                            Rectangle fruitRect = new Rectangle((int)(screenPosition.X + fruitOffset.X - 0.5f * fruitScale * fruitSize.X),
-                                                                (int)(screenPosition.Y + fruitOffset.Y - 0.5f * fruitScale * fruitSize.Y),
-                                                                (int)(fruitScale * fruitSize.X), (int)(fruitScale * fruitSize.Y));
                             spriteBatch.Draw(texture, screenPosition + offset, Color.White);
-                            spriteBatch.Draw(parentCollection.fruitTexture, fruitRect, Color.White);
                         }
                         break;
                     case TreeStatus.KILLED:
@@ -434,6 +428,16 @@ namespace lightseeds.GameObjects
                         }
                 }
             }
+            if (status == TreeStatus.MATURE)
+            {
+                float fruitScale = (float)currentFruitTime / (float)fruitTime;
+                Vector2 fruitScreenPosition = Vector3.Transform(nextSeedPosition, parentCollection.game.worldToScreen).ToVector2();
+                Rectangle fruitRect = new Rectangle((int)(fruitScreenPosition.X - 0.5f * fruitScale * fruitSize.X),
+                                                    (int)(fruitScreenPosition.Y - 0.5f * fruitScale * fruitSize.Y),
+                                                    (int)(fruitScale * fruitSize.X), (int)(fruitScale * fruitSize.Y));
+                spriteBatch.Draw(parentCollection.fruitTexture, fruitRect, Color.DarkGreen);
+            }
+
         }
 
         public bool OccupiesPosition(float posX)
@@ -461,6 +465,29 @@ namespace lightseeds.GameObjects
                 info += "\nLife: " + (int)lifeSpan + " sec";
             }
             return info;
+        }
+
+        public Vector3 GetNextSeedPosition()
+        {
+            Random randomizer = parentCollection.randomizer;
+            float offsetX, offsetY;
+            if (treeType == TreeType.BASE)
+            {
+                offsetY = (float)randomizer.Next(8, 30);
+                if (offsetY < 10)
+                    offsetX = (float)randomizer.Next(-4, 4);
+                else
+                    offsetX = (float)randomizer.Next(-8, 8);
+            }
+            else
+            {
+                offsetY = (float)randomizer.Next(2, 6);
+                if (offsetY < 4)
+                    offsetX = (float)randomizer.Next(-1, 1);
+                else
+                    offsetX = (float)randomizer.Next(-3, 3);
+            }
+            return new Vector3(worldPosition.X + offsetX, worldPosition.Y + offsetY, 1.0f);
         }
     }
 }

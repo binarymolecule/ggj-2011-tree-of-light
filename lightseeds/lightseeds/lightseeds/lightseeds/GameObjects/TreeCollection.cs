@@ -22,6 +22,8 @@ namespace lightseeds.GameObjects
     {
         public List<Tree> trees = new List<Tree>();
 
+        public Random randomizer;
+
         public Game1 game;
 
         public ContentManager content;
@@ -52,6 +54,8 @@ namespace lightseeds.GameObjects
             textures[11] = content.Load<Texture2D>("Trees/Pawn Tree/Pawn_Tree_xray");
             textures[12] = content.Load<Texture2D>("Trees/Tank Tree/Tank_Tree_xray");
             fruitTexture = content.Load<Texture2D>("textures/glowing");
+
+            randomizer = new Random();
         }
 
         public void Reset()

@@ -34,7 +34,7 @@ namespace lightseeds.GameObjects
             // remove all seeds
             seeds.Clear();
             // clear score
-            collectedSeedCount = 0;
+            collectedSeedCount = 0;            
         }
 
         public void Update()
