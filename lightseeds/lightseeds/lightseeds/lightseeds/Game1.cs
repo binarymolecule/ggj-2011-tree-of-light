@@ -146,8 +146,8 @@ namespace lightseeds
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Create title and gameover screens
-            introScreen = new GameScreen(this, Content.Load<Texture2D>("textures/titleScreen"));
-            gameoverScreen = new GameScreen(this, Content.Load<Texture2D>("textures/gameoverScreen"));
+            introScreen = new GameScreen(this, Content.Load<Texture2D>("textures/titleScreen"), 10.0f);
+            gameoverScreen = new GameScreen(this, Content.Load<Texture2D>("textures/gameoverScreen"), 3.0f);
 
             // Create main game related stuff
             world = new World();

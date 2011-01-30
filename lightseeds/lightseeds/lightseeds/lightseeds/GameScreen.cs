@@ -25,7 +25,7 @@ namespace lightseeds
 
         ScreenStatus screenStatus;
 
-        float fadeTime, waitTime;
+        float fadeTime, waitTime, duration;
 
         const float MAX_FADE_TIME = 1.0f, MAX_WAIT_TIME = 1.0f;
 
@@ -33,10 +33,11 @@ namespace lightseeds
 
         public ScreenStatus Status { get { return screenStatus; } }
 
-        public GameScreen(Game1 game, Texture2D tex) : base(game)
+        public GameScreen(Game1 game, Texture2D tex, float duration) : base(game)
         {
             this.game = game;
             screenTexture = tex;
+            this.duration = duration;
             var content = GameServices.GetService<ContentManager>();
             effect = content.Load<Effect>("effects/titleEffect");
             Reset();
@@ -81,6 +82,7 @@ namespace lightseeds
                 {
                     fadeTime = MAX_FADE_TIME;
                     screenStatus = ScreenStatus.ACTIVE;
+                    waitTime = duration;
                 }
                 effect.Parameters["fade"].SetValue(fadeTime / MAX_FADE_TIME);
             }
@@ -110,6 +112,16 @@ namespace lightseeds
                          keyboardState.IsKeyDown(Keys.Escape))
                 {
                     game.Exit();
+                }
+                // automatic fade out after given timer (< 0: wait for user input)
+                if (waitTime > 0)
+                {
+                    waitTime -= gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
+                    if (waitTime < 0)
+                    {
+                        waitTime = 0.0f;
+                        screenStatus = ScreenStatus.FADE_OUT;
+                    }
                 }
             }
 
