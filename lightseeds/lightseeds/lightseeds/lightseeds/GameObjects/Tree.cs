@@ -184,6 +184,7 @@ namespace lightseeds.GameObjects
         public TreeStatus status;
         public string[] descriptionLines = new string[4];
         public float glowStrength;
+        public float glowRange;
 
         public Vector3 worldPosition
         {
@@ -304,6 +305,7 @@ namespace lightseeds.GameObjects
             {
                 case TreeStatus.SEED:
                     position.Y -= (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) * SEED_FALL_SPEED;
+                    this.glowRange = 0.8f + 0.2f * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 0.35);
                     if (position.Y < groundHeight)
                     {
                         status = TreeStatus.PLANTED;
@@ -311,6 +313,8 @@ namespace lightseeds.GameObjects
                     }
                     break;
                 case TreeStatus.PLANTED:
+                    this.glowStrength = 0.4f + 0.15f * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 0.5);
+                    this.glowRange = 1f + 0.2f * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 0.35);
                     growth += (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) / growthTime;
                     if (growth > 1.0f)
                     {
@@ -319,7 +323,8 @@ namespace lightseeds.GameObjects
                     }
                     break;
                 case TreeStatus.MATURE:
-                    this.glowStrength = (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 0.5);
+                    this.glowStrength = 0.4f + 0.15f * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 0.5);
+                    this.glowRange = 1f + 0.2f * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 0.35);
                     // grow fruit
                     currentFruitTime += gameTime.ElapsedGameTime.TotalSeconds;
                     if (currentFruitTime > fruitTime)

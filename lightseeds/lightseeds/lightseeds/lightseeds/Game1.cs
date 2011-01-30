@@ -379,9 +379,9 @@ namespace lightseeds
 
         private void DrawForceField(SpriteBatch spriteBatch, Tree tree)
         {
-            var a = 0.4f + 0.15f * tree.glowStrength * tree.growth;
+            var a = tree.glowStrength * tree.growth;
             var color = new Color(1f, 1f, 1f, a);
-            var scale = tree.texture.Width / playerTexture.Width * 0.85f;
+            var scale = tree.glowRange * (tree.texture.Width / playerTexture.Width * 0.85f);
             spriteBatch.Draw(playerTexture, Vector3.Transform(tree.worldPosition, worldToScreen).ToVector2(), null, color, 0, new Vector2(playerTexture.Width/2, playerTexture.Height/2), scale, SpriteEffects.None, 0);
          
         }
