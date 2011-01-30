@@ -24,7 +24,7 @@ namespace lightseeds
     private AudioCategory light2 = new AudioCategory();
     private AudioCategory dark2 = new AudioCategory();
 
-    private float LightVolume = 1.0f;
+    private float LightVolume = 0.0f;
     private float TargetLightVolume = 1.0f;
     private float DarkVolume = 0.0f;
     private float TargetDarkVolume = 0.0f;
@@ -55,7 +55,7 @@ namespace lightseeds
 
       CurrentStage = 0;
       NextStage = 0;
-      light.SetVolume(1.0f);
+      light.SetVolume(0.0f);
       dark.SetVolume(0.0f);
       light2.SetVolume(0.0f);
       dark2.SetVolume(0.0f);
@@ -125,8 +125,12 @@ namespace lightseeds
 
     public void Play(string CueName)
     {
-      soundBank.PlayCue(CueName);
+      if(!soundBank.GetCue(CueName).IsPlaying)
+        soundBank.PlayCue(CueName);
+      
     }
+
+
 
     private bool SecondStageStarted = false;
     public void SetNextStage(int stage)

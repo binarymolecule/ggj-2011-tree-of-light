@@ -20,7 +20,7 @@ namespace lightseeds
     {
         GraphicsDeviceManager graphics;
 
-        MusicManager musicManager = new MusicManager(15, 15);
+        MusicManager musicManager = new MusicManager(20, 20);
 
         public SpriteBatch spriteBatch;
         public World world;
@@ -95,6 +95,7 @@ namespace lightseeds
 
             GameServices.AddService(GraphicsDevice);
             GameServices.AddService(Content);
+            GameServices.AddService(musicManager);
 
             base.Initialize();
 

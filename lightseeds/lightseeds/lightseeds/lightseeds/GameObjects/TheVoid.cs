@@ -35,7 +35,8 @@ namespace lightseeds.GameObjects
                 if (IsBehind(player.worldPosition.X))
                 {
                     // player is dead
-
+                  GameServices.GetService<MusicManager>().Play("Die");
+                  GameServices.GetService<MusicManager>().Play("Disintegrate");
                     player.Respawn();
                 }
             }

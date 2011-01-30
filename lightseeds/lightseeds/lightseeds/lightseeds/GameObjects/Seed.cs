@@ -37,6 +37,28 @@ namespace lightseeds.GameObjects
                 float distance = (player.worldPosition - position).Length();
                 if (distance < 1.5f)
                 {
+                  Random r = new Random();
+                  switch(r.Next(1, 6))
+                  {
+                    case 1:
+                      GameServices.GetService<MusicManager>().Play("PickUpOne");
+                      break;
+                    case 2:
+                      GameServices.GetService<MusicManager>().Play("PickUpTwo");
+                      break;
+                    case 3:
+                      GameServices.GetService<MusicManager>().Play("PickUpThree");
+                      break;
+                    case 4:
+                      GameServices.GetService<MusicManager>().Play("PickUpFour");
+                      break;
+                    case 5:
+                      GameServices.GetService<MusicManager>().Play("PickUpFive");
+                      break;
+                    case 6:
+                      GameServices.GetService<MusicManager>().Play("PickUpSix");
+                      break;
+                    }
                     RemoveOnNextUpdate = true;
                     collected = true;
                     player.collectedSeeds += 1;

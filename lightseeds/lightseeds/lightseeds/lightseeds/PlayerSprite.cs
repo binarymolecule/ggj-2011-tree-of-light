@@ -263,6 +263,7 @@ namespace lightseeds
                         blueprint = null;
                         waitForBPConfirm = false;
                         waitForReleaseA = true;
+                        GameServices.GetService<MusicManager>().Play("MenuSelect");
                     }
                     if (gamepadState.IsButtonDown(Buttons.B) && !waitForReleaseB)
                     {
@@ -271,6 +272,7 @@ namespace lightseeds
                         blueprint = null;
                         waitForBPConfirm = false;
                         waitForReleaseB = true;
+                        GameServices.GetService<MusicManager>().Play("MenuSelect");
                     }
                     if (gamepadState.ThumbSticks.Left.X < 0.0f && !waitForReleaseLeft && !waitForReleaseA)
                     {
@@ -278,6 +280,7 @@ namespace lightseeds
                         game.treeCollection.trees.Remove(blueprint);
                         blueprint = game.treeCollection.CreateTree(worldPosition, type.Previous(), true, "");
                         waitForReleaseLeft = true;
+                        GameServices.GetService<MusicManager>().Play("MenuSelect");
                     }
                     if (gamepadState.ThumbSticks.Left.X > 0.0f && !waitForReleaseRight)
                     {
@@ -285,7 +288,10 @@ namespace lightseeds
                         game.treeCollection.trees.Remove(blueprint);
                         blueprint = game.treeCollection.CreateTree(worldPosition, type.Next(), true, "");
                         waitForReleaseRight = true;
+                        GameServices.GetService<MusicManager>().Play("MenuSelect");
                     }
+
+                    
                 }
                 else
                 {
@@ -310,6 +316,8 @@ namespace lightseeds
                             waitForBPConfirm = true;
                             waitForReleaseA = true;
                         }
+
+                        GameServices.GetService<MusicManager>().Play("MenuSelect");
                     }
                 }
                 if (gamepadState.IsButtonUp(Buttons.A))

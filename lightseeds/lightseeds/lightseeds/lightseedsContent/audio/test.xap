@@ -329,7 +329,7 @@ Wave Bank
     Windows Bank Path Edited = 0;
     Seek Tables = 1;
     Compression Preset Name = <none>;
-    Bank Last Revised Low = 623540371;
+    Bank Last Revised Low = 2406220038;
     Bank Last Revised High = 30130237;
 
     Wave
@@ -673,6 +673,29 @@ Wave Bank
             Loop Region Length = 0;
             File Type = 1;
             Last Modified Low = 250829053;
+            Last Modified High = 30130237;
+        }
+    }
+
+    Wave
+    {
+        Name = MenuSelect;
+        File = MenuSelect.wav;
+        Build Settings Last Modified Low = 2351619942;
+        Build Settings Last Modified High = 30130237;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 75600;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2194780241;
             Last Modified High = 30130237;
         }
     }
@@ -1395,6 +1418,53 @@ Sound Bank
         }
     }
 
+    Sound
+    {
+        Name = MenuSelect;
+        Volume = 0;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank1;
+                    Bank Index = 0;
+                    Entry Name = MenuSelect;
+                    Entry Index = 15;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
     Cue
     {
         Name = light;
@@ -1690,6 +1760,26 @@ Sound Bank
         {
             Name = PickUpFour;
             Index = 14;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = MenuSelect;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = MenuSelect;
+            Index = 15;
             Weight Min = 0;
             Weight Max = 255;
         }
