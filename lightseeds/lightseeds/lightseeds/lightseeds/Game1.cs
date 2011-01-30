@@ -402,8 +402,11 @@ namespace lightseeds
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
                 float nx = this.particleCollection.random.Next(100), ny = particleCollection.random.Next(100);
                 var nv = new Vector2(-nx, -ny);
-                for(int ni=0; ni<4; ni++) {
-                    spriteBatch.Draw(noise, nv + ni*new Vector2(noise.Width, 0), new Color(255,255,255,20));
+                for(int nxi=0; nxi<4; nxi++) {
+                    for (int nyi = 0; nyi < 2; nyi++)
+                    {
+                        spriteBatch.Draw(noise, nv + new Vector2(nxi * noise.Width, nyi * noise.Height), new Color(255, 255, 255, 13));
+                    }
                 }
                 
                 spriteBatch.End();
