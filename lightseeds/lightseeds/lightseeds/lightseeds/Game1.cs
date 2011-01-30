@@ -319,12 +319,12 @@ namespace lightseeds
 
                 GameCamera.CurrentCamera = cameras[i];
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, bgMatrix(i));
-                spriteBatch.Draw(backgroundTexture, new Rectangle((int)(-SCREEN_WIDTH*0.1f), (int)(-SCREEN_HEIGHT*0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT*1.2)), Color.White);
+                spriteBatch.Draw(backgroundTexture, new Rectangle((int)(-SCREEN_WIDTH*0.1f), (int)(-SCREEN_HEIGHT*0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT*1.2)), Color.Gray);
                 spriteBatch.End();
 
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, bgMatrix(i, 2f));
-                spriteBatch.Draw(backgroundTexture2, new Rectangle((int)(-SCREEN_WIDTH * 0.1f), (int)(-SCREEN_HEIGHT * 0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT * 1.2)), Color.White);
-                spriteBatch.End();
+                //spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, bgMatrix(i, 2f));
+                //spriteBatch.Draw(backgroundTexture2, new Rectangle((int)(-SCREEN_WIDTH * 0.1f), (int)(-SCREEN_HEIGHT * 0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT * 1.2)), Color.White);
+                //spriteBatch.End();
 
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, bgMatrix(i, 4f));
                 spriteBatch.Draw(backgroundTexture3, new Rectangle((int)(-SCREEN_WIDTH * 0.1f), (int)(-SCREEN_HEIGHT * 0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT * 1.2)), Color.White);
@@ -428,9 +428,6 @@ namespace lightseeds
             {
                 this.Exit();
             }
-
-            if (keyboardState.IsKeyDown(Keys.F1))
-                Reset();
 
             foreach (var p in players)
             {

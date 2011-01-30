@@ -38,7 +38,7 @@ namespace lightseeds.GameObjects
             graphicsDevice = GameServices.GetService<GraphicsDevice>();
             content = GameServices.GetService<ContentManager>();
             tile = content.Load<Texture2D>("black");
-            grassTopping = content.Load<Texture2D>("ground/Grass");
+            grassTopping = content.Load<Texture2D>("ground/Grass2");
             spriteEffect = content.Load<Effect>("effects/sprite");
 
             heights = new List<Vector2>();
@@ -93,7 +93,7 @@ namespace lightseeds.GameObjects
                 vertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y, 0), Color.White, new Vector2(x, y));
 
                 topVertices[i * 2] = new VertexPositionColorTexture(new Vector3(x, y - 0.4f, 0), Color.Green, new Vector2(x, 1));
-                topVertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y + 0.8f, 0), Color.Green, new Vector2(x, 0));
+                topVertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y + 1.2f, 0), Color.Green, new Vector2(x, 0));
             }
 
             groundVbo.SetData(vertices);

@@ -128,7 +128,7 @@ void SpritePixelShader(inout float4 color : COLOR0, float2 texCoord : TEXCOORD0)
     color.a = tex2D(TextureSampler, texCoord).a;
 	//color = float4(texCoord.x, texCoord.y, 0, 1);
 	//color = float4(1,0,0,1);
-    //color = tex2D(TextureSampler, texCoord);
+    color = tex2D(TextureSampler, texCoord);
 }
 
 
