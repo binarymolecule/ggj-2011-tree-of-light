@@ -279,8 +279,11 @@ namespace lightseeds
                 spriteBatch.Draw(backgroundTexture3, new Rectangle((int)(-SCREEN_WIDTH * 0.1f), (int)(-SCREEN_HEIGHT * 0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT * 1.2)), Color.White);
                 spriteBatch.End();
 
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null,
+
+
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
                                   cameras[i].screenTransform);
+                treeCollection.trees.ForEach((t) => DrawForceField(spriteBatch, t));
                 treeCollection.Draw(spriteBatch);
                 seedCollection.Draw(spriteBatch);
 
@@ -352,6 +355,15 @@ namespace lightseeds
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        private void DrawForceField(SpriteBatch spriteBatch, Tree tree)
+        {
+            var a = 0.4f + 0.15f * tree.glowStrength * tree.growth;
+            var color = new Color(1f, 1f, 1f, a);
+            var scale = tree.texture.Width / playerTexture.Width * 0.85f;
+            spriteBatch.Draw(playerTexture, Vector3.Transform(tree.worldPosition, worldToScreen).ToVector2(), null, color, 0, new Vector2(playerTexture.Width/2, playerTexture.Height/2), scale, SpriteEffects.None, 0);
+         
         }
 
         public void handleControls()

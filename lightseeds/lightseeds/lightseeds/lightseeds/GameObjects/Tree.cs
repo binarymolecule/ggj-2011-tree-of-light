@@ -149,7 +149,7 @@ namespace lightseeds.GameObjects
         public Vector2 fruitSize;
         public float groundHeight;
 
-        private Texture2D texture;
+        public Texture2D texture;
         private static Random random = new Random();
 
         public TreeCollection parentCollection;
@@ -182,6 +182,7 @@ namespace lightseeds.GameObjects
 
         public TreeStatus status;
         public string[] descriptionLines = new string[4];
+        public float glowStrength;
 
         public Vector3 worldPosition
         {
@@ -304,6 +305,7 @@ namespace lightseeds.GameObjects
                     }
                     break;
                 case TreeStatus.MATURE:
+                    this.glowStrength = (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 0.5);
                     // grow fruit
                     currentFruitTime += gameTime.ElapsedGameTime.TotalSeconds;
                     if (currentFruitTime > fruitTime)
@@ -320,11 +322,17 @@ namespace lightseeds.GameObjects
                     }
                     break;
                 case TreeStatus.DIED:
+                    
+                    glowStrength -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    glowStrength = Math.Max(glowStrength, 0);
                     lifeSpan -= gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
                     if (lifeSpan < -10.0f)
                         status = TreeStatus.KILLED;
                     break;
                 case TreeStatus.KILLED:
+                    glowStrength -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    glowStrength = Math.Max(glowStrength, 0);
+
                     growth -= (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) / growthTime;
                     if (growth < 0.0f)
                     {
