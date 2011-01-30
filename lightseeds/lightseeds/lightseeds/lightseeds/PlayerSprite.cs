@@ -22,7 +22,7 @@ namespace lightseeds
 
         Texture2D texture;
         public const float XBOUNDARY = 180.0f;
-        public const float YBOUNDARY = 50.0f;
+        public const float YBOUNDARY = 40.0f;
 
         public const float WOBBLEBPM = 60.0f;
         public const float WOBBLYNESS = 3.0f;
