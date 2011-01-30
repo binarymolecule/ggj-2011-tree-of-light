@@ -132,6 +132,8 @@
     <Compile Include="GameObjects\World.cs" />
     <Compile Include="Helpers\GameServices.cs" />
     <Compile Include="Helpers\VectorConverters.cs" />
+    <Compile Include="HUD\Minimap.cs" />
+    <Compile Include="MusicManager.cs" />
     <Compile Include="PlayerSprite.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
