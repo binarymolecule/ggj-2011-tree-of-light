@@ -297,6 +297,7 @@ namespace lightseeds.GameObjects
                     descriptionLines[1] = "Slow-growing heavy tank.";
                     break;
             }
+
             descriptionLines[2] = "Price: " + price.ToString() + " souls";
             
             // create first seed position

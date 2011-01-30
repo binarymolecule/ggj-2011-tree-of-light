@@ -80,6 +80,7 @@ namespace lightseeds
         bool splitScreenMode = true;
         private SpriteFont scriptFont;
         private ParallaxCollection parallaxCollection;
+        private Texture2D black;
 
         public enum GameState
         {
@@ -163,6 +164,7 @@ namespace lightseeds
             backgroundTexture = Content.Load<Texture2D>("Background/Background_1");
             backgroundTexture2 = Content.Load<Texture2D>("Background/Background_2");
             backgroundTexture3 = Content.Load<Texture2D>("Background/Background_3");
+            this.black = Content.Load<Texture2D>("black");
             this.noise = Content.Load<Texture2D>("noise");
 
             this.parallaxCollection = new ParallaxCollection(this);
@@ -496,14 +498,21 @@ namespace lightseeds
 
             if (this.State != GameState.STORY)
             {
-                spriteBatch.Begin();
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 
                 // set position of map panel and info texts
                 Vector2 edgePos = (splitScreenMode ? splitScreenPositions[1] : joinedScreenBottomPosition);
                 mapPanel.edgePosition = edgePos;
                 mapPanel.Draw(gameTime);
 
-                spriteBatch.DrawString(spriteFont, String.Format("Souls: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, -40) + splitScreenPositions[1], Color.Red);
+                var soulText = String.Format("{0:0} Souls", seedCollection.collectedSeedCount);
+                var soulTextDim = headlineFont.MeasureString(soulText);
+
+                var textStart = new Vector2(10, -soulTextDim.Y/2) + splitScreenPositions[1];
+
+                spriteBatch.Draw(black, new Rectangle((int)textStart.X-10, (int)textStart.Y - 5, (int)soulTextDim.X + 20 + (int)soulTextDim.Y + 15, (int)soulTextDim.Y + 10), Color.Black);
+                spriteBatch.Draw(seedCollection.texture, new Rectangle((int)textStart.X, (int)textStart.Y, (int)soulTextDim.Y, (int)soulTextDim.Y), Color.White);
+                spriteBatch.DrawString(headlineFont, soulText, new Vector2((int)soulTextDim.Y + 5, 0) + textStart, Color.White);
 
                 //int totalTime = (int)(gameTime.TotalGameTime.TotalSeconds - startTime);
                 //spriteBatch.DrawString(spriteFont, String.Format("DEBUG Time: {0:0}:{1:00}", totalTime / 60, totalTime % 60),
