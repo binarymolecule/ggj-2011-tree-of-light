@@ -712,6 +712,7 @@ namespace lightseeds
             treeCollection.Update(gameTime);
             foreach (PlayerSprite p in players)
                 p.Update(gameTime);
+            fairyCollection.Update(gameTime);
 
             switch (storyProgress)
             {
