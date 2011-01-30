@@ -224,17 +224,10 @@ namespace lightseeds
             seedCollection.Reset();
             CreateRandomSeeds(NUM_INITIAL_SEEDS, treeCollection.trees[0]);
 
+            // create fairy collection
             fairyCollection = new FairyCollection(this);
             fairyCollection.Load(playerTexture);
-
-            const int NUM_FAIRIES = 40;
-            for (int i = NUM_FAIRIES - 1; i >= 0; i--)
-            {
-                float sx = random.Next(30);
-                float sy = random.Next(30);
-                fairyCollection.SpawnFairy(new Vector3(sx-15.0f, sy+5.0f, 1.0f));
-            }
-            
+            fairyCollection.Reset();
             
             /*
              spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
@@ -659,6 +652,7 @@ namespace lightseeds
         {
             treeCollection.Reset();
             seedCollection.Reset();
+            fairyCollection.Reset();
             CreateRandomSeeds(NUM_INITIAL_SEEDS, treeCollection.trees[0]);
             ResetVoids(1.0f);
             for (int i = 0; i < 2; i++)

@@ -64,5 +64,17 @@ namespace lightseeds.GameObjects
             fairies.Add(fairy);
             return fairy;
         }
+
+        public void Reset()
+        {
+            fairies.Clear();
+            const int NUM_FAIRIES = 40;
+            for (int i = NUM_FAIRIES - 1; i >= 0; i--)
+            {
+                float sx = random.Next(30);
+                float sy = random.Next(30);
+                SpawnFairy(new Vector3(sx - 15.0f, sy + 5.0f, 1.0f));
+            }
+        }
     }
 }
