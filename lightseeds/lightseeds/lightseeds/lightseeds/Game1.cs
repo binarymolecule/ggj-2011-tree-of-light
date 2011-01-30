@@ -75,7 +75,8 @@ namespace lightseeds
 
         int storyProgress = -1;
         float storyTime = 0.0f;
-        float[] storyTimeIntervalls = { 7.0f, 3.0f, 4.0f, 6.0f, 4.0f, 3.0f };
+        float[] storyTimeIntervalls = { 7.0f, 3.0f, 4.0f, 8.0f, 4.0f, 6.0f,
+                                        4.0f, 12.0f, 4.0f, 6.0f };
 
         bool splitScreenMode = true;
         private SpriteFont scriptFont;
@@ -475,8 +476,45 @@ namespace lightseeds
 
                             // draw menu buttons for build menu
                             if (tree.status == Tree.TreeStatus.BLUEPRINT)
-                                spriteBatch.Draw(menuButtons, textPos, Color.White);
+                                spriteBatch.Draw(menuButtons, textPos, new Rectangle(0, 0, menuButtons.Width, menuButtons.Height / 8), Color.White);
 
+                            spriteBatch.End();
+                        }
+                    }
+                }
+                else
+                {
+                    // draw story related stuff
+                    if (storyProgress == 5)
+                    {
+                        if (storyTime > 0.25f * storyTimeIntervalls[storyProgress] &&
+                            storyTime < 0.75f * storyTimeIntervalls[storyProgress])
+                        {
+                            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);                        
+                            spriteBatch.Draw(menuButtons, new Vector2(SCREEN_WIDTH / 2 + 24, SCREEN_HEIGHT / 2),
+                                             new Rectangle(0, menuButtons.Height / 4, menuButtons.Width, menuButtons.Height / 4), Color.White);
+                            spriteBatch.End();
+                        }
+                    }
+                    else if (storyProgress == 7)
+                    {
+                        spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+                        if (storyTime < 0.5f * storyTimeIntervalls[storyProgress])
+                            spriteBatch.Draw(menuButtons, new Vector2(SCREEN_WIDTH / 2 + 24, SCREEN_HEIGHT / 2),
+                                             new Rectangle(0, menuButtons.Height / 8, menuButtons.Width, menuButtons.Height / 8), Color.White);
+                        else
+                            spriteBatch.Draw(menuButtons, new Vector2(SCREEN_WIDTH / 2 + 24, SCREEN_HEIGHT / 2),
+                                             new Rectangle(0, menuButtons.Height / 2, menuButtons.Width, menuButtons.Height / 4), Color.White);
+                        spriteBatch.End();
+                    }
+                    else if (storyProgress == 9)
+                    {
+                        if (storyTime > 0.25f * storyTimeIntervalls[storyProgress] &&
+                            storyTime < 0.75f * storyTimeIntervalls[storyProgress])
+                        {
+                            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+                            spriteBatch.Draw(menuButtons, new Vector2(SCREEN_WIDTH / 2 + 24, SCREEN_HEIGHT / 2),
+                                             new Rectangle(0, 3 * menuButtons.Height / 4, menuButtons.Width, menuButtons.Height / 4), Color.White);
                             spriteBatch.End();
                         }
                     }
@@ -681,6 +719,7 @@ namespace lightseeds
                     }
                     break;
                 case 2:
+                case 6:
                     {
                         // scroll left
                         joinedCamera.Update(gameTime);
@@ -688,6 +727,11 @@ namespace lightseeds
                         {
                             storyTime = 0.0f;
                             storyProgress++;
+                            if (storyProgress == 7)
+                            {
+                                treeCollection.CreateTree(new Vector3(-0.5f * World.WorldWidth + WORLD_SCREEN_WIDTH, 16.0f, 1.0f),
+                                                          TreeType.MOTHER, false, "");
+                            }
                         }
                     }
                     break;
@@ -705,6 +749,7 @@ namespace lightseeds
                     }
                     break;
                 case 4:
+                case 8:
                     {
                         // scroll right
                         joinedCamera.Update(gameTime);
@@ -720,6 +765,31 @@ namespace lightseeds
                 case 5:
                     {
                         // wait
+                        if (storyTime > storyTimeIntervalls[storyProgress])
+                        {
+                            storyTime = 0.0f;
+                            storyProgress++;
+                            joinedCamera.MoveTo(new Vector2(-0.5f * World.WorldWidth + WORLD_SCREEN_WIDTH, 16.0f),
+                                                storyTimeIntervalls[storyProgress]);
+                        }
+                    }
+                    break;
+                case 7:
+                    {
+                        // plant seed and watch tree grow
+                        voids.ForEach((v) => v.Update(gameTime));
+                        particleCollection.Update(gameTime);
+                        if (storyTime > storyTimeIntervalls[storyProgress])
+                        {
+                            storyTime = 0.0f;
+                            storyProgress++;
+                            joinedCamera.MoveTo(new Vector2(0.0f, 16.0f), storyTimeIntervalls[storyProgress]);
+                        }
+                    }
+                    break;
+                case 9:
+                    {
+                        // wait for the game to begin
                         if (storyTime > storyTimeIntervalls[storyProgress])
                         {
                             storyTime = 0.0f;
