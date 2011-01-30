@@ -258,7 +258,7 @@ namespace lightseeds.GameObjects
                     lifeSpan = 0.0f;
                     price = 0;
                     descriptionLines[0] = "The Tree of Life";
-                    descriptionLines[1] = "center of the world";
+                    descriptionLines[1] = "Protect it any cost";
                     break;
                 case TreeType.FIGHTER:
                     growthTime = 8.0f;
@@ -266,8 +266,8 @@ namespace lightseeds.GameObjects
                     resistance = 0.4f;
                     lifeSpan = 60.0f;
                     price = 3;
-                    descriptionLines[0] = "Fighter Tree";
-                    descriptionLines[1] = "fight for the light";
+                    descriptionLines[0] = "Soldier Tree";
+                    descriptionLines[1] = "Light and defensive tree";
                     break;
                 case TreeType.MOTHER:
                     growthTime = 15.0f;
@@ -275,8 +275,8 @@ namespace lightseeds.GameObjects
                     resistance = 0.6f;
                     lifeSpan = 80.0f;
                     price = 8;
-                    descriptionLines[0] = "The Mother Tree";
-                    descriptionLines[1] = "a lot of children";
+                    descriptionLines[0] = "Producer Tree";
+                    descriptionLines[1] = "Spawns many souls";
                     break;
                 case TreeType.PAWN:
                     growthTime = 5.0f;
@@ -285,7 +285,7 @@ namespace lightseeds.GameObjects
                     lifeSpan = 25.0f;
                     price = 2;
                     descriptionLines[0] = "Pawn Tree";
-                    descriptionLines[1] = "the ace of rage";
+                    descriptionLines[1] = "Cheap jack of all trades";
                     break;
                 case TreeType.TANK:
                     growthTime = 25.0f;
@@ -293,11 +293,11 @@ namespace lightseeds.GameObjects
                     resistance = 0.3f;
                     lifeSpan = 130.0f;
                     price = 10;
-                    descriptionLines[0] = "Tank Tree";
-                    descriptionLines[1] = "you shall not pass";
+                    descriptionLines[0] = "Defender Tree";
+                    descriptionLines[1] = "Slow-growing heavy tank";
                     break;
             }
-            descriptionLines[2] = "Price: " + price.ToString() + " seeds";
+            descriptionLines[2] = "Price: " + price.ToString() + " souls";
         }
 
         public void Update(GameTime gameTime)
@@ -450,7 +450,7 @@ namespace lightseeds.GameObjects
                     info += "Growth: " + (int)(100.0f * (float)growth) + "%";
                     break;
                 case TreeStatus.MATURE:
-                    info += "Fruit: " + (int)(100.0f * (float)currentFruitTime / (float)fruitTime) + "%";
+                    info += "Soul: " + (int)(100.0f * (float)currentFruitTime / (float)fruitTime) + "%";
                     break;
                 case TreeStatus.BLUEPRINT:
                     info += String.Join("\n", descriptionLines[1], descriptionLines[2], descriptionLines[3]);
