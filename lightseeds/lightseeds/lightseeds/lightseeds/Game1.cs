@@ -305,10 +305,14 @@ namespace lightseeds
 
                     spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
                                       cameras[i].screenTransform);
-                    var textPos = Vector3.Transform(tree.worldPosition, worldToScreen).ToVector2() + tree.fruitOffset;
-                    textPos += new Vector2(30, 0);
+                    var textPos = Vector3.Transform(tree.worldPosition + new Vector3(1.5f, 1f, 0), worldToScreen).ToVector2() + tree.fruitOffset;
+
+                    var bodyText = tree.GetStatusInfo();
 
                     var headlineMeasure = headlineFont.MeasureString(tree.name);
+                    var bodyMeasure = spriteFont.MeasureString(bodyText);
+
+                    textPos.Y = Math.Min(SPLIT_SCREEN_HEIGHT - headlineMeasure.Y - bodyMeasure.Y - 10 - cameras[i].screenTransform.Translation.Y, textPos.Y);
 
                     spriteBatch.DrawString(headlineFont, tree.name, textPos + new Vector2(2, 2), Color.Black);
                     spriteBatch.DrawString(headlineFont, tree.name, textPos, Color.White);
@@ -328,23 +332,7 @@ namespace lightseeds
                 spriteBatch.Draw(splitScreens[i], splitScreenPositions[i], Color.White);
             spriteBatch.End();
 
-            spriteBatch.Begin();
-            foreach (var p in players)
-            {
-                //spriteBatch.DrawString(spriteFont, String.Format("P{0:0}: {1:0.0} / {2:0.0}", p.index, p.worldPosition.X, p.worldPosition.Y), splitScreenPositions[p.index], Color.White);
-                if (p.blueprint != null)
-                {
-                    var y = 0;
-                    foreach (var descriptionLine in p.blueprint.descriptionLines)
-                    {
-                        var msg = String.Format("{0}", descriptionLine);
-                        var msgDim = spriteFont.MeasureString(msg);
-                        spriteBatch.DrawString(spriteFont, msg, new Vector2(SPLIT_SCREEN_WIDTH - 10 - msgDim.X + 2, y + 2) + splitScreenPositions[p.index], Color.Black);
-                        spriteBatch.DrawString(spriteFont, msg, new Vector2(SPLIT_SCREEN_WIDTH - 10 - msgDim.X, y) + splitScreenPositions[p.index], Color.White);
-                        y += (int)msgDim.Y;
-                    }
-                }
-            }            
+            spriteBatch.Begin();        
             spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, -40) + splitScreenPositions[1], Color.Red);
             
             int totalTime = (int)(gameTime.TotalGameTime.TotalSeconds - startTime);
