@@ -217,7 +217,7 @@ namespace lightseeds
                 return;
             }
 
-            if (Math.Abs(voids[0].horizontalPosition) + Math.Abs(voids[1].horizontalPosition) < 198.0f)
+            if (Math.Abs(voids[0].horizontalPosition) + Math.Abs(voids[1].horizontalPosition) < 200.0f)
               musicManager.SetNextStage(1);
 
           float P1VoidDistance = Math.Min(Math.Abs(voids[0].horizontalPosition - players[0].worldPosition.X), Math.Abs(voids[1].horizontalPosition - players[0].worldPosition.X));
@@ -366,10 +366,6 @@ namespace lightseeds
             int totalTime = (int)(gameTime.TotalGameTime.TotalSeconds - startTime);
             spriteBatch.DrawString(spriteFont, String.Format("DEBUG Time: {0:0}:{1:00}", totalTime / 60, totalTime % 60), splitScreenPositions[0], Color.Red);
 
-            spriteBatch.End();
-
-            spriteBatch.Begin();
-            spriteBatch.Draw(splitScreens[0], new Vector2(200f, 200f), new Rectangle(0, 0, 100, 100), Color.White);
             spriteBatch.End();
 
             base.Draw(gameTime);
