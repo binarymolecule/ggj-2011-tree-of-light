@@ -258,7 +258,7 @@ namespace lightseeds.GameObjects
                     lifeSpan = 0.0f;
                     price = 0;
                     descriptionLines[0] = "The Tree of Life";
-                    descriptionLines[1] = "Protect it any cost";
+                    descriptionLines[1] = "Protect it at any cost.";
                     break;
                 case TreeType.FIGHTER:
                     growthTime = 8.0f;
@@ -267,7 +267,7 @@ namespace lightseeds.GameObjects
                     lifeSpan = 60.0f;
                     price = 3;
                     descriptionLines[0] = "Soldier Tree";
-                    descriptionLines[1] = "Light and defensive tree";
+                    descriptionLines[1] = "Light but defensive tree.";
                     break;
                 case TreeType.MOTHER:
                     growthTime = 15.0f;
@@ -276,7 +276,7 @@ namespace lightseeds.GameObjects
                     lifeSpan = 80.0f;
                     price = 8;
                     descriptionLines[0] = "Producer Tree";
-                    descriptionLines[1] = "Spawns many souls";
+                    descriptionLines[1] = "Spawns many Souls.";
                     break;
                 case TreeType.PAWN:
                     growthTime = 5.0f;
@@ -284,8 +284,8 @@ namespace lightseeds.GameObjects
                     resistance = 0.6f;
                     lifeSpan = 25.0f;
                     price = 2;
-                    descriptionLines[0] = "Pawn Tree";
-                    descriptionLines[1] = "Cheap jack of all trades";
+                    descriptionLines[0] = "Common Tree";
+                    descriptionLines[1] = "Cheap jack of all trades.";
                     break;
                 case TreeType.TANK:
                     growthTime = 25.0f;
@@ -294,7 +294,7 @@ namespace lightseeds.GameObjects
                     lifeSpan = 130.0f;
                     price = 10;
                     descriptionLines[0] = "Defender Tree";
-                    descriptionLines[1] = "Slow-growing heavy tank";
+                    descriptionLines[1] = "Slow-growing heavy tank.";
                     break;
             }
             descriptionLines[2] = "Price: " + price.ToString() + " souls";
