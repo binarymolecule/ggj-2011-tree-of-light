@@ -237,13 +237,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="textures\titleScreen.png">
-      <Name>titleScreen</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="textures\centerBar.png">
       <Name>centerBar</Name>
       <Importer>TextureImporter</Importer>
@@ -475,6 +468,13 @@
   <ItemGroup>
     <Compile Include="Hourglass.png">
       <Name>Hourglass</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\titleScreen.png">
+      <Name>titleScreen</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
