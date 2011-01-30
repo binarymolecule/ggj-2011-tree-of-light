@@ -99,6 +99,13 @@
       <Name>Geo</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
+      <SubType>Designer</SubType>
+    </Compile>
+    <Compile Include="fonts\headline.spritefont">
+      <Name>headline</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <SubType>Designer</SubType>
     </Compile>
     <None Include="resources\ComingSoon.ttf">
       <Name>ComingSoon</Name>

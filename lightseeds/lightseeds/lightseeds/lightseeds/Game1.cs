@@ -51,6 +51,7 @@ namespace lightseeds
         private Texture2D backgroundTexture3;
 
         public double startTime;
+        private SpriteFont headlineFont;
 
         public enum GameState
         {
@@ -129,6 +130,7 @@ namespace lightseeds
             splitScreens[1] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
 
             spriteFont = Content.Load<SpriteFont>("fonts/Geo");
+            headlineFont = Content.Load<SpriteFont>("fonts/headline");
 
             treeCollection = new TreeCollection(this);
             treeCollection.Load();
@@ -260,7 +262,22 @@ namespace lightseeds
                 if (tree != null)
                 {
                     // show tree information
-                    //spriteBatch.DrawString(spriteFont, tree.GetStatusInfo(), new Vector2(SPLIT_SCREEN_WIDTH / 2 - 120, SPLIT_SCREEN_HEIGHT - 80) + splitScreenPositions[i], Color.White);
+
+                    spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
+                                      cameras[i].screenTransform);
+                    var textPos = Vector3.Transform(tree.worldPosition, worldToScreen).ToVector2() + tree.fruitOffset;
+                    textPos += new Vector2(30, 0);
+
+                    var headlineMeasure = headlineFont.MeasureString(tree.name);
+
+                    spriteBatch.DrawString(headlineFont, tree.name, textPos + new Vector2(2, 2), Color.Black);
+                    spriteBatch.DrawString(headlineFont, tree.name, textPos, Color.White);
+
+                    textPos.Y += headlineMeasure.Y;
+
+                    spriteBatch.DrawString(spriteFont, tree.GetStatusInfo(), textPos + new Vector2(2,2), Color.Black);
+                    spriteBatch.DrawString(spriteFont, tree.GetStatusInfo(), textPos, Color.White);
+                    spriteBatch.End();
                 }
             }
             GraphicsDevice.SetRenderTarget(null);

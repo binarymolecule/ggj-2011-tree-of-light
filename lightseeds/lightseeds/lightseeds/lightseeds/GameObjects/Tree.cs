@@ -127,6 +127,8 @@ namespace lightseeds.GameObjects
             fruitSize = new Vector2(parentCollection.fruitTexture.Width, parentCollection.fruitTexture.Height);
             texture = parentCollection.textures[(int)treeType];
             screenSize = new Vector2(texture.Width, texture.Height);
+            name = "foo";
+
             if (treeType == TreeType.BASE)
             {
                 offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 210.0f);
@@ -339,6 +341,9 @@ namespace lightseeds.GameObjects
                     break;
                 case TreeStatus.MATURE:
                     info = "Fruit: " + (int)(100.0f * (float)currentFruitTime / (float)fruitTime) + "%";
+                    break;
+                case TreeStatus.BLUEPRINT:
+                    info = String.Join("\n", descriptionLines);
                     break;
             }
             if (status == TreeStatus.MATURE && treeType != TreeType.BASE)
