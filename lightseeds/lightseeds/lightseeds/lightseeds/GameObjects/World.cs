@@ -92,8 +92,8 @@ namespace lightseeds.GameObjects
                 vertices[i * 2] = new VertexPositionColorTexture(new Vector3(x, 0, 0), Color.White, new Vector2(x, 0));
                 vertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y, 0), Color.White, new Vector2(x, y));
 
-                topVertices[i * 2] = new VertexPositionColorTexture(new Vector3(x, y - 0.4f, 0), Color.Green, new Vector2(x, 1));
-                topVertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y + 1.2f, 0), Color.Green, new Vector2(x, 0));
+                topVertices[i * 2] = new VertexPositionColorTexture(new Vector3(x, y - 0.3f, 0), Color.Green, new Vector2(x, 1));
+                topVertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(x, y + 1.6f, 0), Color.Green, new Vector2(x, 0));
             }
 
             groundVbo.SetData(vertices);
