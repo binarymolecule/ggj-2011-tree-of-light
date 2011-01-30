@@ -149,6 +149,26 @@ namespace lightseeds
             game.cameras[index].MoveTo(worldPosition.ToVector2(), 1.0f);
         }
 
+        public void Reset()
+        {
+            position = initialPosition;
+
+            // reset stun mode
+            stunTimer = 0.0f;
+            isStunned = false;
+
+            // reset controls
+            waitForReleaseA = false;
+            waitForReleaseB = false;
+            waitForReleaseLeft = false;
+            waitForReleaseRight = false;
+            waitForBPConfirm = false;
+            blueprint = null;
+
+            currentXAcceleration = 0.0f;
+            currentYAcceleration = 0.0f;
+        }
+
         private void UpdateXPosition(GameTime gameTime)
         {
             

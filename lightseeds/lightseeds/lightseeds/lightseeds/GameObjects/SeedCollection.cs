@@ -28,6 +28,15 @@ namespace lightseeds.GameObjects
             this.game = game;
         }
 
+
+        public void Reset()
+        {
+            // remove all seeds
+            seeds.Clear();
+            // clear score
+            collectedSeedCount = 0;
+        }
+
         public void Update()
         {
             List<Seed> seedsToRemove = new List<Seed>();

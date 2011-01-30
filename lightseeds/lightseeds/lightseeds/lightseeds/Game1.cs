@@ -141,15 +141,18 @@ namespace lightseeds
             world = new World();
             world.Load();
 
+            // load textures
             playerTexture = Content.Load<Texture2D>("textures/playerTexture");
             backgroundTexture = Content.Load<Texture2D>("Background/Background_1");
             backgroundTexture2 = Content.Load<Texture2D>("Background/Background_2");
             backgroundTexture3 = Content.Load<Texture2D>("Background/Background_3");
 
+            // create map panel
             mapPanel = new MapPanel(this, Content.Load<Texture2D>("textures/centerBar"),
                                     Content.Load<Texture2D>("textures/darkBar"),
                                     Content.Load<Texture2D>("textures/mapIcons"));
 
+            // create players
             players = new PlayerSprite[2];
             players[0] = new PlayerSprite(this, 0, new Vector3(2.0f, 7.0f, 1.0f), playerTexture)
             {
@@ -160,12 +163,14 @@ namespace lightseeds
                 color = new Color(0xf8, 0xfe, 0x4d, 255)
             };
 
+            // create cameras
             cameras = new GameCamera[2];
             cameras[0] = new GameCamera(this, 0, players[0].worldPosition);
             cameras[0].FollowPlayer(players[0]);
             cameras[1] = new GameCamera(this, 1, players[1].worldPosition);
             cameras[1].FollowPlayer(players[1]);
 
+            // createTree split screens
             splitScreens = new RenderTarget2D[2];
             splitScreens[0] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
             splitScreens[1] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
@@ -175,39 +180,26 @@ namespace lightseeds
 
             treeCollection = new TreeCollection(this);
             treeCollection.Load();
-            treeCollection.CreateTree(Vector3.Zero, TreeType.BASE, false, "");
+            treeCollection.Reset();
 
             seedCollection = new SeedCollection(this);
             seedCollection.Load();
+            seedCollection.Reset();
 
+            // distribute some random seeds
             Random randomizer = new Random();
             const int NUM_INITIAL_SEEDS = 8;
             for (int i = 0; i < NUM_INITIAL_SEEDS; i++)
             {
-                float posX = (float)randomizer.Next(-(World.WorldWidth + WORLD_SCREEN_WIDTH)/2, (World.WorldWidth- WORLD_SCREEN_WIDTH)/2);
+                float posX = (float)randomizer.Next(-(World.WorldWidth + WORLD_SCREEN_WIDTH) / 2, (World.WorldWidth - WORLD_SCREEN_WIDTH) / 2);
                 float offsetY = (float)randomizer.Next(2, 6);
                 seedCollection.SpawnSeed(new Vector3(posX, world.getHeigth(posX) + offsetY, 0.0f));
             }
 
-            this.particleCollection = new ParticleCollection(this);
+            // reset "The Void"
+            ResetVoids(1.0f);
 
-            voids.Add(new TheVoid(this)
-            {
-                direction = new Vector3(1, 0, 0),
-                horizontalPosition = -World.WorldWidth/2
-            });
-
-            voids.Add(new TheVoid(this)
-            {
-                direction = new Vector3(-1, 0, 0),
-                horizontalPosition = World.WorldWidth / 2
-            });
-
-            //this.State = GameState.INTRO;
-
-            // skip intro for now
-            fadeColor = Color.White;
-            this.State = GameState.RUNNING;
+            this.State = GameState.INTRO;            
         }
 
         /// <summary>
@@ -230,7 +222,13 @@ namespace lightseeds
                 introScreen.Update(gameTime);
                 if (introScreen.Status == GameScreen.ScreenStatus.DONE)
                 {
-                    this.State = GameState.STORY;
+                    //this.State = GameState.STORY;
+
+                    // skip intro for now
+                    fadeColor = Color.White;
+                    this.State = GameState.RUNNING;
+                    startTime = gameTime.TotalGameTime.TotalSeconds;             
+
                     musicManager.StartLoop();
                 }
                 return;
@@ -240,7 +238,9 @@ namespace lightseeds
                 gameoverScreen.Update(gameTime);
                 if (gameoverScreen.Status == GameScreen.ScreenStatus.DONE)
                 {
-                    this.Exit();
+                    introScreen.Reset();
+                    this.State = GameState.INTRO;
+                    Reset();
                 }
                 return;
             }
@@ -429,11 +429,13 @@ namespace lightseeds
                 this.Exit();
             }
 
+            if (keyboardState.IsKeyDown(Keys.F1))
+                Reset();
+
             foreach (var p in players)
             {
                 var gamepadState = GamePad.GetState(p.index == 0 ? PlayerIndex.One : PlayerIndex.Two);
                 p.HandleInput(gamepadState, p.index == 0 ? Keyboard.GetState() : new KeyboardState());
-
 
                 // debug input
                 if (p.index == 0)
@@ -469,6 +471,39 @@ namespace lightseeds
             
         }
 
+
+        public void Reset()
+        {
+            treeCollection.Reset();
+            seedCollection.Reset();
+            ResetVoids(1.0f);
+            for (int i = 0; i < 2; i++)
+            {
+                // reset players
+                players[i].Reset();
+                // reset cameras
+                cameras[i].FollowPlayer(players[i]);
+                cameras[i].MoveTo(players[i].worldPosition.ToVector2(), 0.1f);
+            }
+
+            // TODO care about music stuff
+        }
+
+        public void ResetVoids(float factor)
+        {
+            particleCollection = new ParticleCollection(this);
+            voids.Clear();
+            voids.Add(new TheVoid(this)
+            {
+                direction = new Vector3(1, 0, 0),
+                horizontalPosition = -factor * World.WorldWidth / 2
+            });
+            voids.Add(new TheVoid(this)
+            {
+                direction = new Vector3(-1, 0, 0),
+                horizontalPosition = factor * World.WorldWidth / 2
+            });
+        }
 
         public void UpdateStoryMode(GameTime gameTime)
         {

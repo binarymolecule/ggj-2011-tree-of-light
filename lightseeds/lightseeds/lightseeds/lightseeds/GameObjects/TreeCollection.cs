@@ -54,6 +54,15 @@ namespace lightseeds.GameObjects
             fruitTexture = content.Load<Texture2D>("textures/glowing");
         }
 
+        public void Reset()
+        {
+            // remove all trees
+            trees.Clear();
+            // create base tree
+            CreateTree(Vector3.Zero, TreeType.BASE, false, "");
+        }
+
+
         public void Update(GameTime gameTime)
         {
             List<Tree> treesToRemove = new List<Tree>();

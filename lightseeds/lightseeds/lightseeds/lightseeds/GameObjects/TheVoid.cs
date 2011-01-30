@@ -114,13 +114,13 @@ namespace lightseeds.GameObjects
 
             if (direction.X > 0)
             {
-                v1 = Vector3.Transform(new Vector3(horizontalPosition - 30, 30, 0), game.worldToScreen).ToVector2();
+                v1 = Vector3.Transform(new Vector3(horizontalPosition - 1000, 100, 0), game.worldToScreen).ToVector2();
                 v2 = Vector3.Transform(new Vector3(horizontalPosition - 2, 0, 0), game.worldToScreen).ToVector2();
             }
             else
             {
-                v1 = Vector3.Transform(new Vector3(horizontalPosition + 2, 30, 0), game.worldToScreen).ToVector2();
-                v2 = Vector3.Transform(new Vector3(horizontalPosition + 30, 0, 0), game.worldToScreen).ToVector2();
+                v1 = Vector3.Transform(new Vector3(horizontalPosition + 2, 100, 0), game.worldToScreen).ToVector2();
+                v2 = Vector3.Transform(new Vector3(horizontalPosition + 1000, 0, 0), game.worldToScreen).ToVector2();
             }
             
             var vd = v2 - v1;
