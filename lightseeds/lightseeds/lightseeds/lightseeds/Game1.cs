@@ -129,11 +129,11 @@ namespace lightseeds
             players = new PlayerSprite[2];
             players[0] = new PlayerSprite(this, 0, new Vector3(2.0f, 7.0f, 1.0f), playerTexture)
             {
-                color = new Color(220, 220, 255, 255)
+                color = new Color(0x48, 0xe6, 0xfe, 255)
             };
             players[1] = new PlayerSprite(this, 1, new Vector3(-2.0f, 6.5f, 1.0f), playerTexture)
             {
-                color = new Color(255, 220, 220, 255)
+                color = new Color(0xf8, 0xfe, 0x4d, 255)
             };
 
             cameras = new GameCamera[2];
