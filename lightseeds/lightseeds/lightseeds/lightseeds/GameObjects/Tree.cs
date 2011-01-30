@@ -229,7 +229,7 @@ namespace lightseeds.GameObjects
 
             if (treeType == TreeType.BASE)
             {
-                offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 210.0f);
+                offset = new Vector2(-0.5f * screenSize.X - 20, -screenSize.Y + 210.0f);
                 fruitOffset = new Vector2(0.0f, -96.0f);
             }
             else
@@ -447,11 +447,9 @@ namespace lightseeds.GameObjects
             switch (status)
             {
                 case TreeStatus.PLANTED:
-                    info += descriptionLines[0] + "\n";
                     info += "Growth: " + (int)(100.0f * (float)growth) + "%";
                     break;
                 case TreeStatus.MATURE:
-                    info += descriptionLines[0] + "\n";
                     info += "Fruit: " + (int)(100.0f * (float)currentFruitTime / (float)fruitTime) + "%";
                     break;
                 case TreeStatus.BLUEPRINT:

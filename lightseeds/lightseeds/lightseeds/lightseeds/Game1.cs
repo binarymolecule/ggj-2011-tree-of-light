@@ -387,6 +387,18 @@ namespace lightseeds
                 particleCollection.Draw(gameTime, spriteBatch);
                 spriteBatch.End();
 
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
+                                  GameCamera.CurrentCamera.screenTransform);
+
+                foreach (var tree in treeCollection.trees)
+                {
+                    var xpos = tree.worldPosition.X;
+                    var textPos = Vector3.Transform(new Vector3(xpos, world.getHeigth(xpos) - 1, 0), worldToScreen).ToVector2();
+                    var textMeasure = headlineFont.MeasureString(tree.name);
+                    spriteBatch.DrawString(headlineFont, tree.name, textPos - textMeasure/2, new Color(55,55,55,255));
+                }
+                spriteBatch.End();
+
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
                 float nx = this.particleCollection.random.Next(100), ny = particleCollection.random.Next(100);
                 var nv = new Vector2(-nx, -ny);
@@ -408,7 +420,7 @@ namespace lightseeds
                         var textPos = Vector3.Transform(tree.worldPosition + new Vector3(1.5f, 1f, 0), worldToScreen).ToVector2() + tree.fruitOffset;
 
                         var bodyText = tree.GetStatusInfo();
-                        var headlineText = tree.status == Tree.TreeStatus.BLUEPRINT ? tree.descriptionLines[0] : tree.name;
+                        var headlineText = tree.descriptionLines[0];
 
                         var headlineMeasure = headlineFont.MeasureString(headlineText);
                         var bodyMeasure = spriteFont.MeasureString(bodyText);
@@ -512,8 +524,8 @@ namespace lightseeds
         {
             if (index < 2)
             {
-                Vector3 v = new Vector3(-(players[index].worldPosition.X) * factor,
-                                        (players[index].worldPosition.Y) * factor, 0);
+                Vector3 v = new Vector3((cameras[index].worldTransform.Translation.X) * factor,
+                                    -(cameras[index].worldTransform.Translation.Y * 0.2f) * factor, 0);
                 return Matrix.CreateTranslation(v);
             }
             else
