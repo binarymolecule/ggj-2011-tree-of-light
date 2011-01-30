@@ -336,7 +336,7 @@ namespace lightseeds
             spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, -40) + splitScreenPositions[1], Color.Red);
             
             int totalTime = (int)(gameTime.TotalGameTime.TotalSeconds - startTime);
-            spriteBatch.DrawString(spriteFont, String.Format("Time: {0:0}:{1:00}", totalTime / 60, totalTime % 60), splitScreenPositions[1], Color.Red);
+            spriteBatch.DrawString(spriteFont, String.Format("DEBUG Time: {0:0}:{1:00}", totalTime / 60, totalTime % 60), splitScreenPositions[0], Color.Red);
             spriteBatch.End();
 
             base.Draw(gameTime);
