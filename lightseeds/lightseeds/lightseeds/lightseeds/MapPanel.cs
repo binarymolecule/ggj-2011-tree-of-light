@@ -31,6 +31,8 @@ namespace lightseeds
 
         Game1 game;
 
+        static int BAR_WIDTH, BAR_LEFT_OFFSET, BAR_RIGHT_OFFSET;
+
         public MapPanel(Game1 game, Texture2D barTex, Texture2D darkTex, Texture2D iconTex) : base(game)
         {
             this.game = game;
@@ -41,6 +43,11 @@ namespace lightseeds
             iconOffset = new Vector2(-iconSize / 2, iconSize / 2);
             barOffset = new Vector2(0.0f, -barTexture.Height / 2);
             edgePosition = game.splitScreenPositions[1];
+
+            // global offsets for bar
+            BAR_LEFT_OFFSET = 176;
+            BAR_RIGHT_OFFSET = 76;
+            BAR_WIDTH = Game1.SCREEN_WIDTH - BAR_LEFT_OFFSET - BAR_RIGHT_OFFSET;
         }
 
         /// <summary>
@@ -56,7 +63,7 @@ namespace lightseeds
 
         int worldToBarCoordinate(float posX)
         {
-            return (int)(((posX / (float)World.WorldWidth) + 0.5f) * Game1.SCREEN_WIDTH);
+            return (int)(((posX / (float)World.WorldWidth) + 0.5f) * BAR_WIDTH + BAR_LEFT_OFFSET);
         }
 
         Rectangle worldToIconRectangle(float posX)
@@ -86,9 +93,9 @@ namespace lightseeds
             }
             leftWidth = worldToBarCoordinate(leftWidth);
             rightWidth = worldToBarCoordinate(rightWidth);
-            leftDarkRect = new Rectangle(0, (int)edgePosition.Y - 9, (int)leftWidth, 16);
+            leftDarkRect = new Rectangle(BAR_LEFT_OFFSET, (int)edgePosition.Y - 9, (int)leftWidth - BAR_LEFT_OFFSET, 16);
             rightDarkRect = new Rectangle((int)rightWidth, (int)edgePosition.Y - 9,
-                                          Game1.SPLIT_SCREEN_WIDTH - (int)rightWidth, 16);
+                                          BAR_LEFT_OFFSET + BAR_WIDTH - (int)rightWidth, 16);
 
             base.Update(gameTime);
         }

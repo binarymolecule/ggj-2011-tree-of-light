@@ -76,8 +76,8 @@ namespace lightseeds
 
         int storyProgress = -1;
         float storyTime = 0.0f;
-        float[] storyTimeIntervalls = { 7.0f, 3.0f, 4.0f, 8.0f, 4.0f, 6.0f,
-                                        4.0f, 12.0f, 4.0f, 6.0f };
+        float[] storyTimeIntervalls = { 7.0f, 3.0f, 4.0f, 7.0f, 4.0f, 6.0f,
+                                        4.0f, 12.0f, 4.0f, 8.0f };
 
         bool splitScreenMode = true;
         private SpriteFont scriptFont;
@@ -509,19 +509,26 @@ namespace lightseeds
                     }
                     else if (storyProgress == 7)
                     {
-                        spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
                         if (storyTime < 0.5f * storyTimeIntervalls[storyProgress])
+                        {
+                            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
                             spriteBatch.Draw(menuButtons, new Vector2(SCREEN_WIDTH / 2 + 24, SCREEN_HEIGHT / 2),
                                              new Rectangle(0, menuButtons.Height / 8, menuButtons.Width, menuButtons.Height / 8), Color.White);
-                        else
-                            spriteBatch.Draw(menuButtons, new Vector2(SCREEN_WIDTH / 2 + 24, SCREEN_HEIGHT / 2),
-                                             new Rectangle(0, menuButtons.Height / 2, menuButtons.Width, menuButtons.Height / 4), Color.White);
-                        spriteBatch.End();
+                            spriteBatch.End();
+                        }
                     }
                     else if (storyProgress == 9)
                     {
-                        if (storyTime > 0.25f * storyTimeIntervalls[storyProgress] &&
-                            storyTime < 0.75f * storyTimeIntervalls[storyProgress])
+                        if (storyTime > 0.23f * storyTimeIntervalls[storyProgress] &&
+                            storyTime < 0.48f * storyTimeIntervalls[storyProgress])
+                        {
+                            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+                            spriteBatch.Draw(menuButtons, new Vector2(SCREEN_WIDTH / 2 - 136, SCREEN_HEIGHT / 2 - 16),
+                                             new Rectangle(0, menuButtons.Height / 2, menuButtons.Width, menuButtons.Height / 4), Color.White);
+                            spriteBatch.End();
+                        }
+                        else if (storyTime > 0.52f * storyTimeIntervalls[storyProgress] &&
+                            storyTime < 0.77f * storyTimeIntervalls[storyProgress])
                         {
                             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
                             spriteBatch.Draw(menuButtons, new Vector2(SCREEN_WIDTH / 2 + 24, SCREEN_HEIGHT / 2),
@@ -764,8 +771,6 @@ namespace lightseeds
                     {
                         // scroll right
                         joinedCamera.Update(gameTime);
-                        voids.ForEach((v) => v.Update(gameTime));
-                        particleCollection.Update(gameTime);
                         if (storyTime > storyTimeIntervalls[storyProgress])
                         {
                             storyTime = 0.0f;
@@ -815,6 +820,7 @@ namespace lightseeds
                         splitScreenMode = true;
                         joinedCamera.Center(new Vector3(0.0f, 16.0f, 1.0f));
                         startTime = gameTime.TotalGameTime.TotalSeconds;
+                        ResetVoids(1.0f);
                     }
                     break;
             }
@@ -822,7 +828,7 @@ namespace lightseeds
             // skip intro
             GamePadState gamepadState = GamePad.GetState(PlayerIndex.One);
             KeyboardState keyboardState = Keyboard.GetState();
-            if (gamepadState.IsButtonDown(Buttons.Start) || gamepadState.IsButtonDown(Buttons.A) ||
+            if (gamepadState.IsButtonDown(Buttons.Start) ||
                 gamepadState.IsButtonDown(Buttons.B) || keyboardState.IsKeyDown(Keys.Enter))
             {
                 // start the game
@@ -830,7 +836,8 @@ namespace lightseeds
                 this.State = GameState.RUNNING;
                 splitScreenMode = true;
                 joinedCamera.Center(new Vector3(0.0f, 16.0f, 1.0f));
-                startTime = gameTime.TotalGameTime.TotalSeconds;             
+                startTime = gameTime.TotalGameTime.TotalSeconds;
+                ResetVoids(1.0f);
             }
             else if (gamepadState.Buttons.Back == ButtonState.Pressed ||
                      keyboardState.IsKeyDown(Keys.Escape))

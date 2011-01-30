@@ -299,9 +299,9 @@ namespace lightseeds.GameObjects
             }
 
             descriptionLines[2] = "Price: " + price.ToString() + " souls";
-            
+
             // create first seed position
-            if (!isBlueprint)
+            if (!isBlueprint && status == TreeStatus.MATURE)
             {
                 nextSeedPosition = GetNextSeedPosition();
             }
@@ -329,6 +329,7 @@ namespace lightseeds.GameObjects
                     {
                         status = TreeStatus.MATURE;
                         growth = 1.0f;
+                        nextSeedPosition = GetNextSeedPosition();
                     }
                     break;
                 case TreeStatus.MATURE:
@@ -474,19 +475,19 @@ namespace lightseeds.GameObjects
             float offsetX, offsetY;
             if (treeType == TreeType.BASE)
             {
-                offsetY = (float)randomizer.Next(8, 30);
-                if (offsetY < 10)
-                    offsetX = (float)randomizer.Next(-4, 4);
+                offsetY = 0.1f * randomizer.Next(80, 300);
+                if (offsetY < 10.0f)
+                    offsetX = 0.1f * randomizer.Next(-40, 40);
                 else
-                    offsetX = (float)randomizer.Next(-8, 8);
+                    offsetX = 0.1f * randomizer.Next(-80, 80);
             }
             else
             {
-                offsetY = (float)randomizer.Next(2, 6);
-                if (offsetY < 4)
-                    offsetX = (float)randomizer.Next(-1, 1);
+                offsetY = 0.1f * randomizer.Next(20, 50);
+                if (offsetY < 4.0f)
+                    offsetX = 0.1f *  randomizer.Next(-10, 10);
                 else
-                    offsetX = (float)randomizer.Next(-3, 3);
+                    offsetX = 0.1f * randomizer.Next(-20, 20);
             }
             return new Vector3(worldPosition.X + offsetX, worldPosition.Y + offsetY, 1.0f);
         }
