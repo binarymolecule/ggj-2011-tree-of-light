@@ -74,6 +74,7 @@ namespace lightseeds
         float[] storyTimeIntervalls = { 7.0f, 3.0f, 4.0f, 6.0f, 4.0f, 3.0f };
 
         bool splitScreenMode = true;
+        private SpriteFont scriptFont;
 
         public enum GameState
         {
@@ -194,6 +195,7 @@ namespace lightseeds
 
             spriteFont = Content.Load<SpriteFont>("fonts/Geo");
             headlineFont = Content.Load<SpriteFont>("fonts/headline");
+            scriptFont = Content.Load<SpriteFont>("fonts/script");
 
             treeCollection = new TreeCollection(this);
             treeCollection.Load();
@@ -394,8 +396,8 @@ namespace lightseeds
                 {
                     var xpos = tree.worldPosition.X;
                     var textPos = Vector3.Transform(new Vector3(xpos, world.getHeigth(xpos) - 1, 0), worldToScreen).ToVector2();
-                    var textMeasure = headlineFont.MeasureString(tree.name);
-                    spriteBatch.DrawString(headlineFont, tree.name, textPos - textMeasure/2, new Color(55,55,55,255));
+                    var textMeasure = scriptFont.MeasureString(tree.name);
+                    spriteBatch.DrawString(scriptFont, tree.name, textPos - textMeasure / 2, new Color(55, 55, 55, 255));
                 }
                 spriteBatch.End();
 

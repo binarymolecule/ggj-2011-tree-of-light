@@ -112,6 +112,12 @@
       <Processor>FontDescriptionProcessor</Processor>
       <SubType>Designer</SubType>
     </Compile>
+    <Compile Include="fonts\script.spritefont">
+      <SubType>Designer</SubType>
+      <Name>script</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
     <None Include="resources\ComingSoon.ttf">
       <Name>ComingSoon</Name>
     </None>
