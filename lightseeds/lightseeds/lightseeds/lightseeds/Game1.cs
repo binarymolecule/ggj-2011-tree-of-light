@@ -214,6 +214,12 @@ namespace lightseeds
                 float offsetY = (float)randomizer.Next(2, 6);
                 seedCollection.SpawnSeed(new Vector3(posX, world.getHeigth(posX) + offsetY, 0.0f));
             }
+             /**
+             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
+                               GameCamera.CurrentCamera.screenTransform);
+                
+             foreground.Draw(this, gameTime, i);
+             **/
 
             // reset "The Void"
             ResetVoids(1.0f);
@@ -373,6 +379,12 @@ namespace lightseeds
                 spriteBatch.End();
                 
                 world.Draw(this, gameTime, -1000, 2000);
+                /**
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
+                                  worldToScreen * bgMatrix(i, 1.1f));
+                foreground.Draw(this, gameTime, i);
+                spriteBatch.End();
+                **/
 
                 BlendState bs = new BlendState() {
                     AlphaBlendFunction = BlendFunction.Subtract,
