@@ -257,7 +257,7 @@ namespace lightseeds.GameObjects
                     resistance = 1.0f;
                     lifeSpan = 0.0f;
                     price = 0;
-                    descriptionLines[0] = "The Tree of Life";
+                    descriptionLines[0] = "The Tree of Light";
                     descriptionLines[1] = "Protect it at any cost.";
                     break;
                 case TreeType.FIGHTER:
@@ -294,7 +294,7 @@ namespace lightseeds.GameObjects
                     lifeSpan = 130.0f;
                     price = 10;
                     descriptionLines[0] = "Defender Tree";
-                    descriptionLines[1] = "Slow-growing heavy tank.";
+                    descriptionLines[1] = "Slow-growing heavy defender.";
                     break;
             }
 
