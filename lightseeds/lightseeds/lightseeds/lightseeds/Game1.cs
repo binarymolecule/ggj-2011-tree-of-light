@@ -366,7 +366,7 @@ namespace lightseeds
                                   GameCamera.CurrentCamera.screenTransform);
                 foreach (var player in players)
                 {
-                  player.Draw(gameTime);
+                    player.Draw(gameTime);
                 }
                 spriteBatch.End();
                 
@@ -573,13 +573,17 @@ namespace lightseeds
 
             storyTime += gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
 
+            // update tree and players
+            treeCollection.Update(gameTime);
+            foreach (PlayerSprite p in players)
+                p.Update(gameTime);
+
             switch (storyProgress)
             {
                 case 0:
                     {
                         // scroll + fade in
                         joinedCamera.Update(gameTime);
-                        treeCollection.Update(gameTime);
                         float c = storyTime / storyTimeIntervalls[storyProgress];
                         fadeColor = new Color(c, c, c, 1.0f); 
                         if (storyTime > storyTimeIntervalls[storyProgress])
@@ -593,7 +597,6 @@ namespace lightseeds
                 case 1:
                     {
                         // wait
-                        treeCollection.Update(gameTime);
                         if (storyTime > storyTimeIntervalls[storyProgress])
                         {
                             storyTime = 0.0f;
@@ -607,7 +610,6 @@ namespace lightseeds
                     {
                         // scroll left
                         joinedCamera.Update(gameTime);
-                        treeCollection.Update(gameTime);
                         if (storyTime > storyTimeIntervalls[storyProgress])
                         {
                             storyTime = 0.0f;
@@ -632,7 +634,8 @@ namespace lightseeds
                     {
                         // scroll right
                         joinedCamera.Update(gameTime);
-                        treeCollection.Update(gameTime);
+                        voids.ForEach((v) => v.Update(gameTime));
+                        particleCollection.Update(gameTime);
                         if (storyTime > storyTimeIntervalls[storyProgress])
                         {
                             storyTime = 0.0f;
@@ -643,7 +646,6 @@ namespace lightseeds
                 case 5:
                     {
                         // wait
-                        treeCollection.Update(gameTime);
                         if (storyTime > storyTimeIntervalls[storyProgress])
                         {
                             storyTime = 0.0f;
