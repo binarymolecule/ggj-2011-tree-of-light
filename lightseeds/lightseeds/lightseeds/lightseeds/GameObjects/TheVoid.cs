@@ -59,9 +59,27 @@ namespace lightseeds.GameObjects
 
 
             float regularSpeed = 0.5f * (float)gt.ElapsedGameTime.TotalSeconds;
-            regularSpeed *= accumulatedRepulsion;
+
+            if (game.State == lightseeds.Game1.GameState.RUNNING)
+            {
+                regularSpeed *= accumulatedRepulsion;
+            }
+            else if (game.State == lightseeds.Game1.GameState.CLOSING)
+            {
+                regularSpeed *= 10;
+            }
+            
 
             this.horizontalPosition += regularSpeed * direction.X;
+
+            if (direction.X > 0)
+            {
+                this.horizontalPosition = Math.Min(horizontalPosition, 2);
+            }
+            else
+            {
+                this.horizontalPosition = Math.Max(horizontalPosition, -2);
+            }
 
             // adding new particles
 

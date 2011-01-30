@@ -46,6 +46,13 @@ namespace lightseeds
         static public int WORLD_SCREEN_HEIGHT = 9;
 
         public ParticleCollection particleCollection;
+        public GameState State;
+
+        public enum GameState
+        {
+            RUNNING,
+            CLOSING
+        }
 
         public Game1()
         {
@@ -263,6 +270,20 @@ namespace lightseeds
             {
                 var gamepadState = GamePad.GetState(p.index == 0 ? PlayerIndex.One : PlayerIndex.Two);
                 p.HandleInput(gamepadState);
+
+
+                // debug input
+                if (p.index == 0)
+                {
+                    if (gamepadState.IsButtonDown(Buttons.RightShoulder))
+                    {
+                        this.State = GameState.CLOSING;
+                    }
+                    else if (gamepadState.IsButtonDown(Buttons.LeftShoulder))
+                    {
+                        seedCollection.collectedSeedCount += 10;
+                    }
+                }
             }
         }
 

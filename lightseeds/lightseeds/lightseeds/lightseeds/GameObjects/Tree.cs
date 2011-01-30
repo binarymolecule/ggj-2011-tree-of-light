@@ -305,7 +305,8 @@ namespace lightseeds.GameObjects
                             Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * growth * screenSize.X),
                                                                 (int)(screenPosition.Y - growth * screenSize.Y + 8.0f),
                                                                 (int)(growth * screenSize.X), (int)(growth * screenSize.Y));
-                            spriteBatch.Draw(texture, rectangle, Color.White);
+                            var fade = Color.Lerp(Color.White, Color.Black, 3 - 3 * growth);
+                            spriteBatch.Draw(texture, rectangle, fade);
                         }
                         break;
                     case TreeStatus.DIED:
