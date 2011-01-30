@@ -17,19 +17,19 @@ namespace lightseeds
     /// </summary>
     public class GameScreen : Microsoft.Xna.Framework.DrawableGameComponent
     {
-        Texture2D screenTexture;
+        public Texture2D screenTexture;
 
-        Effect effect;
+        public Effect effect;
 
         public enum ScreenStatus { WAIT, FADE_IN, FADE_OUT, ACTIVE, DONE };
 
-        ScreenStatus screenStatus;
+        public ScreenStatus screenStatus;
 
-        float fadeTime, waitTime, duration;
+        public float fadeTime, waitTime, duration;
 
-        const float MAX_FADE_TIME = 1.0f, MAX_WAIT_TIME = 1.0f;
+        public const float MAX_FADE_TIME = 1.0f, MAX_WAIT_TIME = 1.0f;
 
-        Game1 game;
+        public Game1 game;
 
         public ScreenStatus Status { get { return screenStatus; } }
 
@@ -43,7 +43,7 @@ namespace lightseeds
             Reset();
         }
 
-        public void Reset()
+        public virtual void Reset()
         {
             screenStatus = ScreenStatus.WAIT;
             fadeTime = 0.0f;

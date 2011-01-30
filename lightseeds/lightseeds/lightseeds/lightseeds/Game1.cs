@@ -1,4 +1,6 @@
 #define SHOW_INTRO
+//#define TEST_GAMEOVER
+//#define DEBUG_CONTROLS
 
 using System;
 using System.Collections.Generic;
@@ -33,7 +35,7 @@ namespace lightseeds
 
         public Texture2D playerTexture;
         Texture2D backgroundTexture;
-        private SpriteFont spriteFont;
+        public SpriteFont spriteFont;
 
         Texture2D menuButtons;
 
@@ -72,7 +74,8 @@ namespace lightseeds
         public double startTime;
         private SpriteFont headlineFont;
 
-        GameScreen introScreen, gameoverScreen;
+        GameScreen introScreen;
+        GameOverGameScreen gameoverScreen;
 
         int storyProgress = -1;
         float storyTime = 0.0f;
@@ -157,7 +160,7 @@ namespace lightseeds
 
             // Create title and gameover screens
             introScreen = new GameScreen(this, Content.Load<Texture2D>("textures/titleScreen"), 10.0f);
-            gameoverScreen = new GameScreen(this, Content.Load<Texture2D>("textures/gameoverScreen"), 3.0f);
+            gameoverScreen = new GameOverGameScreen(this, Content.Load<Texture2D>("textures/gameoverScreen"), 3.0f);
 
             // Create main game related stuff
             world = new World();
@@ -243,7 +246,7 @@ namespace lightseeds
             // reset "The Void"
             ResetVoids(1.0f);
 
-            this.State = GameState.INTRO;            
+            this.State = GameState.INTRO;
         }
 
         /// <summary>
@@ -261,8 +264,14 @@ namespace lightseeds
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+
             if (this.State == GameState.INTRO)
             {
+#if TEST_GAMEOVER
+                this.gameoverScreen.Reset(gameTime);
+                this.State = GameState.GAMEOVER;
+#endif
+
                 introScreen.Update(gameTime);
                 if (introScreen.Status == GameScreen.ScreenStatus.DONE)
                 {
@@ -331,7 +340,7 @@ namespace lightseeds
 
             if (voids.All((v) => v.IsBehind(0.0f)))
             {
-                gameoverScreen.Reset();
+                gameoverScreen.Reset(gameTime);
                 State = GameState.GAMEOVER;
             }
             fairyCollection.Update(gameTime);
@@ -612,6 +621,7 @@ namespace lightseeds
                 p.HandleInput(gamepadState, p.index == 0 ? Keyboard.GetState() : new KeyboardState());
 
                 // debug input
+#if DEBUG_CONTROLS
                 if (p.index == 0)
                 {
                     if (gamepadState.IsButtonDown(Buttons.RightShoulder))
@@ -623,6 +633,7 @@ namespace lightseeds
                         seedCollection.collectedSeedCount += 10;
                     }
                 }
+#endif
             }
         }
 
