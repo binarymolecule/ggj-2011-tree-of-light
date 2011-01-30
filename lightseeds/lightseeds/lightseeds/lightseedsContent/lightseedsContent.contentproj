@@ -108,13 +108,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Background\Background.png">
-      <Name>Background</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Tree Previews\Tree1_preview.png">
       <Name>Tree1_preview</Name>
       <Importer>TextureImporter</Importer>
@@ -202,6 +195,23 @@
   <ItemGroup>
     <Compile Include="black.bmp">
       <Name>black</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Background\Background_1.png">
+      <Name>Background_1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Background\Background_2.png">
+      <Name>Background_2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Background\Background_3.png">
+      <Name>Background_3</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
