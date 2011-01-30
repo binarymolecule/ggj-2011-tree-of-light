@@ -101,6 +101,11 @@
       <Processor>FontDescriptionProcessor</Processor>
       <SubType>Designer</SubType>
     </Compile>
+    <Compile Include="effects\titleEffect.fx">
+      <Name>titleEffect</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
     <Compile Include="fonts\headline.spritefont">
       <Name>headline</Name>
       <Importer>FontDescriptionImporter</Importer>
@@ -236,6 +241,20 @@
     </Compile>
     <Compile Include="Trees\Pawn Tree\Pawn_Tree_Xray.png">
       <Name>Pawn_Tree_Xray</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\gameoverScreen.png">
+      <Name>gameoverScreen</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\titleScreen.png">
+      <Name>titleScreen</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
