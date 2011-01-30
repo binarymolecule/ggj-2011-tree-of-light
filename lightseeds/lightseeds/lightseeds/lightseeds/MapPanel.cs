@@ -95,7 +95,7 @@ namespace lightseeds
 
         public override void Draw(GameTime gameTime)
         {
-            game.spriteBatch.Draw(barTexture, edgePosition + barOffset, Color.White);
+            game.spriteBatch.Draw(barTexture, new Rectangle(0, (int)(edgePosition.Y + barOffset.Y), Game1.SCREEN_WIDTH, barTexture.Height), Color.White);
 
             // draw dark areas
             game.spriteBatch.Draw(darkTexture, leftDarkRect, Color.White);
