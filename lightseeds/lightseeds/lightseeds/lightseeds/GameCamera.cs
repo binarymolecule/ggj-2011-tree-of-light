@@ -9,7 +9,7 @@ namespace lightseeds
     {
         int index;
 
-        float speed;
+        Vector2 speed;
 
         bool isMoving;
 
@@ -83,7 +83,7 @@ namespace lightseeds
         public void FollowPlayer(PlayerSprite player)
         {
             this.player = player;
-            this.speed = 0.0f;
+            this.speed = Vector2.Zero;
             isMoving = false;
         }
 
@@ -92,7 +92,7 @@ namespace lightseeds
             this.player = null;
             this.translation = new Vector2(position.X, position.Y);
             this.target = new Vector2(position.X, position.Y);
-            this.speed = 0.0f;
+            this.speed = Vector2.Zero;
             isMoving = false;
             returnMode = false;
         }
@@ -144,6 +144,9 @@ namespace lightseeds
                 targetIsMoving = !player.isStunned && (player.currentXAcceleration != 0 || player.currentYAcceleration !=0 );
             }
 
+            // keep close track of target on vertical axis
+            translation.Y = target.Y;
+
             Vector2 direction = target - translation;
             float seconds = 0.001f * gameTime.ElapsedGameTime.Milliseconds;
             //float distance = direction.Length();
@@ -163,7 +166,7 @@ namespace lightseeds
                 if (Math.Max(distanceX, distanceY) < MIN_DIST && !targetIsMoving)
                 {
                     translation = target;
-                    speed = 0.0f;
+                    speed = Vector2.Zero;
                     direction = Vector2.Zero;
                     isMoving = false;
                 }
@@ -171,15 +174,15 @@ namespace lightseeds
                 {
                     if (distanceX < BRAKE_DIST_X && distanceY < BRAKE_DIST_Y)
                     {
-                        speed -= seconds * BRAKE_ACCELERATION;
-                        if (speed < MIN_SPEED)
-                            speed = MIN_SPEED;
+                        speed.X -= seconds * BRAKE_ACCELERATION;
+                        if (speed.X < MIN_SPEED)
+                            speed.X = MIN_SPEED;
                     }
                     else
                     {
-                        speed += seconds * ACCELERATION;
-                        if (speed > MAX_SPEED)
-                            speed = MAX_SPEED;
+                        speed.X += seconds * ACCELERATION;
+                        if (speed.X > MAX_SPEED)
+                            speed.X = MAX_SPEED;
                     }
                     direction.Normalize();
                     translation += speed * seconds * direction;

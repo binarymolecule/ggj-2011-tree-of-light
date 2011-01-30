@@ -35,6 +35,8 @@ namespace lightseeds
         Texture2D backgroundTexture;
         private SpriteFont spriteFont;
 
+        Texture2D menuButtons;
+
         RenderTarget2D[] splitScreens;
         public Vector2[] splitScreenPositions;
 
@@ -186,21 +188,25 @@ namespace lightseeds
 
             joinedCamera = new GameCamera(this, 2, new Vector3(0.0f, 16.0f, 1.0f));
 
-            // createTree split screens
+            // create game screens
             splitScreens = new RenderTarget2D[2];
             splitScreens[0] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
             splitScreens[1] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
             
             joinedScreen = new RenderTarget2D(GraphicsDevice, SCREEN_WIDTH, SCREEN_HEIGHT);
 
+            // load GUI related stuff
             spriteFont = Content.Load<SpriteFont>("fonts/Geo");
             headlineFont = Content.Load<SpriteFont>("fonts/headline");
             scriptFont = Content.Load<SpriteFont>("fonts/script");
+            menuButtons = Content.Load<Texture2D>("textures/menuButtons");
 
+            // create tree collection
             treeCollection = new TreeCollection(this);
             treeCollection.Load();
             treeCollection.Reset();
 
+            // create seed collection
             seedCollection = new SeedCollection(this);
             seedCollection.Load();
             seedCollection.Reset();
@@ -458,6 +464,12 @@ namespace lightseeds
 
                             spriteBatch.DrawString(spriteFont, bodyText, textPos + new Vector2(2, 2), Color.Black);
                             spriteBatch.DrawString(spriteFont, bodyText, textPos, Color.White);
+                            textPos.Y += headlineMeasure.Y + menuButtons.Height;
+
+                            // draw menu buttons for build menu
+                            if (tree.status == Tree.TreeStatus.BLUEPRINT)
+                                spriteBatch.Draw(menuButtons, textPos, Color.White);
+
                             spriteBatch.End();
                         }
                     }
