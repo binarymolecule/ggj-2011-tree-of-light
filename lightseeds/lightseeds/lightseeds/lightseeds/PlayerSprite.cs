@@ -21,7 +21,7 @@ namespace lightseeds
         Vector3 position, initialPosition;
 
         Texture2D texture;
-        public const float XBOUNDARY = 180.0f;
+        public const float XBOUNDARY = 4.0f;
         public const float YBOUNDARY = 40.0f;
 
         public const float WOBBLEBPM = 60.0f;
@@ -173,8 +173,10 @@ namespace lightseeds
         {
             
             var timeFactor = gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
+            var leftBound = game.voids[0].horizontalPosition + XBOUNDARY;
+            var rightBound = game.voids[1].horizontalPosition - XBOUNDARY;
             //movement
-            if (position.X < XBOUNDARY && position.X > -XBOUNDARY)
+            if (position.X < rightBound && position.X > leftBound)
             {
                 xVelocity += currentXAcceleration * timeFactor;
                 if (xVelocity > MAXVELOCITY_X)
@@ -184,9 +186,9 @@ namespace lightseeds
             }
             
             //backbounce
-            if (position.X < -XBOUNDARY)
+            if (position.X < leftBound)
                 xVelocity += 2 * ACCELERATION * timeFactor;
-            if (position.X > XBOUNDARY)
+            if (position.X > rightBound)
                 xVelocity -= 2 * ACCELERATION * timeFactor;
             
             //slowdown
