@@ -213,7 +213,7 @@ namespace lightseeds
 
             fairyCollection = new FairyCollection(this);
             fairyCollection.Load(playerTexture);
-            fairyCollection.SpawnFairy(new Vector3(0,6,0));
+            fairyCollection.SpawnFairy(new Vector3(2.0f, 8.0f, 1.0f));
 
             // distribute some random seeds
             Random randomizer = new Random();
