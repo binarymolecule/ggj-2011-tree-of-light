@@ -56,11 +56,91 @@ namespace lightseeds.GameObjects
         }
     }
     */
+
+
     public class Tree
     {
         public const float MIN_DISTANCE = 4.0f;
 
         public const float SEED_FALL_SPEED = 4.0f;
+
+        public string[] names = new string[] {
+"Birchbud",
+"Bonehedge",
+"Brownmane",
+"Cedarblossom",
+"Crownbush",
+"Lockshoot",
+"Lowpine",
+"Marrowbriar",
+"Mossalder",
+"Slowoak",
+"Strangecraft",
+"Weedbirch",
+"Wildrowan",
+"Winterskin",
+"Wisehazel",
+"Beamleg",
+"Beardbloom",
+"Bramblebeard",
+"Bramblefoot",
+"Brightvine",
+"Budbone",
+"Calmoak",
+"Copsemarrow",
+"Fallmaple",
+"Maplehedge",
+"Shrubcrown",
+"Skinwand",
+"Weedpalm",
+"Willowbeard",
+"Winterelm",
+"Ashherb",
+"Beamsmile",
+"Brighttimber",
+"Calmmaple",
+"Craftelm",
+"Farelm",
+"Junglemaple",
+"Oakleaf",
+"Palmtalon",
+"Rootbone",
+"Springweed",
+"Summeryew",
+"Talontwig",
+"Timberoak",
+"Willowbraid",
+"Armstaff",
+"Baldalder",
+"Budbeard",
+"Cedarbark",
+"Copsecrown",
+"Fallalder",
+"Furylimb",
+"Greenherb",
+"Hollyshoot",
+"Maplecrown",
+"Oaktalon",
+"Pinefury",
+"Quickrowan",
+"Toothmoss",
+"Wisebriar",
+"Ashbramble",
+"Blossomskin",
+"Bonejungle",
+"Clawbloom",
+"Elmtrunk",
+"Herbfoot",
+"Hollyseed",
+"Honeybeard",
+"Jungleskin",
+"Palmsprig",
+"Rowanlimb",
+"Smallhazel",
+"Strangemaple",
+"Weedcedar",
+"Wiseoak"
+        };
 
         public Vector3 position;
         public Vector2 offset;
@@ -70,6 +150,7 @@ namespace lightseeds.GameObjects
         public float groundHeight;
 
         private Texture2D texture;
+        private static Random random = new Random();
 
         public TreeCollection parentCollection;
 
@@ -85,7 +166,7 @@ namespace lightseeds.GameObjects
         public int price;
         public string name;
         public double currentFruitTime;
-        
+
         #endregion
 
         public bool RemoveOnNextUpdate = false;
@@ -127,7 +208,7 @@ namespace lightseeds.GameObjects
             fruitSize = new Vector2(parentCollection.fruitTexture.Width, parentCollection.fruitTexture.Height);
             texture = parentCollection.textures[(int)treeType];
             screenSize = new Vector2(texture.Width, texture.Height);
-            name = "foo";
+            name = names[random.Next(names.Length-1)];
 
             if (treeType == TreeType.BASE)
             {
@@ -318,7 +399,7 @@ namespace lightseeds.GameObjects
                         break;
                     case TreeStatus.BLUEPRINT:
                         {
-                            bool buildable = (parentCollection.game.seedCollection.collectedSeedCount >= price);                                            
+                            bool buildable = (parentCollection.game.seedCollection.collectedSeedCount >= price);
                             spriteBatch.Draw(texture, screenPosition + offset, buildable ? Color.Gray : Color.Black);
                             break;
                         }
