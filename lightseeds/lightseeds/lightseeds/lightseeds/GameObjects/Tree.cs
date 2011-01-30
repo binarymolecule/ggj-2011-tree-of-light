@@ -129,7 +129,7 @@ namespace lightseeds.GameObjects
             screenSize = new Vector2(texture.Width, texture.Height);
             if (treeType == TreeType.BASE)
             {
-                offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 64.0f);
+                offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 210.0f);
                 fruitOffset = new Vector2(0.0f, -96.0f);
             }
             else

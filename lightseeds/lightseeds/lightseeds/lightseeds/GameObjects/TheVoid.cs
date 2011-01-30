@@ -72,6 +72,10 @@ namespace lightseeds.GameObjects
 
             this.horizontalPosition += regularSpeed * direction.X;
 
+            if(Math.Abs(horizontalPosition) < 3.5f && game.State == Game1.GameState.RUNNING) {
+                game.State = Game1.GameState.CLOSING;
+            }
+
             if (direction.X > 0)
             {
                 this.horizontalPosition = Math.Min(horizontalPosition, 2);
