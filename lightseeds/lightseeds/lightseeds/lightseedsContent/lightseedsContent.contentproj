@@ -120,28 +120,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Tree Previews\Tree1_preview.png">
-      <Name>Tree1_preview</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Tree Previews\Tree2_preview.png">
-      <Name>Tree2_preview</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Tree Previews\Tree3_preview.png">
-      <Name>Tree3_preview</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Tree Previews\Tree4_preview.png">
-      <Name>Tree4_preview</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Smoke\Smoke_1.png">
       <Name>Smoke_1</Name>
       <Importer>TextureImporter</Importer>

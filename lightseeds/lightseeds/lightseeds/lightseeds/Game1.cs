@@ -151,7 +151,7 @@ namespace lightseeds
 
             treeCollection = new TreeCollection(this);
             treeCollection.Load();
-            treeCollection.CreateTree(Vector3.Zero, TreeType.BASE, false);
+            treeCollection.CreateTree(Vector3.Zero, TreeType.BASE, false, "");
 
             seedCollection = new SeedCollection(this);
             seedCollection.Load();
@@ -250,6 +250,12 @@ namespace lightseeds
             particleCollection.Update(gameTime);
 
             mapPanel.Update(gameTime);
+
+            if (voids.All((v) => v.IsBehind(0.0f)))
+            {
+                gameoverScreen.Reset();
+                State = GameState.GAMEOVER;
+            }
 
             base.Update(gameTime);
         }
@@ -410,16 +416,17 @@ namespace lightseeds
             }
         }
 
-        public void createTree(PlayerSprite player, TreeType treeType, int price)
+        public void createTree(PlayerSprite player, TreeType treeType, String name, int price)
         {
             // check and decrease seeds of players here
             if (seedCollection.collectedSeedCount >= price &&
                 !treeCollection.HasTreeAtPosition(player.worldPosition.X))
             {
-                treeCollection.CreateTree(player.worldPosition, treeType, false);
+                treeCollection.CreateTree(player.worldPosition, treeType, false, name);
                 seedCollection.collectedSeedCount -= price;
             }
         }
+
         public Matrix bgMatrix(int index, float factor = 1f)
         {
             Vector3 v = new Vector3(-(players[index].worldPosition.X) * factor, 

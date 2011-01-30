@@ -149,7 +149,8 @@ namespace lightseeds.GameObjects
         public Vector2 fruitSize;
         public float groundHeight;
 
-        public Texture2D texture;
+        public Texture2D texture, deadTexture, xrayTexture;
+
         private static Random random = new Random();
 
         public TreeCollection parentCollection;
@@ -201,15 +202,28 @@ namespace lightseeds.GameObjects
             }
         }
 
-        public Tree(TreeCollection coll, Vector3 pos, TreeType type, bool isBlueprint)
+        public Tree(TreeCollection coll, Vector3 pos, TreeType type, bool isBlueprint, String preferredName)
         {
             position = pos;
             treeType = type;
             parentCollection = coll;
             fruitSize = new Vector2(parentCollection.fruitTexture.Width, parentCollection.fruitTexture.Height);
             texture = parentCollection.textures[(int)treeType];
+            if (treeType != TreeType.BASE)
+            {
+                deadTexture = parentCollection.textures[(int)treeType + 4];
+                xrayTexture = parentCollection.textures[(int)treeType + 8];
+            }
+            else
+            {
+                deadTexture = xrayTexture = texture;
+            }
+
             screenSize = new Vector2(texture.Width, texture.Height);
-            name = names[random.Next(names.Length-1)];
+            if (preferredName == "")
+                name = names[random.Next(names.Length - 1)];
+            else
+                name = preferredName;
 
             if (treeType == TreeType.BASE)
             {
@@ -218,7 +232,7 @@ namespace lightseeds.GameObjects
             }
             else
             {
-                offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 8.0f);
+                offset = new Vector2(-0.5f * screenSize.X, -screenSize.Y + 64.0f);
                 fruitOffset = new Vector2(0.0f, -96.0f);
             }
             growth = 0.1f;
@@ -376,7 +390,7 @@ namespace lightseeds.GameObjects
                     case TreeStatus.PLANTED:
                         {
                             Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * growth * screenSize.X),
-                                                                (int)(screenPosition.Y - growth * screenSize.Y + 8.0f),
+                                                                (int)(screenPosition.Y - growth * screenSize.Y + 64.0f),
                                                                 (int)(growth * screenSize.X), (int)(growth * screenSize.Y));
                             spriteBatch.Draw(texture, rectangle, Color.White);
                         }
@@ -394,21 +408,21 @@ namespace lightseeds.GameObjects
                     case TreeStatus.KILLED:
                         {
                             Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * growth * screenSize.X),
-                                                                (int)(screenPosition.Y - growth * screenSize.Y + 8.0f),
+                                                                (int)(screenPosition.Y - growth * screenSize.Y + 64.0f),
                                                                 (int)(growth * screenSize.X), (int)(growth * screenSize.Y));
-                            var fade = Color.Lerp(Color.Gray, Color.Black, 3 - 3 * growth);
-                            spriteBatch.Draw(texture, rectangle, fade);
+                            var fade = Color.Lerp(Color.White, Color.Black, 3 - 3 * growth);
+                            spriteBatch.Draw(deadTexture, rectangle, fade);
                         }
                         break;
                     case TreeStatus.DIED:
                         {
-                            spriteBatch.Draw(texture, screenPosition + offset, Color.Gray);
+                            spriteBatch.Draw(deadTexture, screenPosition + offset, Color.White);
                         }
                         break;
                     case TreeStatus.BLUEPRINT:
                         {
                             bool buildable = (parentCollection.game.seedCollection.collectedSeedCount >= price);
-                            spriteBatch.Draw(texture, screenPosition + offset, buildable ? Color.Gray : Color.Black);
+                            spriteBatch.Draw(xrayTexture, screenPosition + offset, buildable ? Color.White : Color.Red);
                             break;
                         }
                 }

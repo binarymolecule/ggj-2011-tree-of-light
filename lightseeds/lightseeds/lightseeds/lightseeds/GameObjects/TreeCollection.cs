@@ -37,12 +37,20 @@ namespace lightseeds.GameObjects
         public void Load()
         {
             content = GameServices.GetService<ContentManager>();
-            textures = new Texture2D[5];
+            textures = new Texture2D[4*3 + 1];
             textures[0] = content.Load<Texture2D>("Tree Previews/Treeoflife_Small");
-            textures[1] = content.Load<Texture2D>("Tree Previews/Tree1_preview");
-            textures[2] = content.Load<Texture2D>("Tree Previews/Tree2_preview");
-            textures[3] = content.Load<Texture2D>("Tree Previews/Tree3_preview");
-            textures[4] = content.Load<Texture2D>("Tree Previews/Tree4_preview");
+            textures[1] = content.Load<Texture2D>("Trees/Fighter Tree/Fighter_Tree_tex");
+            textures[2] = content.Load<Texture2D>("Trees/Mother Tree/Mother_tree_tex");
+            textures[3] = content.Load<Texture2D>("Trees/Pawn Tree/Pawn_Tree_tex");
+            textures[4] = content.Load<Texture2D>("Trees/Tank Tree/Tank_Tree_tex");
+            textures[5] = content.Load<Texture2D>("Trees/Fighter Tree/Fighter_Tree_noleafs");
+            textures[6] = content.Load<Texture2D>("Trees/Mother Tree/Mother_tree_noleafs");
+            textures[7] = content.Load<Texture2D>("Trees/Pawn Tree/Pawn_Tree_noleafs");
+            textures[8] = content.Load<Texture2D>("Trees/Tank Tree/Tank_Tree_noleafs");
+            textures[9] = content.Load<Texture2D>("Trees/Fighter Tree/Fighter_Tree_xray");
+            textures[10] = content.Load<Texture2D>("Trees/Mother Tree/Mother_tree_xray");
+            textures[11] = content.Load<Texture2D>("Trees/Pawn Tree/Pawn_Tree_xray");
+            textures[12] = content.Load<Texture2D>("Trees/Tank Tree/Tank_Tree_xray");
             fruitTexture = content.Load<Texture2D>("textures/glowing");
         }
 
@@ -75,9 +83,9 @@ namespace lightseeds.GameObjects
             }
         }
 
-        internal Tree CreateTree(Vector3 seedPos, TreeType type, bool isBlueprint)
+        internal Tree CreateTree(Vector3 seedPos, TreeType type, bool isBlueprint, String name)
         {
-            Tree newTree = new Tree(this, seedPos, type, isBlueprint);
+            Tree newTree = new Tree(this, seedPos, type, isBlueprint, name);
             trees.Add(newTree);
             return newTree;
         }

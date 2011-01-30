@@ -239,7 +239,7 @@ namespace lightseeds
         {
             if (!game.treeCollection.HasTreeAtPosition(worldPosition.X))
             {
-                blueprint = game.treeCollection.CreateTree(worldPosition, TreeType.PAWN, true);
+                blueprint = game.treeCollection.CreateTree(worldPosition, TreeType.PAWN, true, "");
             }
         }
 
@@ -258,7 +258,7 @@ namespace lightseeds
                     if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
                     {
                         game.treeCollection.trees.Remove(blueprint);
-                        game.createTree(this, blueprint.treeType, blueprint.price);
+                        game.createTree(this, blueprint.treeType, blueprint.name, blueprint.price);
                         lastUsedType = blueprint.treeType;
                         blueprint = null;
                         waitForBPConfirm = false;
@@ -276,14 +276,14 @@ namespace lightseeds
                     {
                         var type = blueprint.treeType;
                         game.treeCollection.trees.Remove(blueprint);
-                        blueprint = game.treeCollection.CreateTree(worldPosition, type.Previous(), true);
+                        blueprint = game.treeCollection.CreateTree(worldPosition, type.Previous(), true, "");
                         waitForReleaseLeft = true;
                     }
                     if (gamepadState.ThumbSticks.Left.X > 0.0f && !waitForReleaseRight)
                     {
                         var type = blueprint.treeType;
                         game.treeCollection.trees.Remove(blueprint);
-                        blueprint = game.treeCollection.CreateTree(worldPosition, type.Next(), true);
+                        blueprint = game.treeCollection.CreateTree(worldPosition, type.Next(), true, "");
                         waitForReleaseRight = true;
                     }
                 }
@@ -304,7 +304,7 @@ namespace lightseeds
 
                     if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
                     {
-                        blueprint = game.treeCollection.CreateTree(worldPosition, lastUsedType, true);
+                        blueprint = game.treeCollection.CreateTree(worldPosition, lastUsedType, true, "");
                         waitForBPConfirm = true;
                         waitForReleaseA = true;
                     }
