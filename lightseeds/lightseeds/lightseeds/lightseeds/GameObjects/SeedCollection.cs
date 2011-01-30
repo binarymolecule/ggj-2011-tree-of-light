@@ -11,7 +11,7 @@ namespace lightseeds.GameObjects
 {
     public class SeedCollection
     {
-        List<Seed> seeds = new List<Seed>();
+        public List<Seed> seeds = new List<Seed>();
         public int collectedSeedCount;
         public Game1 game;
         public Texture2D texture;

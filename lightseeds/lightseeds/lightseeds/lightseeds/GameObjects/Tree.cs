@@ -321,8 +321,8 @@ namespace lightseeds.GameObjects
                     break;
                 case TreeStatus.DIED:
                     lifeSpan -= gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
-                    if (lifeSpan < -30.0f)
-                        RemoveOnNextUpdate = true;
+                    if (lifeSpan < -10.0f)
+                        status = TreeStatus.KILLED;
                     break;
                 case TreeStatus.KILLED:
                     growth -= (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) / growthTime;
@@ -388,7 +388,7 @@ namespace lightseeds.GameObjects
                             Rectangle rectangle = new Rectangle((int)(screenPosition.X - 0.5f * growth * screenSize.X),
                                                                 (int)(screenPosition.Y - growth * screenSize.Y + 8.0f),
                                                                 (int)(growth * screenSize.X), (int)(growth * screenSize.Y));
-                            var fade = Color.Lerp(Color.White, Color.Black, 3 - 3 * growth);
+                            var fade = Color.Lerp(Color.Gray, Color.Black, 3 - 3 * growth);
                             spriteBatch.Draw(texture, rectangle, fade);
                         }
                         break;

@@ -33,6 +33,8 @@ namespace lightseeds
         RenderTarget2D[] splitScreens;
         public Vector2[] splitScreenPositions;
 
+        MapPanel mapPanel;
+
         public TreeCollection treeCollection;
         public SeedCollection seedCollection;
 
@@ -116,6 +118,10 @@ namespace lightseeds
             backgroundTexture = Content.Load<Texture2D>("Background/Background_1");
             backgroundTexture2 = Content.Load<Texture2D>("Background/Background_2");
             backgroundTexture3 = Content.Load<Texture2D>("Background/Background_3");
+
+            mapPanel = new MapPanel(this, Content.Load<Texture2D>("textures/centerBar"),
+                                    Content.Load<Texture2D>("textures/darkBar"),
+                                    Content.Load<Texture2D>("textures/mapIcons"));
 
             players = new PlayerSprite[2];
             players[0] = new PlayerSprite(this, 0, new Vector3(2.0f, 7.0f, 1.0f), playerTexture)
@@ -230,6 +236,8 @@ namespace lightseeds
 
             particleCollection.Update(gameTime);
 
+            mapPanel.Update(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -332,11 +340,15 @@ namespace lightseeds
                 spriteBatch.Draw(splitScreens[i], splitScreenPositions[i], Color.White);
             spriteBatch.End();
 
-            spriteBatch.Begin();        
+            spriteBatch.Begin();
+
+            mapPanel.Draw(gameTime);
+            
             spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, -40) + splitScreenPositions[1], Color.Red);
             
             int totalTime = (int)(gameTime.TotalGameTime.TotalSeconds - startTime);
             spriteBatch.DrawString(spriteFont, String.Format("DEBUG Time: {0:0}:{1:00}", totalTime / 60, totalTime % 60), splitScreenPositions[0], Color.Red);
+
             spriteBatch.End();
 
             base.Draw(gameTime);
