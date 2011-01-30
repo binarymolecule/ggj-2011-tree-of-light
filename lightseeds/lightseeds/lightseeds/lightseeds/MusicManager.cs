@@ -125,12 +125,22 @@ namespace lightseeds
 
     public void Play(string CueName)
     {
-      if(!soundBank.GetCue(CueName).IsPlaying)
-        soundBank.PlayCue(CueName);
+      Cue[] cues = PlayingNow.ToArray();
+
+      foreach (Cue c in cues)
+        if (!c.IsPlaying)
+          PlayingNow.Remove(c);
+
+      foreach (Cue c in PlayingNow)
+        if (c.Name == CueName)
+          return;
       
+      Cue cue = soundBank.GetCue(CueName);
+      PlayingNow.Add(cue);
+      cue.Play();
     }
 
-
+    private List<Cue> PlayingNow = new List<Cue>();
 
     private bool SecondStageStarted = false;
     public void SetNextStage(int stage)

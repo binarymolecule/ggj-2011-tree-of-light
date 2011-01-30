@@ -213,10 +213,10 @@ namespace lightseeds
 
             // distribute some random seeds
             Random randomizer = new Random();
-            const int NUM_INITIAL_SEEDS = 8;
+            const int NUM_INITIAL_SEEDS = 4;
             for (int i = 0; i < NUM_INITIAL_SEEDS; i++)
             {
-                float posX = (float)randomizer.Next(-(World.WorldWidth + WORLD_SCREEN_WIDTH) / 2, (World.WorldWidth - WORLD_SCREEN_WIDTH) / 2);
+                float posX = (float)randomizer.Next(15, (World.WorldWidth - WORLD_SCREEN_WIDTH) / 2 - 15);
                 float offsetY = (float)randomizer.Next(2, 6);
                 seedCollection.SpawnSeed(new Vector3(posX, world.getHeigth(posX) + offsetY, 0.0f));
             }
@@ -226,6 +226,13 @@ namespace lightseeds
                 
              foreground.Draw(this, gameTime, i);
              **/
+
+            for (int i = 0; i < NUM_INITIAL_SEEDS; i++)
+            {
+              float posX = -(float)randomizer.Next(15, (World.WorldWidth - WORLD_SCREEN_WIDTH) / 2 - 15);
+              float offsetY = (float)randomizer.Next(2, 6);
+              seedCollection.SpawnSeed(new Vector3(posX, world.getHeigth(posX) + offsetY, 0.0f));
+            }
 
             // reset "The Void"
             ResetVoids(1.0f);

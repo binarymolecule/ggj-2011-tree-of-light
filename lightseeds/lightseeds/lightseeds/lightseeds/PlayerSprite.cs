@@ -178,19 +178,27 @@ namespace lightseeds
             //movement
             if (position.X < rightBound && position.X > leftBound)
             {
-                xVelocity += currentXAcceleration * timeFactor;
-                if (xVelocity > MAXVELOCITY_X)
-                    xVelocity = MAXVELOCITY_X;
-                if (xVelocity < -MAXVELOCITY_X)
-                    xVelocity = -MAXVELOCITY_X;
+                
             }
+
+            xVelocity += currentXAcceleration * timeFactor;
+            if (xVelocity > MAXVELOCITY_X)
+              xVelocity = MAXVELOCITY_X;
+            if (xVelocity < -MAXVELOCITY_X)
+              xVelocity = -MAXVELOCITY_X;
             
             //backbounce
-            if (position.X < leftBound)
-                xVelocity += 2 * ACCELERATION * timeFactor;
+            /*if (position.X < leftBound)
+            {
+              xVelocity += 2 * ACCELERATION * timeFactor;
+              GameServices.GetService<MusicManager>().Play("Die");
+            }
             if (position.X > rightBound)
-                xVelocity -= 2 * ACCELERATION * timeFactor;
-            
+            {
+              xVelocity -= 2 * ACCELERATION * timeFactor;
+              GameServices.GetService<MusicManager>().Play("Die");
+            }
+          */
             //slowdown
             if (currentXAcceleration == 0)
             {

@@ -17,7 +17,7 @@ namespace lightseeds.GameObjects
 
         public float spawnTimer = 0.5f;
         private int particlePool;
-        private const int PARTICLE_FILL = 75;
+        private const int PARTICLE_FILL = 150;
 
         public TheVoid(Game1 game)
         {
@@ -32,12 +32,14 @@ namespace lightseeds.GameObjects
 
             foreach (var player in game.players)
             {
-                if (IsBehind(player.worldPosition.X))
+              if (IsBehind(player.worldPosition.X - direction.X*2.0f))
                 {
+                  player.xVelocity = -Math.Sign(player.worldPosition.X - direction.X * 2.0f - this.horizontalPosition) * 1600.0f;
+                  
                     // player is dead
                   GameServices.GetService<MusicManager>().Play("Die");
-                  GameServices.GetService<MusicManager>().Play("Disintegrate");
-                    player.Respawn();
+                 // GameServices.GetService<MusicManager>().Play("Disintegrate");
+                    //player.Respawn();
                 }
             }
 
@@ -93,7 +95,7 @@ namespace lightseeds.GameObjects
             {
                 particlePool++;
                 float xpos = this.horizontalPosition + direction.X * ((float)game.particleCollection.random.NextDouble() * 6.5f - 6);
-                var p = game.particleCollection.SpawnParticle(new Vector3(xpos, (float)game.particleCollection.random.NextDouble() * 10.0f, 0));
+                var p = game.particleCollection.SpawnParticle(new Vector3(xpos, (float)game.particleCollection.random.NextDouble() * 45.0f, 0));
                 p.OnDestroy = delegate()
                 {
                     particlePool--;
