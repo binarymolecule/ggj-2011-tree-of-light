@@ -18,7 +18,7 @@ namespace lightseeds
 
         public int index;
         
-        Vector3 position, initialPosition;
+        public Vector3 position, initialPosition;
 
         Texture2D texture;
         public const float XBOUNDARY = 4.0f;
@@ -38,6 +38,7 @@ namespace lightseeds
         public float yVelocity = 0.0f;
         public List<Vector3> positions = new List<Vector3>();
         public Vector3 drawingPosition;
+        public Vector2 veloVector;
 
         private float stunTimer = 0.0f;
         public bool isStunned = false;
@@ -88,13 +89,16 @@ namespace lightseeds
             this.game = (Game1)game;
             this.index = index;
             texture = tex;
+            scale = 0.1f;
+            currentScale = 0.1f;
+
             initialPosition = pos;
             position = initialPosition;
             offset = new Vector2(-0.5f * texture.Width, -0.5f * texture.Height);
         }
 
         public PlayerSprite(Game1 game1, Vector3 vector3, Texture2D playerTexture) : base(game1)
-        {
+        {   
             this.game = (Game1)game1;
             texture = playerTexture;
             initialPosition = vector3;
@@ -281,10 +285,31 @@ namespace lightseeds
             }
             base.Draw(gameTime);
         }
+        public void DrawFairy()
+        {
+            var tempColor = Color.White;
+            tempColor.A = 0;
+            currentScale = 0.3f;
+            var screenPositions = new List<Vector3>();
+            foreach (var vector3 in positions)
+            {
+                screenPositions.Add(Vector3.Transform(position, game.worldToScreen));
+            }
+            for (int i = 1; i < screenPositions.Count; i++)
+            {
+                tempColor.A += 2;
+                game.spriteBatch.Draw(texture, new Vector2((positions[i].X + positions[i - 1].X) / 2, (positions[i].Y + positions[i - 1].Y) / 2) + offset, null, tempColor, 0, Vector2.Zero,
+                                      currentScale, SpriteEffects.None, 0);
+                tempColor.A += 2;
+                game.spriteBatch.Draw(texture, new Vector2(positions[i].X, positions[i].Y) + offset, null, tempColor, 0, Vector2.Zero,
+                                      currentScale, SpriteEffects.None, 0);
+            }
+        }
 
+       
         private float WobblyPosition(float pos, float modifier, GameTime gameTime)
         {
-            var sin1 = modifier * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 60 + index * Math.PI);
+            var sin1 = modifier * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 60 + random.Next() * Math.PI);
             var sin2 = 0.7f * modifier * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 97);
             var sin3 = 0.3f * modifier * (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds / 500 * Math.PI * WOBBLEBPM / 23);
             return pos + sin1 + sin2 + sin3 ;

@@ -67,6 +67,7 @@ namespace lightseeds
         private Texture2D backgroundTexture2;
         private Texture2D backgroundTexture3;
         private Color fadeColor = Color.Black;
+        public Random random = new Random();
 
         public double startTime;
         private SpriteFont headlineFont;
@@ -222,7 +223,15 @@ namespace lightseeds
 
             fairyCollection = new FairyCollection(this);
             fairyCollection.Load(playerTexture);
-            fairyCollection.SpawnFairy(new Vector3(2.0f, 8.0f, 1.0f));
+
+            const int NUM_FAIRIES = 40;
+            for (int i = NUM_FAIRIES - 1; i >= 0; i--)
+            {
+                float sx = random.Next(30);
+                float sy = random.Next(30);
+                fairyCollection.SpawnFairy(new Vector3(sx-15.0f, sy+5.0f, 1.0f));
+            }
+            
             
             /*
              spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
@@ -325,6 +334,7 @@ namespace lightseeds
                 gameoverScreen.Reset();
                 State = GameState.GAMEOVER;
             }
+            fairyCollection.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -378,11 +388,12 @@ namespace lightseeds
                 treeCollection.trees.ForEach((t) => DrawForceField(spriteBatch, t));
                 treeCollection.Draw(spriteBatch);
                 seedCollection.Draw(spriteBatch);
-                fairyCollection.Draw(spriteBatch, gameTime);
+                
                 spriteBatch.End();
 
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, null, null, null, null,
                                   GameCamera.CurrentCamera.screenTransform);
+                fairyCollection.Draw(gameTime);
                 foreach (var player in players)
                 {
                     player.Draw(gameTime);

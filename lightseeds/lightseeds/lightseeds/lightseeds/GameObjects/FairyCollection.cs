@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using lightseeds.Helpers;
 using Microsoft.Xna.Framework;
@@ -11,41 +12,57 @@ namespace lightseeds.GameObjects
         private Game1 game;
         public Texture2D texture;
         public ContentManager content;
-
+        private Random random = new Random();
         public List<PlayerSprite> fairies = new List<PlayerSprite>();
 
         public FairyCollection(Game1 game)
         {
             this.game = game;
-            PlayerSprite sprite = new PlayerSprite(game, new Vector3(0, 0, 0), game.playerTexture);
         }
 
         public void Load(Texture2D t)
         {
-            content = GameServices.GetService<ContentManager>();
-            this.texture = t;
+            texture = t;
         }
         public void Update(GameTime time)
         {
             foreach (var fairy in fairies)
             {
-                fairy.Move(0,0.1f);
+
+                var sx = random.NextDouble() - 0.5f;
+                var sy = random.NextDouble() - 0.5f;
+                Vector2 movingVector = new Vector2((float)sx, (float)sy);
+                
+                if (fairy.xVelocity > PlayerSprite.MAXVELOCITY_X / 2)
+                    movingVector.X = -PlayerSprite.MAXVELOCITY_X / 4;
+                if (fairy.xVelocity < -PlayerSprite.MAXVELOCITY_X / 2)
+                    movingVector.X = PlayerSprite.MAXVELOCITY_X / 4;
+                if (fairy.yVelocity < -PlayerSprite.MAXVELOCITY_Y_DOWN / 4)
+                    movingVector.Y = PlayerSprite.MAXVELOCITY_Y / 20;
+                if (fairy.position.X > (World.WorldWidth/2) / 4)
+                    movingVector.X -= PlayerSprite.MAXVELOCITY_X / 20;
+                if (fairy.position.X < -(World.WorldWidth / 2) / 4)
+                    movingVector.X += PlayerSprite.MAXVELOCITY_X / 20;
+                
+                fairy.Move(movingVector.X, movingVector.Y);
+
                 fairy.Update(time);
             }
         }
 
-        public void Draw(SpriteBatch sb, GameTime time)
+        public void Draw(GameTime time)
         {
-            
             foreach (var fairy in fairies)
             {
-                fairy.Draw(time);
+                fairy.DrawFairy();
             }
         }
 
-        internal void SpawnFairy(Vector3 v)
+        internal PlayerSprite SpawnFairy(Vector3 v)
         {
-            fairies.Add(new PlayerSprite(game, v, texture));
+            var fairy = new PlayerSprite(game, v, texture);
+            fairies.Add(fairy);
+            return fairy;
         }
     }
 }
