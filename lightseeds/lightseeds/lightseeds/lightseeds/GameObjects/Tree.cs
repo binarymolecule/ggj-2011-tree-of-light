@@ -185,6 +185,7 @@ namespace lightseeds.GameObjects
         public string[] descriptionLines = new string[4];
         public float glowStrength;
         public float glowRange;
+        private float fallSpeed;
 
         public Vector3 worldPosition
         {
@@ -304,7 +305,8 @@ namespace lightseeds.GameObjects
             switch (status)
             {
                 case TreeStatus.SEED:
-                    position.Y -= (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) * SEED_FALL_SPEED;
+                    fallSpeed += 25f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    position.Y -= (float)(gameTime.ElapsedGameTime.TotalSeconds) * fallSpeed;
                     this.glowRange = 0.8f + 0.2f * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds * 0.35);
                     if (position.Y < groundHeight)
                     {
