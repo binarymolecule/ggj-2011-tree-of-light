@@ -332,19 +332,20 @@ namespace lightseeds
                     var textPos = Vector3.Transform(tree.worldPosition + new Vector3(1.5f, 1f, 0), worldToScreen).ToVector2() + tree.fruitOffset;
 
                     var bodyText = tree.GetStatusInfo();
+                    var headlineText = tree.status == Tree.TreeStatus.BLUEPRINT ? tree.descriptionLines[0] : tree.name;
 
-                    var headlineMeasure = headlineFont.MeasureString(tree.name);
+                    var headlineMeasure = headlineFont.MeasureString(headlineText);
                     var bodyMeasure = spriteFont.MeasureString(bodyText);
 
                     textPos.Y = Math.Min(SPLIT_SCREEN_HEIGHT - headlineMeasure.Y - bodyMeasure.Y - 10 - cameras[i].screenTransform.Translation.Y, textPos.Y);
 
-                    spriteBatch.DrawString(headlineFont, tree.name, textPos + new Vector2(2, 2), Color.Black);
-                    spriteBatch.DrawString(headlineFont, tree.name, textPos, Color.White);
+                    spriteBatch.DrawString(headlineFont, headlineText, textPos + new Vector2(2, 2), Color.Black);
+                    spriteBatch.DrawString(headlineFont, headlineText, textPos, Color.White);
 
                     textPos.Y += headlineMeasure.Y;
 
-                    spriteBatch.DrawString(spriteFont, tree.GetStatusInfo(), textPos + new Vector2(2,2), Color.Black);
-                    spriteBatch.DrawString(spriteFont, tree.GetStatusInfo(), textPos, Color.White);
+                    spriteBatch.DrawString(spriteFont, bodyText, textPos + new Vector2(2,2), Color.Black);
+                    spriteBatch.DrawString(spriteFont, bodyText, textPos, Color.White);
                     spriteBatch.End();
                 }
             }

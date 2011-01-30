@@ -426,13 +426,15 @@ namespace lightseeds.GameObjects
             switch (status)
             {
                 case TreeStatus.PLANTED:
-                    info = "Growth: " + (int)(100.0f * (float)growth) + "%";
+                    info += descriptionLines[0] + "\n";
+                    info += "Growth: " + (int)(100.0f * (float)growth) + "%";
                     break;
                 case TreeStatus.MATURE:
-                    info = "Fruit: " + (int)(100.0f * (float)currentFruitTime / (float)fruitTime) + "%";
+                    info += descriptionLines[0] + "\n";
+                    info += "Fruit: " + (int)(100.0f * (float)currentFruitTime / (float)fruitTime) + "%";
                     break;
                 case TreeStatus.BLUEPRINT:
-                    info = String.Join("\n", descriptionLines);
+                    info += String.Join("\n", descriptionLines[1], descriptionLines[2], descriptionLines[3]);
                     break;
             }
             if (status == TreeStatus.MATURE && treeType != TreeType.BASE)
