@@ -203,7 +203,11 @@ namespace lightseeds
                 horizontalPosition = World.WorldWidth / 2
             });
 
-            this.State = GameState.INTRO;
+            //this.State = GameState.INTRO;
+
+            // skip intro for now
+            fadeColor = Color.White;
+            this.State = GameState.RUNNING;
         }
 
         /// <summary>

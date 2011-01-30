@@ -136,8 +136,7 @@ namespace lightseeds.GameObjects
             };
             graphicsDevice.RasterizerState = new RasterizerState()
             {
-                CullMode = CullMode.None,
-                
+                CullMode = CullMode.None,                
             };
 
             spriteEffect.Parameters["ViewportSize"].SetValue(graphicsDevice.Viewport.ToVector());
