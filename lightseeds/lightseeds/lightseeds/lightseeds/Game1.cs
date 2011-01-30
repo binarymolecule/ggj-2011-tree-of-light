@@ -146,6 +146,7 @@ namespace lightseeds
             backgroundTexture = Content.Load<Texture2D>("Background/Background_1");
             backgroundTexture2 = Content.Load<Texture2D>("Background/Background_2");
             backgroundTexture3 = Content.Load<Texture2D>("Background/Background_3");
+            this.noise = Content.Load<Texture2D>("noise");
 
             // create map panel
             mapPanel = new MapPanel(this, Content.Load<Texture2D>("textures/centerBar"),
@@ -361,6 +362,15 @@ namespace lightseeds
                                   cameras[i].screenTransform);
                 voids.ForEach((v) => v.Draw(spriteBatch));
                 particleCollection.Draw(gameTime, spriteBatch);
+                spriteBatch.End();
+
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
+                float nx = this.particleCollection.random.Next(100), ny = particleCollection.random.Next(100);
+                var nv = new Vector2(-nx, -ny);
+                for(int ni=0; ni<4; ni++) {
+                    spriteBatch.Draw(noise, nv + ni*new Vector2(noise.Width, 0), new Color(255,255,255,20));
+                }
+                
                 spriteBatch.End();
 
                 if (this.State != GameState.STORY)
@@ -621,5 +631,7 @@ namespace lightseeds
                 startTime = gameTime.TotalGameTime.TotalSeconds;             
             }
         }
+
+        public Texture2D noise { get; set; }
     }
 }
