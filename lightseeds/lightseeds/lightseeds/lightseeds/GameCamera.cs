@@ -38,6 +38,20 @@ namespace lightseeds
 
         public static GameCamera CurrentCamera;
 
+        private bool returnMode = false;
+
+        private float returnFactor;
+
+        private Vector2 returnSource, returnTarget;
+
+        public void StartReturnMode(Vector2 retTarget)
+        {
+            returnMode = true;
+            returnFactor = 0.0f;
+            returnSource = translation;
+            returnTarget = retTarget;
+        }
+
         public Matrix screenTransform
         {
             get
@@ -96,6 +110,21 @@ namespace lightseeds
 
         public void Update(GameTime gameTime)
         {
+            if (returnMode)
+            {
+                returnFactor += gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
+                if (returnFactor > 1.0f)
+                {
+                    returnMode = false;
+                    translation = returnTarget;
+                }
+                else
+                {
+                    translation = returnFactor * returnTarget + (1.0f - returnFactor) * returnSource;
+                }
+                return;
+            }
+
             bool targetIsMoving = false;
             if (player != null)
             {
@@ -108,8 +137,7 @@ namespace lightseeds
                     target.Y = MIN_COORDS.Y;
                 else if (target.Y > MAX_COORDS.Y)
                     target.Y = MAX_COORDS.Y;
-                targetIsMoving = (player.currentXAcceleration != 0 || player.currentYAcceleration !=0 );
-            
+                targetIsMoving = !player.isStunned && (player.currentXAcceleration != 0 || player.currentYAcceleration !=0 );
             }
 
             Vector2 direction = target - translation;

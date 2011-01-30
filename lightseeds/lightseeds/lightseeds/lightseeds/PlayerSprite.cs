@@ -36,7 +36,7 @@ namespace lightseeds
         public float yVelocity = 0.0f;
 
         private float stunTimer = 0.0f;
-        private bool isStunned = false;
+        public bool isStunned = false;
 
         private bool waitForReleaseA = false;
         private bool waitForReleaseB = false;
@@ -96,7 +96,7 @@ namespace lightseeds
                 if (stunTimer < 0.0f)
                 {
                     stunTimer = 0.0f;
-                    isStunned = false;
+                    isStunned = false;                    
                 }
             }
             else
@@ -132,6 +132,11 @@ namespace lightseeds
             waitForReleaseRight = false;
             waitForBPConfirm = false;
             blueprint = null;
+
+            currentXAcceleration = 0.0f;
+            currentYAcceleration = 0.0f;
+
+            game.cameras[index].StartReturnMode(worldPosition.ToVector2());
         }
 
         private void UpdateXPosition(GameTime gameTime)
