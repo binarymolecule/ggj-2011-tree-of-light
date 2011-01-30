@@ -53,10 +53,14 @@ namespace lightseeds
         public double startTime;
         private SpriteFont headlineFont;
 
+        GameScreen introScreen, gameoverScreen;
+
         public enum GameState
         {
+            INTRO,
             RUNNING,
-            CLOSING
+            CLOSING,
+            GAMEOVER
         }
 
         public Game1()
@@ -71,8 +75,7 @@ namespace lightseeds
                             Matrix.CreateTranslation(0.5f * (float)SPLIT_SCREEN_WIDTH, 0.5f * (float)SPLIT_SCREEN_HEIGHT, 0.0f);
             splitScreenPositions = new Vector2[2];
             splitScreenPositions[0] = Vector2.Zero;
-            splitScreenPositions[1] = new Vector2(0.0f, (float)SPLIT_SCREEN_HEIGHT);
-            
+            splitScreenPositions[1] = new Vector2(0.0f, (float)SPLIT_SCREEN_HEIGHT);            
         }
 
         /// <summary>
@@ -101,6 +104,11 @@ namespace lightseeds
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            // Create title and gameover screens
+            introScreen = new GameScreen(this, Content.Load<Texture2D>("textures/titleScreen"));
+            gameoverScreen = new GameScreen(this, Content.Load<Texture2D>("textures/gameoverScreen"));
+
+            // Create main game related stuff
             world = new World();
             world.Load();
 
@@ -161,6 +169,8 @@ namespace lightseeds
                 direction = new Vector3(-1, 0, 0),
                 horizontalPosition = World.WorldWidth / 2
             });
+
+            this.State = GameState.INTRO;
         }
 
         /// <summary>
@@ -178,6 +188,25 @@ namespace lightseeds
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (this.State == GameState.INTRO)
+            {
+                introScreen.Update(gameTime);
+                if (introScreen.Status == GameScreen.ScreenStatus.DONE)
+                {
+                    this.State = GameState.RUNNING;
+                }
+                return;
+            }
+            else if (this.State == GameState.GAMEOVER)
+            {
+                gameoverScreen.Update(gameTime);
+                if (gameoverScreen.Status == GameScreen.ScreenStatus.DONE)
+                {
+                    this.Exit();
+                }
+                return;
+            }
+
             if (startTime < 0)
                 startTime = gameTime.TotalGameTime.TotalSeconds;
 
@@ -210,7 +239,18 @@ namespace lightseeds
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(new Color(40,40,40));
+            if (this.State == GameState.INTRO)
+            {
+                introScreen.Draw(gameTime);                
+                return;
+            }
+            else if (this.State == GameState.GAMEOVER)
+            {
+                gameoverScreen.Draw(gameTime);               
+                return;
+            }
+
+            GraphicsDevice.Clear(new Color(40, 40, 40));
             
             // Draw worlds
             for (int i = 0; i < 2; i++)
