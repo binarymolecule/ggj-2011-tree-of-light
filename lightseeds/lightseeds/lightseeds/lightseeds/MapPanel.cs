@@ -24,6 +24,8 @@ namespace lightseeds
         Rectangle leftDarkRect, rightDarkRect;
 
         Vector2 iconOffset, barOffset;
+        
+        public Vector2 edgePosition;
 
         int iconSize;
 
@@ -38,6 +40,7 @@ namespace lightseeds
             iconSize = iconTexture.Height;
             iconOffset = new Vector2(-iconSize / 2, iconSize / 2);
             barOffset = new Vector2(0.0f, -barTexture.Height / 2);
+            edgePosition = game.splitScreenPositions[1];
         }
 
         /// <summary>
@@ -53,13 +56,13 @@ namespace lightseeds
 
         int worldToBarCoordinate(float posX)
         {
-            return (int)(((posX / (float)World.WorldWidth) + 0.5f) * Game1.SPLIT_SCREEN_WIDTH);
+            return (int)(((posX / (float)World.WorldWidth) + 0.5f) * Game1.SCREEN_WIDTH);
         }
 
         Rectangle worldToIconRectangle(float posX)
         {
             int barX = worldToBarCoordinate(posX);
-            return new Rectangle(barX - iconSize / 2, (int)game.splitScreenPositions[1].Y - iconSize / 2, iconSize, iconSize);
+            return new Rectangle(barX - iconSize / 2, (int)edgePosition.Y - iconSize / 2, iconSize, iconSize);
         }
 
         Rectangle iconRectangle(int index)
@@ -83,8 +86,8 @@ namespace lightseeds
             }
             leftWidth = worldToBarCoordinate(leftWidth);
             rightWidth = worldToBarCoordinate(rightWidth);
-            leftDarkRect = new Rectangle(0, (int)game.splitScreenPositions[1].Y - 9, (int)leftWidth, 16);
-            rightDarkRect = new Rectangle((int)rightWidth, (int)game.splitScreenPositions[1].Y - 9,
+            leftDarkRect = new Rectangle(0, (int)edgePosition.Y - 9, (int)leftWidth, 16);
+            rightDarkRect = new Rectangle((int)rightWidth, (int)edgePosition.Y - 9,
                                           Game1.SPLIT_SCREEN_WIDTH - (int)rightWidth, 16);
 
             base.Update(gameTime);
@@ -92,7 +95,7 @@ namespace lightseeds
 
         public override void Draw(GameTime gameTime)
         {
-            game.spriteBatch.Draw(barTexture, game.splitScreenPositions[1] + barOffset, Color.White);
+            game.spriteBatch.Draw(barTexture, edgePosition + barOffset, Color.White);
 
             // draw dark areas
             game.spriteBatch.Draw(darkTexture, leftDarkRect, Color.White);

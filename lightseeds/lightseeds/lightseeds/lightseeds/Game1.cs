@@ -101,7 +101,7 @@ namespace lightseeds
             splitScreenPositions[1] = new Vector2(0.0f, (float)SPLIT_SCREEN_HEIGHT);
             
             joinedScreenPosition = Vector2.Zero;
-            joinedScreenBottomPosition = new Vector2(0.0f, (float)SCREEN_HEIGHT - 8.0f);
+            joinedScreenBottomPosition = new Vector2(0.0f, (float)SCREEN_HEIGHT - 12.0f);
         }
 
         /// <summary>
@@ -389,17 +389,21 @@ namespace lightseeds
                 particleCollection.Draw(gameTime, spriteBatch);
                 spriteBatch.End();
 
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
-                                  GameCamera.CurrentCamera.screenTransform);
-
-                foreach (var tree in treeCollection.trees)
+                if (this.State != GameState.STORY)
                 {
-                    var xpos = tree.worldPosition.X;
-                    var textPos = Vector3.Transform(new Vector3(xpos, world.getHeigth(xpos) - 1, 0), worldToScreen).ToVector2();
-                    var textMeasure = scriptFont.MeasureString(tree.name);
-                    spriteBatch.DrawString(scriptFont, tree.name, textPos - textMeasure / 2, new Color(55, 55, 55, 255));
+                    spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
+                                      GameCamera.CurrentCamera.screenTransform);
+                    foreach (var tree in treeCollection.trees)
+                    {
+                        var xpos = tree.worldPosition.X;
+                        var textPos = Vector3.Transform(new Vector3(xpos, world.getHeigth(xpos) - 1, 0), worldToScreen).ToVector2();
+                        var textMeasure = headlineFont.MeasureString(tree.name);
+                        spriteBatch.DrawString(headlineFont, tree.name, textPos - textMeasure / 2, new Color(55, 55, 55, 255));
+                        //var textMeasure = scriptFont.MeasureString(tree.name);
+                        //spriteBatch.DrawString(scriptFont, tree.name, textPos - textMeasure / 2, new Color(55, 55, 55, 255));
+                    }
+                    spriteBatch.End();
                 }
-                spriteBatch.End();
 
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
                 float nx = this.particleCollection.random.Next(100), ny = particleCollection.random.Next(100);
@@ -413,32 +417,37 @@ namespace lightseeds
                 
                 spriteBatch.End();
 
-                if (this.State != GameState.STORY && splitScreenMode)
+                if (this.State != GameState.STORY)
                 {
-                    Tree tree = treeCollection.FindTreeAtPosition(players[i].worldPosition.X);
-                    if (tree != null)
+                    for (int j = (splitScreenMode ? i : 0); j <= (splitScreenMode ? i : 1); j++)
                     {
-                        // show tree information
+                        Tree tree = treeCollection.FindTreeAtPosition(players[j].worldPosition.X);
+                        if (tree != null)
+                        {
+                            // show tree information
 
-                        spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
-                                          cameras[i].screenTransform);
-                        var textPos = Vector3.Transform(tree.worldPosition + new Vector3(1.5f, 1f, 0), worldToScreen).ToVector2() + tree.fruitOffset;
+                            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
+                                              GameCamera.CurrentCamera.screenTransform);
+                            var textPos = Vector3.Transform(tree.worldPosition + new Vector3(1.5f, 1f, 0), worldToScreen).ToVector2() + tree.fruitOffset;
 
-                        var bodyText = tree.GetStatusInfo();
-                        var headlineText = tree.descriptionLines[0];
+                            var bodyText = tree.GetStatusInfo();
+                            var headlineText = tree.descriptionLines[0];
 
-                        var headlineMeasure = headlineFont.MeasureString(headlineText);
-                        var bodyMeasure = spriteFont.MeasureString(bodyText);
+                            var headlineMeasure = headlineFont.MeasureString(headlineText);
+                            var bodyMeasure = spriteFont.MeasureString(bodyText);
 
-                        textPos.Y = Math.Min(SPLIT_SCREEN_HEIGHT - headlineMeasure.Y - bodyMeasure.Y - 10 - cameras[i].screenTransform.Translation.Y, textPos.Y);
+                            textPos.Y = Math.Min(SPLIT_SCREEN_HEIGHT - headlineMeasure.Y - bodyMeasure.Y - 10 - GameCamera.CurrentCamera.screenTransform.Translation.Y, textPos.Y);
+                            //if (!splitScreenMode && j == 0)
+                            //    textPos.Y -= SCREEN_HEIGHT / 2;
 
-                        spriteBatch.DrawString(headlineFont, headlineText, textPos + new Vector2(2, 2), Color.Black);
-                        spriteBatch.DrawString(headlineFont, headlineText, textPos, Color.White);
-                        textPos.Y += headlineMeasure.Y;
+                            spriteBatch.DrawString(headlineFont, headlineText, textPos + new Vector2(2, 2), Color.Black);
+                            spriteBatch.DrawString(headlineFont, headlineText, textPos, Color.White);
+                            textPos.Y += headlineMeasure.Y;
 
-                        spriteBatch.DrawString(spriteFont, bodyText, textPos + new Vector2(2, 2), Color.Black);
-                        spriteBatch.DrawString(spriteFont, bodyText, textPos, Color.White);
-                        spriteBatch.End();
+                            spriteBatch.DrawString(spriteFont, bodyText, textPos + new Vector2(2, 2), Color.Black);
+                            spriteBatch.DrawString(spriteFont, bodyText, textPos, Color.White);
+                            spriteBatch.End();
+                        }
                     }
                 }
             }
@@ -461,16 +470,16 @@ namespace lightseeds
             {
                 spriteBatch.Begin();
 
+                // set position of map panel and info texts
                 Vector2 edgePos = (splitScreenMode ? splitScreenPositions[1] : joinedScreenBottomPosition);
-
+                mapPanel.edgePosition = edgePos;
                 mapPanel.Draw(gameTime);
 
                 spriteBatch.DrawString(spriteFont, String.Format("Souls: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, -40) + splitScreenPositions[1], Color.Red);
 
-
-                int totalTime = (int)(gameTime.TotalGameTime.TotalSeconds - startTime);
-                spriteBatch.DrawString(spriteFont, String.Format("DEBUG Time: {0:0}:{1:00}", totalTime / 60, totalTime % 60),
-                                       (splitScreenMode ? splitScreenPositions[0] : joinedScreenPosition), Color.Red);
+                //int totalTime = (int)(gameTime.TotalGameTime.TotalSeconds - startTime);
+                //spriteBatch.DrawString(spriteFont, String.Format("DEBUG Time: {0:0}:{1:00}", totalTime / 60, totalTime % 60),
+                //                       (splitScreenMode ? splitScreenPositions[0] : joinedScreenPosition), Color.Red);
 
                 spriteBatch.End();
             }

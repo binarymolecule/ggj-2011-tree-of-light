@@ -94,6 +94,7 @@ namespace lightseeds
             this.target = new Vector2(position.X, position.Y);
             this.speed = 0.0f;
             isMoving = false;
+            returnMode = false;
         }
 
         public void Reset()
