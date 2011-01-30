@@ -45,6 +45,7 @@ namespace lightseeds
 
         static public int SCREEN_WIDTH = 1280;
         static public int SCREEN_HEIGHT = 720;
+        static public bool FULLSCREEN = false;
         static public int SPLIT_SCREEN_WIDTH = SCREEN_WIDTH;
         static public int SPLIT_SCREEN_HEIGHT = SCREEN_HEIGHT / 2;
         static public int WORLD_SCREEN_WIDTH = 24;
@@ -74,7 +75,8 @@ namespace lightseeds
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = SCREEN_WIDTH;
             graphics.PreferredBackBufferHeight = SCREEN_HEIGHT;
-
+          
+            InitGraphicsMode(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN);
             worldToScreen = Matrix.CreateScale((float)SPLIT_SCREEN_WIDTH / (float)WORLD_SCREEN_WIDTH,
                                                -(float)SPLIT_SCREEN_HEIGHT / (float)WORLD_SCREEN_HEIGHT, 1.0f) *
                             Matrix.CreateTranslation(0.5f * (float)SPLIT_SCREEN_WIDTH, 0.5f * (float)SPLIT_SCREEN_HEIGHT, 0.0f);
@@ -101,6 +103,21 @@ namespace lightseeds
 
         }
 
+
+        private bool InitGraphicsMode(int iWidth, int iHeight, bool FullScreen)
+        {
+          foreach (DisplayMode dm in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes)
+            if ((dm.Width == iWidth) && (dm.Height == iHeight))
+            {
+              graphics.PreferredBackBufferWidth = iWidth;
+              graphics.PreferredBackBufferHeight = iHeight;
+              graphics.IsFullScreen = FullScreen;
+              graphics.ApplyChanges();
+              return true;
+            }
+
+          return false;
+        }
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
