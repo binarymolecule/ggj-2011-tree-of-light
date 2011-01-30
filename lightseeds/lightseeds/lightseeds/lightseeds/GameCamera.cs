@@ -40,14 +40,15 @@ namespace lightseeds
 
         private bool returnMode = false;
 
-        private float returnFactor;
+        private float returnFactor, returnDuration;
 
         private Vector2 returnSource, returnTarget;
 
-        public void StartReturnMode(Vector2 retTarget)
+        public void MoveTo(Vector2 retTarget, float retDuration)
         {
             returnMode = true;
             returnFactor = 0.0f;
+            returnDuration = retDuration;
             returnSource = translation;
             returnTarget = retTarget;
         }
@@ -100,6 +101,7 @@ namespace lightseeds
             Center(Vector3.Zero);
         }
 
+        /*
         public void MoveTo(Vector3 position)
         {
             this.player = null;
@@ -107,12 +109,13 @@ namespace lightseeds
             this.speed = 0.0f;
             isMoving = false;
         }
+        */
 
         public void Update(GameTime gameTime)
         {
             if (returnMode)
             {
-                returnFactor += gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
+                returnFactor += (gameTime.ElapsedGameTime.Milliseconds / 1000.0f) / returnDuration;
                 if (returnFactor > 1.0f)
                 {
                     returnMode = false;

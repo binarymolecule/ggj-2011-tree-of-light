@@ -55,15 +55,21 @@ namespace lightseeds
         public GameState State;
         private Texture2D backgroundTexture2;
         private Texture2D backgroundTexture3;
+        private Color fadeColor = Color.Black;
 
         public double startTime;
         private SpriteFont headlineFont;
 
         GameScreen introScreen, gameoverScreen;
 
+        int storyProgress = -1;
+        float storyTime = 0.0f;
+        float[] storyTimeIntervalls = { 7.0f, 3.0f, 4.0f, 6.0f, 4.0f, 3.0f };
+
         public enum GameState
         {
             INTRO,
+            STORY,
             RUNNING,
             CLOSING,
             GAMEOVER
@@ -220,7 +226,7 @@ namespace lightseeds
                 introScreen.Update(gameTime);
                 if (introScreen.Status == GameScreen.ScreenStatus.DONE)
                 {
-                    this.State = GameState.RUNNING;
+                    this.State = GameState.STORY;
                     musicManager.StartLoop();
                 }
                 return;
@@ -236,16 +242,20 @@ namespace lightseeds
             }
 
             if (Math.Abs(voids[0].horizontalPosition) + Math.Abs(voids[1].horizontalPosition) < 200.0f)
-              musicManager.SetNextStage(1);
+                musicManager.SetNextStage(1);
 
-          float P1VoidDistance = Math.Min(Math.Abs(voids[0].horizontalPosition - players[0].worldPosition.X), Math.Abs(voids[1].horizontalPosition - players[0].worldPosition.X));
-          float P2VoidDistance = Math.Min(Math.Abs(voids[1].horizontalPosition - players[1].worldPosition.X), Math.Abs(voids[1].horizontalPosition - players[1].worldPosition.X));
+            float P1VoidDistance = Math.Min(Math.Abs(voids[0].horizontalPosition - players[0].worldPosition.X), Math.Abs(voids[1].horizontalPosition - players[0].worldPosition.X));
+            float P2VoidDistance = Math.Min(Math.Abs(voids[1].horizontalPosition - players[1].worldPosition.X), Math.Abs(voids[1].horizontalPosition - players[1].worldPosition.X));
 
             musicManager.SetVolume(Math.Abs(players[0].worldPosition.X), Math.Min(P1VoidDistance, P2VoidDistance));
             musicManager.Update();
 
-            if (startTime < 0)
-                startTime = gameTime.TotalGameTime.TotalSeconds;
+            // story mode
+            if (this.State == GameState.STORY)
+            {
+                UpdateStoryMode(gameTime);
+                return;
+            }
 
             handleControls();
             
@@ -316,8 +326,6 @@ namespace lightseeds
                 spriteBatch.Draw(backgroundTexture3, new Rectangle((int)(-SCREEN_WIDTH * 0.1f), (int)(-SCREEN_HEIGHT * 0.1f), (int)(SCREEN_WIDTH * 2.4), (int)(SCREEN_HEIGHT * 1.2)), Color.White);
                 spriteBatch.End();
 
-
-
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
                                   cameras[i].screenTransform);
                 treeCollection.trees.ForEach((t) => DrawForceField(spriteBatch, t));
@@ -339,38 +347,41 @@ namespace lightseeds
                     AlphaDestinationBlend = Blend.One,
                     AlphaSourceBlend = Blend.One
                 };
+
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
                                   cameras[i].screenTransform);
                 voids.ForEach((v) => v.Draw(spriteBatch));
                 particleCollection.Draw(gameTime, spriteBatch);
                 spriteBatch.End();
 
-
-                Tree tree = treeCollection.FindTreeAtPosition(players[i].worldPosition.X);
-                if (tree != null)
+                if (this.State != GameState.STORY)
                 {
-                    // show tree information
+                    Tree tree = treeCollection.FindTreeAtPosition(players[i].worldPosition.X);
+                    if (tree != null)
+                    {
+                        // show tree information
 
-                    spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
-                                      cameras[i].screenTransform);
-                    var textPos = Vector3.Transform(tree.worldPosition + new Vector3(1.5f, 1f, 0), worldToScreen).ToVector2() + tree.fruitOffset;
+                        spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, null,
+                                          cameras[i].screenTransform);
+                        var textPos = Vector3.Transform(tree.worldPosition + new Vector3(1.5f, 1f, 0), worldToScreen).ToVector2() + tree.fruitOffset;
 
-                    var bodyText = tree.GetStatusInfo();
-                    var headlineText = tree.status == Tree.TreeStatus.BLUEPRINT ? tree.descriptionLines[0] : tree.name;
+                        var bodyText = tree.GetStatusInfo();
+                        var headlineText = tree.status == Tree.TreeStatus.BLUEPRINT ? tree.descriptionLines[0] : tree.name;
 
-                    var headlineMeasure = headlineFont.MeasureString(headlineText);
-                    var bodyMeasure = spriteFont.MeasureString(bodyText);
+                        var headlineMeasure = headlineFont.MeasureString(headlineText);
+                        var bodyMeasure = spriteFont.MeasureString(bodyText);
 
-                    textPos.Y = Math.Min(SPLIT_SCREEN_HEIGHT - headlineMeasure.Y - bodyMeasure.Y - 10 - cameras[i].screenTransform.Translation.Y, textPos.Y);
+                        textPos.Y = Math.Min(SPLIT_SCREEN_HEIGHT - headlineMeasure.Y - bodyMeasure.Y - 10 - cameras[i].screenTransform.Translation.Y, textPos.Y);
 
-                    spriteBatch.DrawString(headlineFont, headlineText, textPos + new Vector2(2, 2), Color.Black);
-                    spriteBatch.DrawString(headlineFont, headlineText, textPos, Color.White);
+                        spriteBatch.DrawString(headlineFont, headlineText, textPos + new Vector2(2, 2), Color.Black);
+                        spriteBatch.DrawString(headlineFont, headlineText, textPos, Color.White);
 
-                    textPos.Y += headlineMeasure.Y;
+                        textPos.Y += headlineMeasure.Y;
 
-                    spriteBatch.DrawString(spriteFont, bodyText, textPos + new Vector2(2,2), Color.Black);
-                    spriteBatch.DrawString(spriteFont, bodyText, textPos, Color.White);
-                    spriteBatch.End();
+                        spriteBatch.DrawString(spriteFont, bodyText, textPos + new Vector2(2, 2), Color.Black);
+                        spriteBatch.DrawString(spriteFont, bodyText, textPos, Color.White);
+                        spriteBatch.End();
+                    }
                 }
             }
             GraphicsDevice.SetRenderTarget(null);
@@ -378,20 +389,22 @@ namespace lightseeds
             // Draw split screens
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
             for (int i = 0; i < 2; i++)
-                spriteBatch.Draw(splitScreens[i], splitScreenPositions[i], Color.White);
+                spriteBatch.Draw(splitScreens[i], splitScreenPositions[i], fadeColor);
             spriteBatch.End();
 
-            spriteBatch.Begin();
+            if (this.State != GameState.STORY)
+            {
+                spriteBatch.Begin();
 
-            mapPanel.Draw(gameTime);
-            
-            spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, -40) + splitScreenPositions[1], Color.Red);
-            
-            int totalTime = (int)(gameTime.TotalGameTime.TotalSeconds - startTime);
-            spriteBatch.DrawString(spriteFont, String.Format("DEBUG Time: {0:0}:{1:00}", totalTime / 60, totalTime % 60), splitScreenPositions[0], Color.Red);
+                mapPanel.Draw(gameTime);
 
-            spriteBatch.End();
+                spriteBatch.DrawString(spriteFont, String.Format("Seeds: {0:0}", seedCollection.collectedSeedCount), new Vector2(0, -40) + splitScreenPositions[1], Color.Red);
 
+                int totalTime = (int)(gameTime.TotalGameTime.TotalSeconds - startTime);
+                spriteBatch.DrawString(spriteFont, String.Format("DEBUG Time: {0:0}:{1:00}", totalTime / 60, totalTime % 60), splitScreenPositions[0], Color.Red);
+
+                spriteBatch.End();
+            }
             base.Draw(gameTime);
         }
 
@@ -451,6 +464,122 @@ namespace lightseeds
                                     (players[index].worldPosition.Y) * factor, 0);
             return Matrix.CreateTranslation(v);
             
+        }
+
+
+        public void UpdateStoryMode(GameTime gameTime)
+        {
+            if (storyProgress < 0)
+            {
+                // initialization
+                storyProgress = 0;
+                storyTime = 0.0f;
+                cameras[0].Center(new Vector3(0.0f, 40.0f, 1.0f));
+                cameras[0].MoveTo(new Vector2(0.0f, 8.0f), storyTimeIntervalls[storyProgress]);
+            }
+
+            storyTime += gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
+
+            switch (storyProgress)
+            {
+                case 0:
+                    {
+                        // scroll + fade in
+                        cameras[0].Update(gameTime);
+                        treeCollection.Update(gameTime);
+                        float c = storyTime / storyTimeIntervalls[storyProgress];
+                        fadeColor = new Color(c, c, c, 1.0f); 
+                        if (storyTime > storyTimeIntervalls[storyProgress])
+                        {
+                            storyTime = 0.0f;
+                            storyProgress++;
+                            fadeColor = Color.White;
+                        }
+                    }
+                    break;
+                case 1:
+                    {
+                        // wait
+                        treeCollection.Update(gameTime);
+                        if (storyTime > storyTimeIntervalls[storyProgress])
+                        {
+                            storyTime = 0.0f;
+                            storyProgress++;
+                            cameras[0].MoveTo(new Vector2(-0.5f * World.WorldWidth + 0.5f * WORLD_SCREEN_WIDTH, 8.0f),
+                                              storyTimeIntervalls[storyProgress]);
+                        }                        
+                    }
+                    break;
+                case 2:
+                    {
+                        // scroll left
+                        cameras[0].Update(gameTime);
+                        treeCollection.Update(gameTime);
+                        if (storyTime > storyTimeIntervalls[storyProgress])
+                        {
+                            storyTime = 0.0f;
+                            storyProgress++;
+                        }
+                    }
+                    break;
+                case 3:
+                    {
+                        // wait
+                        voids.ForEach((v) => v.Update(gameTime));
+                        particleCollection.Update(gameTime);
+                        if (storyTime > storyTimeIntervalls[storyProgress])
+                        {
+                            storyTime = 0.0f;
+                            storyProgress++;
+                            cameras[0].MoveTo(new Vector2(0.0f, 8.0f), storyTimeIntervalls[storyProgress]);
+                        }
+                    }
+                    break;
+                case 4:
+                    {
+                        // scroll right
+                        cameras[0].Update(gameTime);
+                        treeCollection.Update(gameTime);
+                        if (storyTime > storyTimeIntervalls[storyProgress])
+                        {
+                            storyTime = 0.0f;
+                            storyProgress++;
+                        }
+                    }
+                    break;
+                case 5:
+                    {
+                        // wait
+                        treeCollection.Update(gameTime);
+                        if (storyTime > storyTimeIntervalls[storyProgress])
+                        {
+                            storyTime = 0.0f;
+                            storyProgress++;
+                        }
+                    }
+                    break;
+                default:
+                    {
+                        // start the game
+                        this.State = GameState.RUNNING;
+                        cameras[0].FollowPlayer(players[0]);
+                        startTime = gameTime.TotalGameTime.TotalSeconds;
+                    }
+                    break;
+            }
+
+            // skip intro
+            GamePadState gamepadState = GamePad.GetState(PlayerIndex.One);
+            KeyboardState keyboardState = Keyboard.GetState();
+            if (gamepadState.IsButtonDown(Buttons.Start) || keyboardState.IsKeyDown(Keys.Enter))
+            {
+                // start the game
+                fadeColor = Color.White;
+                this.State = GameState.RUNNING;
+                cameras[0].FollowPlayer(players[0]);
+                cameras[0].MoveTo(players[0].worldPosition.ToVector2(), 0.1f);
+                startTime = gameTime.TotalGameTime.TotalSeconds;             
+            }
         }
     }
 }

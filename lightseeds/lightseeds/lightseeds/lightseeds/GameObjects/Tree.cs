@@ -257,8 +257,8 @@ namespace lightseeds.GameObjects
                     resistance = 1.0f;
                     lifeSpan = 0.0f;
                     price = 0;
-                    descriptionLines[0] = "Basic Tree";
-                    descriptionLines[1] = "is Basic";
+                    descriptionLines[0] = "The Tree of Life";
+                    descriptionLines[1] = "center of the world";
                     break;
                 case TreeType.FIGHTER:
                     growthTime = 8.0f;
@@ -285,7 +285,7 @@ namespace lightseeds.GameObjects
                     lifeSpan = 25.0f;
                     price = 2;
                     descriptionLines[0] = "Pawn Tree";
-                    descriptionLines[1] = "The Ace of Rage";
+                    descriptionLines[1] = "the ace of rage";
                     break;
                 case TreeType.TANK:
                     growthTime = 25.0f;

@@ -136,7 +136,7 @@ namespace lightseeds
             currentXAcceleration = 0.0f;
             currentYAcceleration = 0.0f;
 
-            game.cameras[index].StartReturnMode(worldPosition.ToVector2());
+            game.cameras[index].MoveTo(worldPosition.ToVector2(), 1.0f);
         }
 
         private void UpdateXPosition(GameTime gameTime)

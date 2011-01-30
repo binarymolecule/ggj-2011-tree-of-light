@@ -106,6 +106,11 @@ namespace lightseeds
                 {
                     screenStatus = ScreenStatus.FADE_OUT;
                 }
+                else if (gamepadState.Buttons.Back == ButtonState.Pressed ||
+                         keyboardState.IsKeyDown(Keys.Escape))
+                {
+                    game.Exit();
+                }
             }
 
             base.Update(gameTime);
