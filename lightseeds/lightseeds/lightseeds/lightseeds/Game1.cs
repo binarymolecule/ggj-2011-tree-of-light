@@ -130,7 +130,15 @@ namespace lightseeds
 
             seedCollection = new SeedCollection(this);
             seedCollection.Load();
-            seedCollection.SpawnSeed(new Vector3(4.0f, world.getHeigth(4.0f) + 2.0f, 0.0f));
+
+            Random randomizer = new Random();
+            const int NUM_INITIAL_SEEDS = 8;
+            for (int i = 0; i < NUM_INITIAL_SEEDS; i++)
+            {
+                float posX = (float)randomizer.Next(-(World.WorldWidth + WORLD_SCREEN_WIDTH)/2, (World.WorldWidth- WORLD_SCREEN_WIDTH)/2);
+                float offsetY = (float)randomizer.Next(2, 6);
+                seedCollection.SpawnSeed(new Vector3(posX, world.getHeigth(posX) + offsetY, 0.0f));
+            }
 
             this.particleCollection = new ParticleCollection(this);
 

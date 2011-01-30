@@ -316,7 +316,7 @@ namespace lightseeds.GameObjects
                         break;
                     case TreeStatus.BLUEPRINT:
                         {
-                            bool buildable = (parentCollection.game.seedCollection.collectedSeedCount >= price);
+                            bool buildable = (parentCollection.game.seedCollection.collectedSeedCount >= price);                                            
                             spriteBatch.Draw(texture, screenPosition + offset, buildable ? Color.Gray : Color.Black);
                             break;
                         }
