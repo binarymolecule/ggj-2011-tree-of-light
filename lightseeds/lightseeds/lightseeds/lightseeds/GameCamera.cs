@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using lightseeds.GameObjects;
 
 namespace lightseeds
 {
@@ -25,10 +26,23 @@ namespace lightseeds
 
         static public Vector2 WORLD_OFFSET = new Vector2(0.0f, 2.0f);
 
-        static public Vector2 MIN_COORDS = new Vector2(-180.0f + 0.25f * Game1.WORLD_SCREEN_WIDTH, 0.5f * Game1.WORLD_SCREEN_HEIGHT) + WORLD_OFFSET;
-        static public Vector2 MAX_COORDS = new Vector2(180.0f - 0.25f * Game1.WORLD_SCREEN_WIDTH, 100.0f) + WORLD_OFFSET;
+        //static public Vector2 MIN_COORDS = new Vector2(-180.0f + 0.25f * Game1.WORLD_SCREEN_WIDTH, 0.5f * Game1.WORLD_SCREEN_HEIGHT) + WORLD_OFFSET;
+        //static public Vector2 MAX_COORDS = new Vector2(180.0f - 0.25f * Game1.WORLD_SCREEN_WIDTH, 100.0f) + WORLD_OFFSET;
 
-        Vector2 translation;
+        public Vector2 translation {
+            get {
+                return _translation;
+            }
+
+            set {
+                if (float.IsNaN(value.X) || float.IsNaN(value.Y))
+                {
+                    throw new Exception("nan");
+                }
+                _translation = value;
+                RestrictLocation();
+            }
+        }
 
         Vector2 target;
 
@@ -43,9 +57,16 @@ namespace lightseeds
         private float returnFactor, returnDuration;
 
         private Vector2 returnSource, returnTarget;
+        public Vector2 screen;
+        private  Vector2 _translation;
 
         public void MoveTo(Vector2 retTarget, float retDuration)
         {
+            if (returnDuration < 0)
+            {
+                throw new Exception("retDuration smaller than 0");
+            }
+
             returnMode = true;
             returnFactor = 0.0f;
             returnDuration = retDuration;
@@ -57,9 +78,10 @@ namespace lightseeds
         {
             get
             {
-                Vector3 v = new Vector3(-(translation.X - WORLD_OFFSET.X) * game.worldToScreen.M11, 
-                                        -(translation.Y - WORLD_OFFSET.Y) * game.worldToScreen.M22, 0.0f);
-                return Matrix.CreateTranslation(v);
+                Vector3 vTo = Vector3.Transform(new Vector3(-translation, 0), game.worldToScreen);
+                Vector3 vFrom = Vector3.Transform(Vector3.Zero, game.worldToScreen);
+
+                return Matrix.CreateTranslation(vTo - vFrom);
             }
         }
 
@@ -67,15 +89,16 @@ namespace lightseeds
         {
             get
             {
-                return Matrix.CreateTranslation(-(new Vector3(translation.X - WORLD_OFFSET.X, translation.Y - WORLD_OFFSET.Y, 0.0f)));
+                return Matrix.CreateTranslation(-(new Vector3(translation.X, translation.Y, 0.0f)));
             }
         }
 
-        public GameCamera(Game1 game, int index, Vector3 position)
+        public GameCamera(Game1 game, Vector2 screen, int index, Vector3 position)
         {
             this.game = game;
             this.index = index;
             this.player = null;
+            this.screen = screen;
 
             Center(position);
         }
@@ -133,19 +156,11 @@ namespace lightseeds
             if (player != null)
             {
                 target = new Vector2(player.worldPosition.X, player.worldPosition.Y);
-                if (target.X < MIN_COORDS.X)
-                    target.X = MIN_COORDS.X;
-                else if (target.X > MAX_COORDS.X)
-                    target.X = MAX_COORDS.X;
-                if (target.Y < MIN_COORDS.Y)
-                    target.Y = MIN_COORDS.Y;
-                else if (target.Y > MAX_COORDS.Y)
-                    target.Y = MAX_COORDS.Y;
                 targetIsMoving = !player.isStunned && (player.currentXAcceleration != 0 || player.currentYAcceleration !=0 );
             }
 
             // keep close track of target on vertical axis
-            translation.Y = target.Y;
+            translation = new Vector2(translation.X, target.Y);
 
             Vector2 direction = target - translation;
             float seconds = 0.001f * gameTime.ElapsedGameTime.Milliseconds;
@@ -184,10 +199,40 @@ namespace lightseeds
                         if (speed.X > MAX_SPEED)
                             speed.X = MAX_SPEED;
                     }
-                    direction.Normalize();
-                    translation += speed * seconds * direction;
+
+                    if (direction != Vector2.Zero)
+                    {
+                        direction.Normalize();
+                        translation += speed * seconds * direction;
+                    }
                 }            
             }
+        }
+
+        public Vector3 visibleWorld
+        {
+            get
+            {
+                Matrix invWorldToScreen = Matrix.Invert(game.worldToScreen);
+                var sMin = Vector3.Transform(new Vector3(0, 0, 0), invWorldToScreen);
+                var sMax = Vector3.Transform(new Vector3(screen.X, -screen.Y, 0), invWorldToScreen);
+                return sMax - sMin;
+            }
+        }
+
+        private void RestrictLocation()
+        {
+            Vector3 min = new Vector3(-World.WorldWidth + visibleWorld.X / 2, visibleWorld.Y / 2, 0);
+            Vector3 max = new Vector3(+World.WorldWidth - visibleWorld.X / 2, 10000, 0);
+
+            if (this._translation.X < min.X)
+                this._translation.X = min.X;
+            else if (this._translation.X > max.X)
+                this._translation.X = max.X;
+            if (this._translation.Y < min.Y)
+                this._translation.Y = min.Y;
+            else if (this._translation.Y > max.Y)
+                this._translation.Y = max.Y;
         }
     }
 }

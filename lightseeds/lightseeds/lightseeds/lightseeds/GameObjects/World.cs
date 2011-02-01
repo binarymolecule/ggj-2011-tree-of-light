@@ -116,6 +116,7 @@ namespace lightseeds.GameObjects
 
         }
 
+
         public void Draw(Game1 game, GameTime gameTime, int x, int w)
         {
             graphicsDevice.BlendState = BlendState.NonPremultiplied;

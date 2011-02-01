@@ -1,6 +1,7 @@
 #define SHOW_INTRO
 //#define TEST_GAMEOVER
 //#define DEBUG_CONTROLS
+#define WINDOWED
 
 using System;
 using System.Collections.Generic;
@@ -29,8 +30,7 @@ namespace lightseeds
         public SpriteBatch spriteBatch;
         public World world;
 
-        public Matrix worldToScreen;
-        public PlayerSprite[] players;
+        public List<PlayerSprite> players;
         public GameCamera[] cameras;
 
         public Texture2D playerTexture;
@@ -55,14 +55,25 @@ namespace lightseeds
 
         public List<TheVoid> voids = new List<TheVoid>();
 
+#if WINDOWED
         static public int SCREEN_WIDTH = 1280;
         static public int SCREEN_HEIGHT = 720;
         static public bool FULLSCREEN = false;
+#else
+        static public int SCREEN_WIDTH = 1680;
+        static public int SCREEN_HEIGHT = 1050;
+        static public bool FULLSCREEN = true;
+#endif
+
+#if HSPLIT
+        static public int SPLIT_SCREEN_WIDTH = SCREEN_WIDTH / 2;
+        static public int SPLIT_SCREEN_HEIGHT = SCREEN_HEIGHT;
+#else
         static public int SPLIT_SCREEN_WIDTH = SCREEN_WIDTH;
         static public int SPLIT_SCREEN_HEIGHT = SCREEN_HEIGHT / 2;
-        static public int WORLD_SCREEN_WIDTH = 24;
-        static public int WORLD_SCREEN_HEIGHT = 9;
-        const int NUM_INITIAL_SEEDS = 8;
+#endif
+        const int WORLD_SCALE = 24;
+        const int NUM_INITIAL_SEEDS = 4;
 
         public ParticleCollection particleCollection;
         public GameState State;
@@ -97,6 +108,24 @@ namespace lightseeds
             GAMEOVER
         }
 
+        public Matrix worldScreenScale = Matrix.CreateScale((float)SPLIT_SCREEN_WIDTH / (float)WORLD_SCALE,
+                                               -(float)SPLIT_SCREEN_WIDTH / (float)WORLD_SCALE, 1.0f);
+
+        public Matrix worldToScreen
+        {
+            get
+            {
+                if (GameCamera.CurrentCamera != null)
+                {
+                    return worldScreenScale * Matrix.CreateTranslation(GameCamera.CurrentCamera.screen.X / 2, GameCamera.CurrentCamera.screen.Y / 2, 0.0f);
+                }
+                else
+                {
+                    return worldScreenScale;
+                }
+            }
+        }
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -105,12 +134,10 @@ namespace lightseeds
             graphics.PreferredBackBufferHeight = SCREEN_HEIGHT;
           
             InitGraphicsMode(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN);
-            worldToScreen = Matrix.CreateScale((float)SPLIT_SCREEN_WIDTH / (float)WORLD_SCREEN_WIDTH,
-                                               -(float)SPLIT_SCREEN_HEIGHT / (float)WORLD_SCREEN_HEIGHT, 1.0f) *
-                            Matrix.CreateTranslation(0.5f * (float)SPLIT_SCREEN_WIDTH, 0.5f * (float)SPLIT_SCREEN_HEIGHT, 0.0f);
+            
             splitScreenPositions = new Vector2[2];
             splitScreenPositions[0] = Vector2.Zero;
-            splitScreenPositions[1] = new Vector2(0.0f, (float)SPLIT_SCREEN_HEIGHT);
+            splitScreenPositions[1] = new Vector2(SCREEN_WIDTH - SPLIT_SCREEN_WIDTH, SCREEN_HEIGHT - SPLIT_SCREEN_HEIGHT);
             
             joinedScreenPosition = Vector2.Zero;
             joinedScreenBottomPosition = new Vector2(0.0f, (float)SCREEN_HEIGHT - 12.0f);
@@ -181,31 +208,31 @@ namespace lightseeds
                                     Content.Load<Texture2D>("textures/mapIcons"));
 
             // create players
-            players = new PlayerSprite[2];
-            players[0] = new PlayerSprite(this, 0, new Vector3(2.0f, 7.0f, 1.0f), playerTexture)
+            players = new List<PlayerSprite>();
+            players.Add(new PlayerSprite(this, 0, new Vector3(3, world.getHeigth(3), 1.0f), playerTexture)
             {
                 color = new Color(0x48, 0xe6, 0xfe, 255)
-            };
-            players[1] = new PlayerSprite(this, 1, new Vector3(-2.0f, 6.5f, 1.0f), playerTexture)
+            });
+            players.Add(new PlayerSprite(this, 1, new Vector3(-3, world.getHeigth(-3), 1.0f), playerTexture)
             {
                 color = new Color(0xf8, 0xfe, 0x4d, 255)
-            };
-
-            // create cameras
-            cameras = new GameCamera[2];
-            cameras[0] = new GameCamera(this, 0, players[0].worldPosition);
-            cameras[0].FollowPlayer(players[0]);
-            cameras[1] = new GameCamera(this, 1, players[1].worldPosition);
-            cameras[1].FollowPlayer(players[1]);
-
-            joinedCamera = new GameCamera(this, 2, new Vector3(0.0f, 16.0f, 1.0f));
+            });
 
             // create game screens
             splitScreens = new RenderTarget2D[2];
             splitScreens[0] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
             splitScreens[1] = new RenderTarget2D(GraphicsDevice, SPLIT_SCREEN_WIDTH, SPLIT_SCREEN_HEIGHT);
-            
             joinedScreen = new RenderTarget2D(GraphicsDevice, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+            // create cameras
+            cameras = new GameCamera[2];
+            cameras[0] = new GameCamera(this, splitScreens[0].ToVector(), 0, players[0].worldPosition);
+            cameras[0].FollowPlayer(players[0]);
+            cameras[1] = new GameCamera(this, splitScreens[1].ToVector(), 1, players[1].worldPosition);
+            cameras[1].FollowPlayer(players[1]);
+
+            joinedCamera = new GameCamera(this, GraphicsDevice.Viewport.ToVector(), 2, new Vector3(0.0f, 0.0f, 1.0f));
+
 
             // load GUI related stuff
             spriteFont = Content.Load<SpriteFont>("fonts/Geo");
@@ -630,6 +657,16 @@ namespace lightseeds
             }
         }
 
+        public Vector3 MedianPlayerPos
+        {
+            get
+            {
+                Vector3 result = new Vector3();
+                players.ForEach((p) => result += p.worldPosition);
+                return result / players.Count;
+            }
+        }
+
         public void createTree(PlayerSprite player, TreeType treeType, String name, int price)
         {
             // check and decrease seeds of players here
@@ -663,7 +700,7 @@ namespace lightseeds
                 cameras[i].FollowPlayer(players[i]);
                 cameras[i].MoveTo(players[i].worldPosition.ToVector2(), 0.1f);
             }
-            joinedCamera.Center(new Vector3(0.0f, 16.0f, 1.0f));
+            joinedCamera.Center(new Vector3(0.0f, 0.0f, 1.0f));
             splitScreenMode = true;
 
             // TODO care about music stuff
@@ -703,7 +740,7 @@ namespace lightseeds
                 storyProgress = 0;
                 storyTime = 0.0f;
                 joinedCamera.Center(new Vector3(0.0f, 48.0f, 1.0f));
-                joinedCamera.MoveTo(new Vector2(0.0f, 16.0f), storyTimeIntervalls[storyProgress]);
+                joinedCamera.MoveTo(new Vector2(0.0f, 0.0f), storyTimeIntervalls[storyProgress]);
             }
 
             storyTime += gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
@@ -737,7 +774,7 @@ namespace lightseeds
                         {
                             storyTime = 0.0f;
                             storyProgress++;
-                            joinedCamera.MoveTo(new Vector2(-0.5f * World.WorldWidth + 0.5f * WORLD_SCREEN_WIDTH, 16.0f),
+                            joinedCamera.MoveTo(new Vector2(voids[0].horizontalPosition + joinedCamera.visibleWorld.X / 2, 0f),
                                                 storyTimeIntervalls[storyProgress]);
                         }                        
                     }
@@ -753,7 +790,7 @@ namespace lightseeds
                             storyProgress++;
                             if (storyProgress == 7)
                             {
-                                treeCollection.CreateTree(new Vector3(-0.5f * World.WorldWidth + WORLD_SCREEN_WIDTH, 16.0f, 1.0f),
+                                treeCollection.CreateTree(new Vector3(joinedCamera.translation.X, 0.0f, 1.0f),
                                                           TreeType.MOTHER, false, "");
                             }
                         }
@@ -768,7 +805,7 @@ namespace lightseeds
                         {
                             storyTime = 0.0f;
                             storyProgress++;
-                            joinedCamera.MoveTo(new Vector2(0.0f, 16.0f), storyTimeIntervalls[storyProgress]);
+                            joinedCamera.MoveTo(new Vector2(0.0f, 0.0f), storyTimeIntervalls[storyProgress]);
                         }
                     }
                     break;
@@ -791,7 +828,7 @@ namespace lightseeds
                         {
                             storyTime = 0.0f;
                             storyProgress++;
-                            joinedCamera.MoveTo(new Vector2(-0.5f * World.WorldWidth + WORLD_SCREEN_WIDTH, 16.0f),
+                            joinedCamera.MoveTo(new Vector2(voids[0].horizontalPosition + World.WorldWidth / 2 * 0.15f, 0.0f),
                                                 storyTimeIntervalls[storyProgress]);
                         }
                     }
@@ -805,7 +842,7 @@ namespace lightseeds
                         {
                             storyTime = 0.0f;
                             storyProgress++;
-                            joinedCamera.MoveTo(new Vector2(0.0f, 16.0f), storyTimeIntervalls[storyProgress]);
+                            joinedCamera.MoveTo(new Vector2(0.0f, 0.0f), storyTimeIntervalls[storyProgress]);
                         }
                     }
                     break;
@@ -824,7 +861,7 @@ namespace lightseeds
                         // start the game
                         this.State = GameState.RUNNING;
                         splitScreenMode = true;
-                        joinedCamera.Center(new Vector3(0.0f, 16.0f, 1.0f));
+                        joinedCamera.Center(new Vector3(0.0f, 0.0f, 1.0f));
                         startTime = gameTime.TotalGameTime.TotalSeconds;
                         ResetVoids(1.0f);
                     }
@@ -841,7 +878,7 @@ namespace lightseeds
                 fadeColor = Color.White;
                 this.State = GameState.RUNNING;
                 splitScreenMode = true;
-                joinedCamera.Center(new Vector3(0.0f, 16.0f, 1.0f));
+                joinedCamera.Center(new Vector3(0.0f, 0.0f, 1.0f));
                 startTime = gameTime.TotalGameTime.TotalSeconds;
                 ResetVoids(1.0f);
             }
