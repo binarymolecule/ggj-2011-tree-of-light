@@ -1,7 +1,7 @@
 #define SHOW_INTRO
 //#define TEST_GAMEOVER
 //#define DEBUG_CONTROLS
-#define WINDOWED
+//#define WINDOWED
 
 using System;
 using System.Collections.Generic;

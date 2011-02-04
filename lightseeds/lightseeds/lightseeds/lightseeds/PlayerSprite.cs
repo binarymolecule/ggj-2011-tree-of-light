@@ -332,16 +332,33 @@ namespace lightseeds
 
         public void HandleInput(GamePadState gamepadState, KeyboardState kbs)
         {
+            var actionButton = gamepadState.IsButtonDown(Buttons.A) || kbs.IsKeyDown(Keys.Enter);
+            var cancelButton = gamepadState.IsButtonDown(Buttons.B) || kbs.IsKeyDown(Keys.Back);
+
+            var stick = gamepadState.ThumbSticks.Left;
+
+
+            float x = stick.X, y = stick.Y;
+
+            if (kbs != null)
+            {
+                x = kbs.IsKeyDown(Keys.Right) ? 1 : x;
+                x = kbs.IsKeyDown(Keys.Left) ? -1 : x;
+
+
+                y = kbs.IsKeyDown(Keys.Up) ? 1 : y;
+                y = kbs.IsKeyDown(Keys.Down) ? -1 : y;
+            }
+
             if (!isStunned)
             {
-                var stick = gamepadState.ThumbSticks.Left;
-
+                
                 if (waitForBPConfirm)
                 {
                     if (xVelocity == 0)
                         showBlueprint();
                     Move(0, 0);
-                    if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
+                    if (actionButton && !waitForReleaseA)
                     {
                         game.treeCollection.trees.Remove(blueprint);
                         game.createTree(this, blueprint.treeType, blueprint.name, blueprint.price);
@@ -351,7 +368,7 @@ namespace lightseeds
                         waitForReleaseA = true;
                         GameServices.GetService<MusicManager>().Play("MenuSelect");
                     }
-                    if (gamepadState.IsButtonDown(Buttons.B) && !waitForReleaseB)
+                    if (cancelButton && !waitForReleaseB)
                     {
                         game.treeCollection.trees.Remove(blueprint);
                         lastUsedType = blueprint.treeType;
@@ -360,7 +377,7 @@ namespace lightseeds
                         waitForReleaseB = true;
                         GameServices.GetService<MusicManager>().Play("MenuSelect");
                     }
-                    if (gamepadState.ThumbSticks.Left.X < 0.0f && !waitForReleaseLeft && !waitForReleaseA)
+                    if (x < 0.0f && !waitForReleaseLeft && !waitForReleaseA)
                     {
                         var type = blueprint.treeType;
                         game.treeCollection.trees.Remove(blueprint);
@@ -368,7 +385,7 @@ namespace lightseeds
                         waitForReleaseLeft = true;
                         GameServices.GetService<MusicManager>().Play("MenuSelect");
                     }
-                    if (gamepadState.ThumbSticks.Left.X > 0.0f && !waitForReleaseRight)
+                    if (x > 0.0f && !waitForReleaseRight)
                     {
                         var type = blueprint.treeType;
                         game.treeCollection.trees.Remove(blueprint);
@@ -381,20 +398,10 @@ namespace lightseeds
                 }
                 else
                 {
-                    float x = stick.X, y = stick.Y;
-
-                    if (kbs != null)
-                    {
-                        x = kbs.IsKeyDown(Keys.Right) ? 1 : x;
-                        x = kbs.IsKeyDown(Keys.Left) ? -1 : x;
-
-
-                        y = kbs.IsKeyDown(Keys.Up) ? 1 : y;
-                        y = kbs.IsKeyDown(Keys.Down) ? -1 : y;
-                    }
+                    
                     Move(x, y);
 
-                    if (gamepadState.IsButtonDown(Buttons.A) && !waitForReleaseA)
+                    if (actionButton && !waitForReleaseA)
                     {
                         if (!game.treeCollection.HasTreeAtPosition(worldPosition.X))
                         {
@@ -406,11 +413,11 @@ namespace lightseeds
                         GameServices.GetService<MusicManager>().Play("MenuSelect");
                     }
                 }
-                if (gamepadState.IsButtonUp(Buttons.A))
+                if (!actionButton)
                     waitForReleaseA = false;
-                if (gamepadState.IsButtonUp(Buttons.B))
+                if (!cancelButton)
                     waitForReleaseB = false;
-                if (gamepadState.ThumbSticks.Left.X == 0)
+                if (x == 0)
                 {
                     waitForReleaseLeft = false;
                     waitForReleaseRight = false;
